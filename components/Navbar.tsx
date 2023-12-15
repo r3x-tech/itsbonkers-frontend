@@ -59,7 +59,7 @@ export const Navbar: React.FC = () => {
   return (
     <Flex
       justifyContent="space-between"
-      alignItems="center"
+      alignItems="end"
       bg={theme.colors.background}
       color={theme.colors.white}
       h="8vh"
@@ -110,7 +110,7 @@ export const Navbar: React.FC = () => {
             borderWidth="2px"
             outline="none"
             zIndex={100}
-            boxShadow="4px 4px 10px black"
+            // boxShadow="4px 4px 10px black"
           >
             <VStack spacing={4} py="1.5rem" px="2rem">
               <Flex direction="column">

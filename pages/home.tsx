@@ -1,174 +1,271 @@
 import { Navbar } from "@/components/Navbar";
+import userStore from "@/stores/userStore";
 // import userStore from "@/stores/userStore";
 import theme from "@/styles/theme";
 import { Box, Image, Flex, Grid, Input, Text, Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 function HomePage() {
-  // const { loggedIn } = userStore();
+  const { loggedIn } = userStore();
   const router = useRouter();
 
+  const [selectedSleigh, setSelectedSleigh] = useState(false);
+
   return (
-    <>
-      <Box minHeight="100vh">
-        <Navbar />
+    <Box minHeight="100vh" minWidth="100vw" bg={theme.colors.background}>
+      <Navbar />
+      <Flex
+        h="92vh"
+        w="100vw"
+        bg={theme.colors.background}
+        justifyContent="center"
+        alignItems="center"
+      >
         <Flex
-          h="92vh"
-          w="100vw"
-          bg={theme.colors.background}
+          h="85vh"
+          w="93vw"
+          borderRadius="2rem"
+          bg={theme.colors.secondary}
           color={theme.colors.white}
           fontFamily="Montserrat"
-          justifyContent="spacebetween"
+          justifyContent="center"
           align="center"
         >
           <Flex
             direction="column"
-            p="1rem"
             h="100%"
-            w="17%"
-            borderRightWidth="2px"
+            w="20%"
+            borderRightWidth="4px"
+            borderColor={theme.colors.background}
           >
             <Flex
               direction="column"
-              justifyContent="space-between"
-              mt="0.75rem"
+              justifyContent="start"
+              h="20%"
+              py="2rem"
+              px="3rem"
+              borderBottomWidth="4px"
+              borderColor={theme.colors.background}
             >
-              <Input
-                placeholder="SEARCH GAMES"
+              <Text
+                fontSize="1.25rem"
+                fontWeight="700"
+                fontFamily={theme.fonts.body}
+                cursor="pointer"
+              >
+                RESOURCES
+              </Text>
+              <Flex justifyContent="space-between" mt="1.25rem" w="100%">
+                <Box
+                  bg={theme.colors.background}
+                  boxSize="4.5rem"
+                  borderRadius="0.75rem"
+                  boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
+                ></Box>
+                <Box
+                  bg={theme.colors.background}
+                  boxSize="4.5rem"
+                  borderRadius="0.75rem"
+                  boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
+                ></Box>
+                <Box
+                  bg={theme.colors.background}
+                  boxSize="4.5rem"
+                  borderRadius="0.75rem"
+                  boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
+                ></Box>
+                <Box
+                  bg={theme.colors.background}
+                  boxSize="4.5rem"
+                  borderRadius="0.75rem"
+                  boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
+                ></Box>
+              </Flex>
+            </Flex>
+            <Flex
+              direction="column"
+              justifyContent="start"
+              h="80%"
+              py="2rem"
+              px="3rem"
+            >
+              <Flex
+                alignItems="flex-end"
+                justifyContent="space-between"
                 w="100%"
-                h="2rem"
-                fontSize="0.75rem"
-                bg={theme.colors.input}
-                borderWidth="2px"
-                borderRadius="2px"
-                borderColor={theme.colors.input}
-                fontWeight="500"
-                letterSpacing="1px"
-                color={theme.colors.white}
-                focusBorderColor={theme.colors.input}
-                _placeholder={{ color: theme.colors.evenLighterBlue }}
-                _focus={{ boxShadow: "none" }}
-              />
+              >
+                <Text
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  fontFamily={theme.fonts.body}
+                >
+                  SLEIGHS
+                </Text>
+                <Text
+                  fontSize="1rem"
+                  fontWeight="500"
+                  fontFamily={theme.fonts.body}
+                  cursor="pointer"
+                  onClick={() => {}}
+                >
+                  VIEW ALL {">"}
+                </Text>
+              </Flex>
 
-              {/* <Flex justifyContent="space-between" mt="1rem">
-                  <Text fontSize="0.75rem" cursor="pointer">
-                    FILTER
-                  </Text>
-                  <Text fontSize="0.75rem" cursor="pointer">
-                    SORT
-                  </Text>
-                </Flex> */}
+              <Flex
+                flexDirection="column"
+                justifyContent="space-between"
+                mt="1.25rem"
+                w="100%"
+                gap="1.5rem"
+              >
+                <Box
+                  bg={theme.colors.background}
+                  width="100%"
+                  h="7rem"
+                  borderRadius="0.75rem"
+                  borderColor={
+                    selectedSleigh
+                      ? theme.colors.tertiary
+                      : theme.colors.background
+                  }
+                  borderWidth="2px"
+                  boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
+                ></Box>
+                <Box
+                  bg={theme.colors.background}
+                  width="100%"
+                  h="7rem"
+                  borderRadius="0.75rem"
+                  borderColor={
+                    selectedSleigh
+                      ? theme.colors.tertiary
+                      : theme.colors.background
+                  }
+                  borderWidth="2px"
+                  boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
+                ></Box>
+                <Box
+                  bg={theme.colors.background}
+                  width="100%"
+                  h="7rem"
+                  borderRadius="0.75rem"
+                  borderColor={
+                    selectedSleigh
+                      ? theme.colors.tertiary
+                      : theme.colors.background
+                  }
+                  borderWidth="2px"
+                  boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
+                ></Box>
+                <Box
+                  bg={theme.colors.background}
+                  width="100%"
+                  h="7rem"
+                  borderRadius="0.75rem"
+                  borderColor={
+                    selectedSleigh
+                      ? theme.colors.tertiary
+                      : theme.colors.background
+                  }
+                  borderWidth="2px"
+                  boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
+                ></Box>
+              </Flex>
             </Flex>
           </Flex>
           <Flex
             direction="column"
-            px="2rem"
-            py="1.5rem"
+            px="3rem"
+            py="2rem"
             h="100%"
-            w="83%"
+            w="80%"
             overflowY="auto"
           >
-            <Flex direction="column">
-              <Text
-                fontSize="1rem"
-                fontWeight="600"
-                fontFamily={theme.fonts.header}
-                color={theme.colors.white}
-              >
-                EXPLORE
-              </Text>
-              <Grid templateColumns="repeat(6, 1fr)" gap={8} mt="1rem">
-                <Box w="10rem" h="100%">
-                  <Image
-                    src="https://cdn1.epicgames.com/offer/cbd5b3d310a54b12bf3fe8c41994174f/EGS_VALORANT_RiotGames_S2_1200x1600-a0ffbc8c70fd33180b6f1bdb1dfd4eb2"
-                    alt="Game"
-                    borderRadius="2px"
-                    h="10rem"
-                    w="10rem"
-                    cursor="pointer"
-                    onClick={() => {
-                      const gameId = "1234";
-                      router.push(`/game/${gameId}`);
-                    }}
-                  />
-                  <Button
-                    w="100%"
-                    h="2rem"
-                    borderWidth="2px"
-                    borderRadius="2px"
-                    mt="1rem"
-                    fontWeight="600"
-                    letterSpacing="1px"
-                    fontSize="0.75rem"
-                    onClick={() => {
-                      // const link =
-                      //   "https://magiceden.io/marketplace/solana_monkey_business";
-                      // window.open(link, "_blank");
-                      const gameId = "1234";
-                      router.push(`/game/${gameId}`);
-                    }}
-                  >
-                    PURCHASE
-                  </Button>
-                  {/* <Button
-                    w="100%"
-                    h="2rem"
-                    borderWidth="2px"
-                    borderRadius="2px"
-                    mt="1rem"
-                    bg={theme.colors.white}
-                    borderColor={theme.colors.white}
-                    color={theme.colors.background}
-                    fontWeight="600"
-                    letterSpacing="1px"
-                    fontSize="0.85rem"
-                    onClick={() => {
-                      const gameId = "1234";
-                      router.push(`/game/${gameId}`);
-                    }}
-                  >
-                    PLAY
-                  </Button> */}
-                </Box>
-                <Box w="10rem" h="100%">
-                  <Image
-                    src="https://cdn1.epicgames.com/offer/cbd5b3d310a54b12bf3fe8c41994174f/EGS_VALORANT_RiotGames_S2_1200x1600-a0ffbc8c70fd33180b6f1bdb1dfd4eb2"
-                    alt="Game"
-                    borderRadius="2px"
-                    h="10rem"
-                    w="10rem"
-                    cursor="pointer"
-                    onClick={() => {
-                      const gameId = "1234";
-                      router.push(`/game/${gameId}`);
-                    }}
-                  />
-                  <Button
-                    w="100%"
-                    h="2rem"
-                    borderWidth="2px"
-                    borderRadius="2px"
-                    mt="1rem"
-                    fontWeight="600"
-                    letterSpacing="1px"
-                    fontSize="0.75rem"
-                    onClick={() => {
-                      // const link =
-                      //   "https://magiceden.io/marketplace/solana_monkey_business";
-                      // window.open(link, "_blank");
-                      const gameId = "1234";
-                      router.push(`/game/${gameId}`);
-                    }}
-                  >
-                    PURCHASE
-                  </Button>
-                </Box>
-              </Grid>
+            <Flex h="10%" justifyContent="space-between">
+              <Flex>
+                <Text
+                  fontSize="1.25rem"
+                  fontWeight="400"
+                  fontFamily={theme.fonts.body}
+                  color={theme.colors.white}
+                  mr="1rem"
+                >
+                  STAGE:{" "}
+                </Text>
+                <Text
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  fontFamily={theme.fonts.body}
+                  color={theme.colors.white}
+                >
+                  DELIVERY{" "}
+                </Text>
+              </Flex>
+              <Flex>
+                <Text
+                  fontSize="1.25rem"
+                  fontWeight="400"
+                  fontFamily={theme.fonts.body}
+                  color={theme.colors.white}
+                  mr="1rem"
+                >
+                  STAKED:{" "}
+                </Text>
+                <Text
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  fontFamily={theme.fonts.body}
+                  color={theme.colors.white}
+                >
+                  10M BONK{" "}
+                </Text>
+              </Flex>
+              <Flex>
+                <Text
+                  fontSize="1.25rem"
+                  fontWeight="400"
+                  fontFamily={theme.fonts.body}
+                  color={theme.colors.white}
+                  mr="1rem"
+                >
+                  SPOILS:{" "}
+                </Text>
+                <Text
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  fontFamily={theme.fonts.body}
+                  color={theme.colors.white}
+                >
+                  100M BONK{" "}
+                </Text>
+              </Flex>
+              <Flex>
+                <Text
+                  fontSize="1.25rem"
+                  fontWeight="400"
+                  fontFamily={theme.fonts.body}
+                  color={theme.colors.white}
+                  mr="1rem"
+                >
+                  NEXT DELIVERY IN:{" "}
+                </Text>
+                <Text
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  fontFamily={theme.fonts.body}
+                  color={theme.colors.white}
+                >
+                  DELIVERY{" "}
+                </Text>
+              </Flex>
             </Flex>
+            <Flex direction="column"></Flex>
           </Flex>
         </Flex>
-      </Box>
-    </>
+      </Flex>
+    </Box>
   );
 }
 
