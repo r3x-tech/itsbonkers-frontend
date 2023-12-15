@@ -1,7 +1,10 @@
 import { Navbar } from "@/components/Navbar";
+import { SleighComponent } from "@/components/SleighComponent";
+import { sampleSleighs } from "@/stores/sampleData";
 import userStore from "@/stores/userStore";
 // import userStore from "@/stores/userStore";
 import theme from "@/styles/theme";
+import { Sleigh } from "@/types/types";
 import { Box, Image, Flex, Grid, Input, Text, Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -10,7 +13,11 @@ function HomePage() {
   const { loggedIn } = userStore();
   const router = useRouter();
 
-  const [selectedSleigh, setSelectedSleigh] = useState(false);
+  const [selectedSleigh, setSelectedSleigh] = useState<Sleigh | null>(null);
+
+  const handleSelectSleigh = (sleigh: Sleigh) => {
+    setSelectedSleigh(sleigh);
+  };
 
   return (
     <Box minHeight="100vh" minWidth="100vw" bg={theme.colors.background}>
@@ -102,15 +109,25 @@ function HomePage() {
                 >
                   SLEIGHS
                 </Text>
-                <Text
-                  fontSize="1rem"
-                  fontWeight="500"
-                  fontFamily={theme.fonts.body}
-                  cursor="pointer"
-                  onClick={() => {}}
-                >
-                  VIEW ALL {">"}
-                </Text>
+                <Flex>
+                  <Text
+                    fontSize="1rem"
+                    fontWeight="400"
+                    fontFamily={theme.fonts.body}
+                    color={theme.colors.white}
+                    mr="0.5rem"
+                  >
+                    # OF SLEIGHS:{" "}
+                  </Text>
+                  <Text
+                    fontSize="1rem"
+                    fontWeight="700"
+                    fontFamily={theme.fonts.body}
+                    color={theme.colors.white}
+                  >
+                    {sampleSleighs.length}
+                  </Text>
+                </Flex>
               </Flex>
 
               <Flex
@@ -120,58 +137,16 @@ function HomePage() {
                 w="100%"
                 gap="1.5rem"
               >
-                <Box
-                  bg={theme.colors.background}
-                  width="100%"
-                  h="7rem"
-                  borderRadius="0.75rem"
-                  borderColor={
-                    selectedSleigh
-                      ? theme.colors.tertiary
-                      : theme.colors.background
-                  }
-                  borderWidth="2px"
-                  boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
-                ></Box>
-                <Box
-                  bg={theme.colors.background}
-                  width="100%"
-                  h="7rem"
-                  borderRadius="0.75rem"
-                  borderColor={
-                    selectedSleigh
-                      ? theme.colors.tertiary
-                      : theme.colors.background
-                  }
-                  borderWidth="2px"
-                  boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
-                ></Box>
-                <Box
-                  bg={theme.colors.background}
-                  width="100%"
-                  h="7rem"
-                  borderRadius="0.75rem"
-                  borderColor={
-                    selectedSleigh
-                      ? theme.colors.tertiary
-                      : theme.colors.background
-                  }
-                  borderWidth="2px"
-                  boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
-                ></Box>
-                <Box
-                  bg={theme.colors.background}
-                  width="100%"
-                  h="7rem"
-                  borderRadius="0.75rem"
-                  borderColor={
-                    selectedSleigh
-                      ? theme.colors.tertiary
-                      : theme.colors.background
-                  }
-                  borderWidth="2px"
-                  boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
-                ></Box>
+                {sampleSleighs.map((sleigh, index) => (
+                  <SleighComponent
+                    key={index}
+                    sleigh={sleigh}
+                    onSelect={handleSelectSleigh}
+                    isSelected={
+                      !!(selectedSleigh && selectedSleigh.name === sleigh.name)
+                    }
+                  />
+                ))}
               </Flex>
             </Flex>
           </Flex>
@@ -261,17 +236,71 @@ function HomePage() {
                 </Text>
               </Flex>
             </Flex>
-            <Flex
-              direction="column"
-              w="100%"
-              h="100%"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Flex>
-                <Image src="/sleigh.svg" alt="User Profile Pic" w="50rem" />
+            {selectedSleigh ? (
+              <Flex
+                direction="column"
+                w="100%"
+                h="100%"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Flex
+                  direction="column"
+                  w="70%"
+                  justifyContent="center"
+                  alignItems="start"
+                >
+                  <Flex>
+                    <Text
+                      fontSize="1.25rem"
+                      fontWeight="400"
+                      fontFamily={theme.fonts.body}
+                      color={theme.colors.white}
+                      mr="1rem"
+                    >
+                      LVL:{" "}
+                    </Text>
+                    <Text
+                      fontSize="1.25rem"
+                      fontWeight="700"
+                      fontFamily={theme.fonts.body}
+                      color={theme.colors.white}
+                    >
+                      {selectedSleigh.lvl}
+                    </Text>
+                  </Flex>
+
+                  <Text
+                    fontSize="3rem"
+                    fontWeight="400"
+                    fontFamily={theme.fonts.header}
+                    color={theme.colors.white}
+                  >
+                    {selectedSleigh.name}
+                  </Text>
+                </Flex>
+                <Flex>
+                  <Image src="/sleigh.svg" alt="Sleigh Image" w="50rem" />
+                </Flex>
               </Flex>
-            </Flex>
+            ) : (
+              <Flex
+                direction="column"
+                w="100%"
+                h="100%"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Text
+                  fontSize="3rem"
+                  fontWeight="400"
+                  fontFamily={theme.fonts.header}
+                  color={theme.colors.white}
+                >
+                  SHUCKS, SELECT A SLEIGH WILL YA!
+                </Text>
+              </Flex>
+            )}
           </Flex>
         </Flex>
       </Flex>
