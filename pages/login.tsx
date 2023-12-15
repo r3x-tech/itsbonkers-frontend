@@ -6,6 +6,7 @@ import {
   Spinner,
   Input,
   Heading,
+  Image,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import theme from "@/styles/theme";
@@ -88,17 +89,17 @@ function LoginPage() {
         minWidth="22rem"
       >
         <Flex justifyContent="center">
-          <Heading
-            fontSize="1.75rem"
-            letterSpacing="0.25rem"
-            fontWeight="400"
-            color={theme.colors.white}
-            mb="1rem"
-          >
-            Its BONKers
-          </Heading>
+          <Image
+            src="/bonkerslargelogo.png"
+            alt="User Profile Pic"
+            w="50rem"
+            cursor="pointer"
+            onClick={() => {
+              // router.push("/account");
+            }}
+          />
         </Flex>
-        <Flex w="100%">
+        <Flex w="100%" mt="10rem">
           {!isLoginInProgress && !connecting ? (
             <Stack h="100%" w="100%">
               <WalletMultiButton />

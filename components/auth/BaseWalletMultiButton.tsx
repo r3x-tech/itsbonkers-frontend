@@ -39,25 +39,26 @@ const baseButtonStyle: CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  borderColor: `${theme.colors.white}`,
+  borderColor: `${theme.colors.primary}`,
   borderWidth: "2px",
-  borderRadius: "2px",
+  borderRadius: "30px",
   color: `${theme.colors.white}`,
   width: "100%",
-  padding: "0.5rem",
-  fontSize: "0.75rem",
-  fontWeight: 600,
+  padding: "1rem",
+  fontSize: "1.5rem",
+  fontWeight: 700,
   cursor: "pointer",
-  backgroundColor: "transparent",
+  backgroundColor: `${theme.colors.primary}`,
+  fontFamily: `${theme.fonts.body}`,
 };
 
 const hoverButtonStyle: CSSProperties = {
   ...baseButtonStyle,
-  backgroundColor: `${theme.colors.white}`,
-  borderColor: `${theme.colors.white}`,
+  backgroundColor: `${theme.colors.accentThree}`,
+  borderColor: `${theme.colors.accentThree}`,
   borderWidth: "2px",
-  borderRadius: "2px",
-  color: `${theme.colors.background}`,
+  borderRadius: "30px",
+  color: `${theme.colors.white}`,
 };
 
 export default function BaseWalletMultiButton({
@@ -91,7 +92,7 @@ export default function BaseWalletMultiButton({
     } else {
       return getLabel(buttonState);
     }
-  }, [buttonState, children, labels, publicKey]);
+  }, [buttonState, children, getLabel, publicKey]);
 
   const mouseDownListener = (event: globalThis.MouseEvent) => {
     const node = ref.current;

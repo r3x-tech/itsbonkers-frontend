@@ -26,24 +26,5 @@ export type ButtonProps = PropsWithChildren<{
 }>;
 
 export function WalletConnectButton(props: ButtonProps) {
-  return (
-    // <Button
-    //   variant="outline"
-    //   borderColor={theme.colors.white}
-    //   border="2px solid white"
-    //   borderRadius="2px"
-    //   color={theme.colors.white}
-    //   width="100%"
-    //   fontSize="0.75rem"
-    //   fontWeight="700"
-    //   _hover={{
-    //     color: theme.colors.black,
-    //     backgroundColor: theme.colors.white,
-    //     borderColor: theme.colors.white,
-    //   }}
-    //   onClick={props.onClick}
-    // >
-    <BaseWalletConnectButton {...props} labels={LABELS} />
-    // </Button>
-  );
+  return <BaseWalletConnectButton {...props} labels={LABELS} />;
 }
