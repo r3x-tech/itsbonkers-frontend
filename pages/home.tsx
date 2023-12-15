@@ -261,7 +261,17 @@ function HomePage() {
                 </Text>
               </Flex>
             </Flex>
-            <Flex direction="column"></Flex>
+            <Flex
+              direction="column"
+              w="100%"
+              h="100%"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Flex>
+                <Image src="/sleigh.svg" alt="User Profile Pic" w="50rem" />
+              </Flex>
+            </Flex>
           </Flex>
         </Flex>
       </Flex>
