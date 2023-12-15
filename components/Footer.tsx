@@ -15,6 +15,6 @@ export const Footer = () => (
     justifyContent="center"
     alignItems="flex-end"
   >
-    2023 it's BONKersÉ. All rights reserved.
+    2023 its BONKers. All rights reserved.
   </Box>
 );

@@ -79,11 +79,11 @@ export default function BaseWalletMultiButton({
   const [menuOpen, setMenuOpen] = useState(false);
   const ref = useRef<HTMLUListElement>(null);
 
-  const getLabel = (state: string) => {
-    return labels[state as keyof typeof labels] || "";
-  };
-
   const content = useMemo(() => {
+    const getLabel = (state: string) => {
+      return labels[state as keyof typeof labels] || "";
+    };
+
     if (children) {
       return children;
     } else if (publicKey) {
@@ -92,7 +92,7 @@ export default function BaseWalletMultiButton({
     } else {
       return getLabel(buttonState);
     }
-  }, [buttonState, children, getLabel, publicKey]);
+  }, [buttonState, children, labels, publicKey]);
 
   const mouseDownListener = (event: globalThis.MouseEvent) => {
     const node = ref.current;
