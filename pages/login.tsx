@@ -15,9 +15,9 @@ import toast from "react-hot-toast";
 import { WalletMultiButton } from "@/components/auth/WalletMultiButton";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/router";
-import * as web3 from "@solana/web3.js";
 import { Keypair } from "@solana/web3.js";
 import useSleighs from "@/hooks/useSleighs";
+import useSolana from "@/hooks/useSolana";
 
 function LoginPage() {
   const router = useRouter();
@@ -26,7 +26,7 @@ function LoginPage() {
   const [isLoginInProgress, setLoginInProgress] = useState(false);
   const { refetch: refetchSleighs } = useSleighs();
 
-  const connection = new web3.Connection(process.env.NEXT_PUBLIC_RPC_URL!);
+  const { connection } = useSolana();
   const {
     wallet,
     publicKey,
