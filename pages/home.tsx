@@ -292,10 +292,11 @@ function HomePage() {
                 alignItems="center"
               >
                 <Text
-                  fontSize="3rem"
+                  fontSize="2.5rem"
                   fontWeight="400"
                   fontFamily={theme.fonts.header}
                   color={theme.colors.white}
+                  pb="5rem"
                 >
                   SHUCKS, SELECT A SLEIGH WILL YA!
                 </Text>
