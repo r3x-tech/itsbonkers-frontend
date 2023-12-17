@@ -39,7 +39,7 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
   sleighName,
 }) => {
   return (
-    <>
+    <Flex align="flex-end">
       <Button
         borderWidth="2px"
         borderColor={theme.colors.primary}
@@ -49,7 +49,6 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
         fontSize="1.25rem"
         fontFamily={theme.fonts.body}
         w="25rem"
-        mb="1rem"
         h="3.5rem"
         color={theme.colors.white}
         isDisabled={retireInProgress}
@@ -172,6 +171,6 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    </Flex>
   );
 };
