@@ -283,7 +283,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                 fontFamily={theme.fonts.header}
                 color={theme.colors.white}
               >
-                {sleigh.owner}
+                {sleigh.sleighId}
               </Text>
             </Flex>
             <Flex>
@@ -356,7 +356,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                 onCloseRetireSleighModal={onRetireWarningClose}
                 retireSleigh={retireSleigh}
                 retireInProgress={retireInProgress}
-                sleighName={sleigh.owner}
+                sleighName={sleigh.sleighId}
               />
             </Flex>
           </Flex>

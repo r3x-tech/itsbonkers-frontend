@@ -254,7 +254,7 @@ function HomePage() {
                         isSelected={
                           !!(
                             selectedSleigh &&
-                            selectedSleigh.owner === sleigh.owner
+                            selectedSleigh.sleighId === sleigh.sleighId
                           )
                         }
                       />

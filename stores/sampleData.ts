@@ -37,6 +37,7 @@ export const sampleSleighsOld = [
 
 export const sampleSleighs: Sleigh[] = [
   {
+    sleighId: "10",
     owner: "owner_pubkey_1",
     level: 11,
     gameId: 1234567890,
@@ -53,6 +54,7 @@ export const sampleSleighs: Sleigh[] = [
     presentsBagHp: 90,
   },
   {
+    sleighId: "4",
     owner: "owner_pubkey_2",
     level: 8,
     gameId: 1234567890,
@@ -69,6 +71,7 @@ export const sampleSleighs: Sleigh[] = [
     presentsBagHp: 95,
   },
   {
+    sleighId: "3",
     owner: "owner_pubkey_3",
     level: 9,
     gameId: 1234567890,

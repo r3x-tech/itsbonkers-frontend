@@ -51,7 +51,7 @@ export function SleighCardComponent({
         fontFamily={theme.fonts.header}
         color={theme.colors.white}
       >
-        {sleigh.owner}
+        {sleigh.sleighId}
       </Text>
     </Box>
   );
