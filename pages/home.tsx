@@ -286,8 +286,8 @@ function HomePage() {
                       onClick={onOpen}
                       _hover={{
                         color: theme.colors.background,
-                        borderColor: theme.colors.tertiary,
-                        bg: theme.colors.tertiary,
+                        borderColor: theme.colors.quaternary,
+                        bg: theme.colors.quaternary,
                       }}
                     >
                       STAKE NEW SLEIGH +
