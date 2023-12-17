@@ -287,7 +287,127 @@ export function SleighComponent({ sleigh }: SleighProps) {
               </Text>
             </Flex>
             <Flex>
+              <Box
+                ml="8vw"
+                bg={theme.colors.background}
+                w="20rem"
+                borderRadius="0.75rem"
+                borderWidth="2px"
+                borderColor={theme.colors.background}
+                boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
+                cursor="pointer"
+                p="1rem"
+              >
+                <Flex justifyContent="space-between" w="100%" h="20rem">
+                  <Text
+                    fontSize="1.25rem"
+                    fontWeight="700"
+                    fontFamily={theme.fonts.body}
+                    color={theme.colors.white}
+                    mr="0.5rem"
+                  >
+                    PROPULSION
+                  </Text>
+                  <Text
+                    fontSize="1rem"
+                    fontWeight="700"
+                    fontFamily={theme.fonts.body}
+                    color={theme.colors.white}
+                  >
+                    {sleigh.level}
+                  </Text>
+                </Flex>
+                <Flex justifyContent="center" alignContent="center" mt="2rem">
+                  <Button
+                    borderWidth="2px"
+                    borderColor={theme.colors.primary}
+                    bg={theme.colors.primary}
+                    borderRadius="30px"
+                    fontWeight="700"
+                    fontSize="1rem"
+                    fontFamily={theme.fonts.body}
+                    w="100%"
+                    h="3rem"
+                    color={theme.colors.white}
+                    isDisabled={sleigh == null}
+                    isLoading={sleigh == null}
+                    spinner={
+                      <Flex flexDirection="row" align="center">
+                        <Spinner color={theme.colors.white} size="sm" />
+                      </Flex>
+                    }
+                    onClick={() => {}}
+                    _hover={{
+                      color: theme.colors.white,
+                      borderColor: theme.colors.accentThree,
+                      bg: theme.colors.accentThree,
+                    }}
+                  >
+                    REPAIR
+                  </Button>
+                </Flex>
+              </Box>
               <Image src="/sleigh.svg" alt="Sleigh Image" w="50rem" />
+              <Box
+                ml="8vw"
+                bg={theme.colors.background}
+                w="20rem"
+                borderRadius="0.75rem"
+                borderWidth="2px"
+                borderColor={theme.colors.background}
+                boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
+                cursor="pointer"
+                p="1rem"
+              >
+                <Flex justifyContent="space-between" w="100%">
+                  <Text
+                    fontSize="1.25rem"
+                    fontWeight="700"
+                    fontFamily={theme.fonts.body}
+                    color={theme.colors.white}
+                    mr="0.5rem"
+                  >
+                    PAYLOAD
+                  </Text>
+                  <Text
+                    fontSize="1rem"
+                    fontWeight="700"
+                    fontFamily={theme.fonts.body}
+                    color={theme.colors.white}
+                  >
+                    {sleigh.level}
+                  </Text>
+                </Flex>
+                <Flex justifyContent="center" alignContent="center" mt="2rem">
+                  <Button
+                    borderWidth="2px"
+                    borderColor={theme.colors.primary}
+                    bg={theme.colors.primary}
+                    borderRadius="30px"
+                    fontWeight="700"
+                    fontSize="1rem"
+                    fontFamily={theme.fonts.body}
+                    w="100%"
+                    h="3rem"
+                    color={theme.colors.white}
+                    isDisabled={sleigh == null}
+                    isLoading={sleigh == null}
+                    spinner={
+                      <Flex flexDirection="row" align="center">
+                        <Spinner color={theme.colors.white} size="sm" />
+                      </Flex>
+                    }
+                    onClick={() => {}}
+                    _hover={{
+                      color: theme.colors.white,
+                      borderColor: theme.colors.accentThree,
+                      bg: theme.colors.accentThree,
+                    }}
+                  >
+                    REPAIR
+                  </Button>
+                </Flex>
+              </Box>
             </Flex>
             <Flex width="100%" justifyContent="space-between" align="flex-end">
               <Box

@@ -15,9 +15,20 @@ import toast from "react-hot-toast";
 import { WalletMultiButton } from "@/components/auth/WalletMultiButton";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/router";
-import { Keypair } from "@solana/web3.js";
+import { Keypair, PublicKey } from "@solana/web3.js";
 import useSleighs from "@/hooks/useSleighs";
 import useSolana from "@/hooks/useSolana";
+import {
+  LANDING_GEAR_MINT_ADDRESS,
+  NAVIGATION_MINT_ADDRESS,
+  PRESENTS_BAG_MINT_ADDRESS,
+  PROPULSION_MINT_ADDRESS,
+} from "@/constants";
+import {
+  createAssociatedTokenAccountInstruction,
+  getAssociatedTokenAddressSync,
+} from "@solana/spl-token";
+import { sendAllTxParallel } from "@/utils/solana";
 
 function LoginPage() {
   const router = useRouter();
@@ -39,10 +50,99 @@ function LoginPage() {
   const { username, loggedIn } = userStore();
 
   useEffect(() => {
-    if (loggedIn) {
+    const fetchandCreateAtas = async (currentPublicKey: PublicKey) => {
+      const propulsionMintAddress = new PublicKey(PROPULSION_MINT_ADDRESS);
+      const landingGearMintAddress = new PublicKey(LANDING_GEAR_MINT_ADDRESS);
+      const navigationMintAddress = new PublicKey(NAVIGATION_MINT_ADDRESS);
+      const presentsBagMintAddress = new PublicKey(PRESENTS_BAG_MINT_ADDRESS);
+
+      let ixs = [];
+
+      const sleighPropulsionPartsAta = getAssociatedTokenAddressSync(
+        propulsionMintAddress,
+        currentPublicKey
+      );
+
+      const sleighPropulsionPartsAtaBalance = await connection.getBalance(
+        sleighPropulsionPartsAta
+      );
+      if (sleighPropulsionPartsAtaBalance == 0) {
+        const ix = createAssociatedTokenAccountInstruction(
+          currentPublicKey,
+          sleighPropulsionPartsAta,
+          currentPublicKey,
+          propulsionMintAddress
+        );
+        ixs.push(ix);
+      }
+
+      const sleighLandingGearPartsAta = getAssociatedTokenAddressSync(
+        landingGearMintAddress,
+        currentPublicKey
+      );
+      const sleighLandingGearPartsAtaBalance = await connection.getBalance(
+        sleighLandingGearPartsAta
+      );
+      if (sleighLandingGearPartsAtaBalance == 0) {
+        const ix = createAssociatedTokenAccountInstruction(
+          currentPublicKey,
+          sleighLandingGearPartsAta,
+          currentPublicKey,
+          landingGearMintAddress
+        );
+        ixs.push(ix);
+      }
+
+      const sleighNavigationPartsAta = getAssociatedTokenAddressSync(
+        navigationMintAddress,
+        currentPublicKey
+      );
+      const sleighNavigationPartsAtaBalance = await connection.getBalance(
+        sleighPropulsionPartsAta
+      );
+      if (sleighNavigationPartsAtaBalance == 0) {
+        const ix = createAssociatedTokenAccountInstruction(
+          currentPublicKey,
+          sleighNavigationPartsAta,
+          currentPublicKey,
+          navigationMintAddress
+        );
+        ixs.push(ix);
+      }
+
+      const sleighPresentsBagPartsAta = getAssociatedTokenAddressSync(
+        presentsBagMintAddress,
+        currentPublicKey
+      );
+      const sleighPresentsBagPartsAtaBalance = await connection.getBalance(
+        sleighPresentsBagPartsAta
+      );
+      if (sleighPresentsBagPartsAtaBalance == 0) {
+        const ix = createAssociatedTokenAccountInstruction(
+          currentPublicKey,
+          sleighPresentsBagPartsAta,
+          currentPublicKey,
+          navigationMintAddress
+        );
+        ixs.push(ix);
+      }
+
+      if (ixs.length > 0) {
+        sendAllTxParallel(
+          connection,
+          ixs,
+          currentPublicKey,
+          signAllTransactions
+        );
+      }
+
       router.push("/home");
+    };
+
+    if (loggedIn && connection && publicKey != null) {
+      fetchandCreateAtas(publicKey);
     }
-  }, [loggedIn, router]);
+  }, [connection, loggedIn, publicKey, router, signAllTransactions]);
 
   useEffect(() => {
     const fetchData = async () => {

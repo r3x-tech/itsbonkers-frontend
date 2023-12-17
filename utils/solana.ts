@@ -26,7 +26,14 @@ import { Buffer } from "buffer";
 import toast from "react-hot-toast";
 //@ts-ignore
 import { ByteifyEndianess, serializeUint64 } from "byteify";
-import { GAME_ID, TOKEN_MINT_ADDRESS } from "@/constants";
+import {
+  GAME_ID,
+  LANDING_GEAR_MINT_ADDRESS,
+  NAVIGATION_MINT_ADDRESS,
+  PRESENTS_BAG_MINT_ADDRESS,
+  PROPULSION_MINT_ADDRESS,
+  TOKEN_MINT_ADDRESS,
+} from "@/constants";
 // import ByteifyEndianess from "byteify";
 // import serializeUint64 from "byteify";
 
@@ -282,14 +289,27 @@ export const deliveryTx = async (
       ],
       new PublicKey(BONKERS_PROGRAM_PROGRAMID)
     )[0];
-    const sleighPropulsionPartsAta = new PublicKey("...");
-    const sleighLandingGearPartsAta = new PublicKey("...");
-    const sleighNavigationPartsAta = new PublicKey("...");
-    const sleighPresentsBagPartsAta = new PublicKey("...");
-    const propulsionMintAddress = new PublicKey("...");
-    const landingGearMintAddress = new PublicKey("...");
-    const navigationAddress = new PublicKey("...");
-    const presentsBagMintAddress = new PublicKey("...");
+
+    const propulsionMintAddress = new PublicKey(PROPULSION_MINT_ADDRESS);
+    const landingGearMintAddress = new PublicKey(LANDING_GEAR_MINT_ADDRESS);
+    const navigationMintAddress = new PublicKey(NAVIGATION_MINT_ADDRESS);
+    const presentsBagMintAddress = new PublicKey(PRESENTS_BAG_MINT_ADDRESS);
+    const sleighPropulsionPartsAta = getAssociatedTokenAddressSync(
+      propulsionMintAddress,
+      publicKey
+    );
+    const sleighLandingGearPartsAta = getAssociatedTokenAddressSync(
+      landingGearMintAddress,
+      publicKey
+    );
+    const sleighNavigationPartsAta = getAssociatedTokenAddressSync(
+      navigationMintAddress,
+      publicKey
+    );
+    const sleighPresentsBagPartsAta = getAssociatedTokenAddressSync(
+      presentsBagMintAddress,
+      publicKey
+    );
 
     const ix = await BONKERS_PROGRAM.methods
       .delivery()
@@ -303,7 +323,7 @@ export const deliveryTx = async (
         sleighPresentsBagPartsAta: sleighPresentsBagPartsAta,
         propulsionMint: propulsionMintAddress,
         landingGearMint: landingGearMintAddress,
-        navigationMint: navigationAddress,
+        navigationMint: navigationMintAddress,
         presentsBagMint: presentsBagMintAddress,
         tokenProgram: TOKEN_PROGRAM_ID,
       })
@@ -386,14 +406,26 @@ export const repairSleighTx = async (
       ],
       new PublicKey(BONKERS_PROGRAM_PROGRAMID)
     )[0];
-    const sleighPropulsionPartsAta = new PublicKey("...");
-    const sleighLandingGearPartsAta = new PublicKey("...");
-    const sleighNavigationPartsAta = new PublicKey("...");
-    const sleighPresentsBagPartsAta = new PublicKey("...");
-    const propulsionMintAddress = new PublicKey("...");
-    const landingGearMintAddress = new PublicKey("...");
-    const navigationMintAddress = new PublicKey("...");
-    const presentsBagMintAddress = new PublicKey("...");
+    const propulsionMintAddress = new PublicKey(PROPULSION_MINT_ADDRESS);
+    const landingGearMintAddress = new PublicKey(LANDING_GEAR_MINT_ADDRESS);
+    const navigationMintAddress = new PublicKey(NAVIGATION_MINT_ADDRESS);
+    const presentsBagMintAddress = new PublicKey(PRESENTS_BAG_MINT_ADDRESS);
+    const sleighPropulsionPartsAta = getAssociatedTokenAddressSync(
+      propulsionMintAddress,
+      publicKey
+    );
+    const sleighLandingGearPartsAta = getAssociatedTokenAddressSync(
+      landingGearMintAddress,
+      publicKey
+    );
+    const sleighNavigationPartsAta = getAssociatedTokenAddressSync(
+      navigationMintAddress,
+      publicKey
+    );
+    const sleighPresentsBagPartsAta = getAssociatedTokenAddressSync(
+      presentsBagMintAddress,
+      publicKey
+    );
 
     const ix = await BONKERS_PROGRAM.methods
       .repair(
@@ -543,13 +575,13 @@ export const createTx = async (
     const { blockhash } = await connection.getLatestBlockhash();
     console.log("latest bh: ", blockhash);
 
-    const txMsg = new web3.TransactionMessage({
+    const txMsg = new TransactionMessage({
       payerKey: publicKey,
       recentBlockhash: blockhash,
       instructions: [ix],
     }).compileToLegacyMessage();
 
-    const tx = new web3.VersionedTransaction(txMsg);
+    const tx = new VersionedTransaction(txMsg);
     if (!tx) {
       console.error("Error creating tx for ix: ", ix, " with tx: ", tx);
       return undefined;
@@ -558,5 +590,79 @@ export const createTx = async (
   } catch (error) {
     console.error("Error creating tx: ", error);
     return undefined;
+  }
+};
+
+export const signAndSendTransaction = async ({
+  connection,
+  ixs,
+  wallet,
+  signTransaction,
+}: {
+  connection: Connection;
+  ixs: TransactionInstruction[];
+  wallet: string;
+  signTransaction: any;
+}) => {
+  if (!wallet || !ixs || !signTransaction) return;
+  const { blockhash } = await connection!.getLatestBlockhash();
+  console.log("bh: ", blockhash);
+
+  const txMsg = new TransactionMessage({
+    payerKey: new PublicKey(wallet),
+    recentBlockhash: blockhash,
+    instructions: ixs,
+  }).compileToLegacyMessage();
+
+  const tx = new VersionedTransaction(txMsg);
+  if (!tx) {
+    toast.error("Failed to create parallel tx");
+    console.error("Failed to create parallel tx: ", tx);
+    return;
+  }
+
+  const signedTx = await signTransaction(tx);
+  return await connection.sendRawTransaction(signedTx.serialize());
+};
+
+export const sendAllTxParallel = async (
+  connection: Connection,
+  ixs: TransactionInstruction[],
+  walletAddress: PublicKey,
+  signAllTransactions: any
+) => {
+  try {
+    const maxIxsInTx = 10;
+    let txs = [];
+    for (let i = 0; i < ixs.length; i += maxIxsInTx) {
+      const messageV0 = new TransactionMessage({
+        payerKey: walletAddress,
+        recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+        instructions: ixs.slice(
+          i,
+          i + maxIxsInTx > ixs.length ? ixs.length : i + maxIxsInTx
+        ),
+      }).compileToLegacyMessage();
+      const tx = new VersionedTransaction(messageV0);
+      txs.push(tx);
+    }
+    signAllTransactions(txs)
+      .then((sTxs: any) => {
+        let sigs: Promise<string>[] = [];
+        for (let stx of sTxs) {
+          console.log(Buffer.from(stx.serialize()).toString("base64"));
+          sigs.push(connection.sendRawTransaction(stx.serialize()));
+        }
+        Promise.all(sigs).then((sigs: string[]) => {
+          console.log(sigs);
+          toast.success("Sent all transactions successfully!");
+        });
+      })
+      .catch((e: Error) => {
+        console.error(e);
+        toast.error("Something went wrong sending transactions");
+      });
+  } catch (e) {
+    throw e;
   }
 };
