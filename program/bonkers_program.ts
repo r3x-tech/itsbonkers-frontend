@@ -5,7 +5,7 @@ export type Bonkers = {
     {
       "name": "initBonkers",
       "docs": [
-        "* Creates the Roll account for the game\n     * Creates Setting account for the game\n     *  Set the start time for stage 1 and roll interval and end time for stage 1\n     * ~~ (Done with init script)~~ Create the Bonk ATA for the GameSettings PDA"
+        "* Creates the Roll account for the game\n     * Creates Setting account for the game\n     *  Set the start time for stage 1 and roll interval and end time for stage 1\n     * ~~ (Done with init script)~~ Create the Bonk ATA for the GameSettings PDA\n     * ~~ (Done with init script)~~ Create Resource SPL Tokens with Metadata and ascribe mint authority to Game Settings PDA"
       ],
       "accounts": [
         {
@@ -24,7 +24,12 @@ export type Bonkers = {
           "isSigner": false
         },
         {
-          "name": "gameRolls",
+          "name": "gameRollsStg1",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "gameRollsStg2",
           "isMut": true,
           "isSigner": false
         }
@@ -133,7 +138,7 @@ export type Bonkers = {
     {
       "name": "claimLevels",
       "docs": [
-        "* Pass in Roll Indexes since last claim (do the calculations off chain) that earn levels\n     * Can only be called by stake account otherwise someone could skip claims\n     * Can no longer claim levels if game is on stage 2\n     * If they have claims, but their stake amount is less than current mint cost (sleighs built + multiplier), they have to wait and recover the account in stage 2\n     * Basically they're SOL for not confirming sooner\n     * CHECK: How many levels you can claim per transaction due to compute limit"
+        "* Pass in Roll Indexes since last claim (do the calculations off chain) that earn levels\n     * Can only be called by stake account otherwise someone could skip claims\n     * Can no longer claim levels if game is on stage 2\n     * If they have claims, but their stake amount is less than current mint cost (sleighs built + multiplier)\n     * they have to wait and recover the account in stage 2\n     * Basically they're SOL for not confirming sooner\n     * CHECK: How many levels you can claim per transaction due to compute limit"
       ],
       "accounts": [
         {
@@ -163,6 +168,288 @@ export type Bonkers = {
           "type": {
             "vec": "u64"
           }
+        }
+      ]
+    },
+    {
+      "name": "stage2Roll",
+      "docs": [
+        "* Can be called by anyone if stage 1 has ended and stage 2 has started."
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "gameSettings",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "gameRolls",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "delivery",
+      "docs": [
+        "* Can be called by anyone once stage 2 has started for any any sleigh\n     * Processes the next available roll for each sleigh, can process only one at a time\n     * In that roll, it'll figure out what resource to mint for the user\n     * and what malfunctions to apply due to the delivery."
+      ],
+      "accounts": [
+        {
+          "name": "gameSettings",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "gameRolls",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sleigh",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighPropulsionPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighLandingGearPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighNavigationPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighPresentsBagPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "propulsionMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "landingGearMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "navigationMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "presentsBagMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "repair",
+      "docs": [
+        "* Repair takes in the amount of points you want to repair any\n     * part and burns the amount of resources from the ATA for it"
+      ],
+      "accounts": [
+        {
+          "name": "sleighOwner",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "gameSettings",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sleigh",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighPropulsionPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighLandingGearPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighNavigationPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighPresentsBagPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "propulsionMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "landingGearMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "navigationMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "presentsBagMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "repairPropulsionHp",
+          "type": "u8"
+        },
+        {
+          "name": "repairLandingGearHp",
+          "type": "u8"
+        },
+        {
+          "name": "repairNavigationHp",
+          "type": "u8"
+        },
+        {
+          "name": "repairPresentsBagHp",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "retire",
+      "docs": [
+        "* Can be called by sleigh owner at any time to scuttle the sleigh and return bonk to the owner\n     * If the sleigh was never built (built_index=0), then returns full bonk amount\n     * Otherwise returns 70*(stake-mintcost) + spoils + prize pool if last sleigh\n     * CHECK to see if anchor closes the account before or after the code in this function executes,\n     * otherwise close the account manually"
+      ],
+      "accounts": [
+        {
+          "name": "sleighOwner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sleigh",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "gameSettings",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "gameTokenAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighOwnerAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "coinMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "elvishCoffee",
+      "docs": [
+        "* Admin can only withdraw from the wallet when the game is OVER"
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "gameSettings",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "gameTokenAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "adminAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "coinMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amt",
+          "type": "u64"
         }
       ]
     }
@@ -210,11 +497,35 @@ export type Bonkers = {
             "type": "u64"
           },
           {
+            "name": "sleighsRetired",
+            "type": "u64"
+          },
+          {
             "name": "totalSpoils",
             "type": "u64"
           },
           {
             "name": "mintCostMultiplier",
+            "type": "u64"
+          },
+          {
+            "name": "propulsionPartsMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "landingGearPartsMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "navigationPartsMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "presentsBagPartsMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "prizePool",
             "type": "u64"
           }
         ]
@@ -276,35 +587,23 @@ export type Bonkers = {
             "type": "u64"
           },
           {
-            "name": "propulsionStatus",
-            "type": "bool"
+            "name": "lastDeliveryRoll",
+            "type": "u64"
           },
           {
-            "name": "propulsionRepaired",
+            "name": "propulsionHp",
             "type": "u8"
           },
           {
-            "name": "landingGearStatus",
-            "type": "bool"
-          },
-          {
-            "name": "landingGearRepaired",
+            "name": "landingGearHp",
             "type": "u8"
           },
           {
-            "name": "navigationStatus",
-            "type": "bool"
-          },
-          {
-            "name": "navigationRepaired",
+            "name": "navigationHp",
             "type": "u8"
           },
           {
-            "name": "presentsBagStatus",
-            "type": "bool"
-          },
-          {
-            "name": "presentsBagRepaired",
+            "name": "presentsBagHp",
             "type": "u8"
           }
         ]
@@ -335,6 +634,21 @@ export type Bonkers = {
     {
       "code": 6004,
       "name": "InvalidRollForClaim",
+      "msg": ""
+    },
+    {
+      "code": 6005,
+      "name": "Stage1NotOver",
+      "msg": ""
+    },
+    {
+      "code": 6006,
+      "name": "SleighBroken",
+      "msg": ""
+    },
+    {
+      "code": 6007,
+      "name": "GameNotOver",
       "msg": ""
     }
   ]
@@ -347,7 +661,7 @@ export const IDL: Bonkers = {
     {
       "name": "initBonkers",
       "docs": [
-        "* Creates the Roll account for the game\n     * Creates Setting account for the game\n     *  Set the start time for stage 1 and roll interval and end time for stage 1\n     * ~~ (Done with init script)~~ Create the Bonk ATA for the GameSettings PDA"
+        "* Creates the Roll account for the game\n     * Creates Setting account for the game\n     *  Set the start time for stage 1 and roll interval and end time for stage 1\n     * ~~ (Done with init script)~~ Create the Bonk ATA for the GameSettings PDA\n     * ~~ (Done with init script)~~ Create Resource SPL Tokens with Metadata and ascribe mint authority to Game Settings PDA"
       ],
       "accounts": [
         {
@@ -366,7 +680,12 @@ export const IDL: Bonkers = {
           "isSigner": false
         },
         {
-          "name": "gameRolls",
+          "name": "gameRollsStg1",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "gameRollsStg2",
           "isMut": true,
           "isSigner": false
         }
@@ -475,7 +794,7 @@ export const IDL: Bonkers = {
     {
       "name": "claimLevels",
       "docs": [
-        "* Pass in Roll Indexes since last claim (do the calculations off chain) that earn levels\n     * Can only be called by stake account otherwise someone could skip claims\n     * Can no longer claim levels if game is on stage 2\n     * If they have claims, but their stake amount is less than current mint cost (sleighs built + multiplier), they have to wait and recover the account in stage 2\n     * Basically they're SOL for not confirming sooner\n     * CHECK: How many levels you can claim per transaction due to compute limit"
+        "* Pass in Roll Indexes since last claim (do the calculations off chain) that earn levels\n     * Can only be called by stake account otherwise someone could skip claims\n     * Can no longer claim levels if game is on stage 2\n     * If they have claims, but their stake amount is less than current mint cost (sleighs built + multiplier)\n     * they have to wait and recover the account in stage 2\n     * Basically they're SOL for not confirming sooner\n     * CHECK: How many levels you can claim per transaction due to compute limit"
       ],
       "accounts": [
         {
@@ -505,6 +824,288 @@ export const IDL: Bonkers = {
           "type": {
             "vec": "u64"
           }
+        }
+      ]
+    },
+    {
+      "name": "stage2Roll",
+      "docs": [
+        "* Can be called by anyone if stage 1 has ended and stage 2 has started."
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "gameSettings",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "gameRolls",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "delivery",
+      "docs": [
+        "* Can be called by anyone once stage 2 has started for any any sleigh\n     * Processes the next available roll for each sleigh, can process only one at a time\n     * In that roll, it'll figure out what resource to mint for the user\n     * and what malfunctions to apply due to the delivery."
+      ],
+      "accounts": [
+        {
+          "name": "gameSettings",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "gameRolls",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sleigh",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighPropulsionPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighLandingGearPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighNavigationPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighPresentsBagPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "propulsionMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "landingGearMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "navigationMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "presentsBagMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "repair",
+      "docs": [
+        "* Repair takes in the amount of points you want to repair any\n     * part and burns the amount of resources from the ATA for it"
+      ],
+      "accounts": [
+        {
+          "name": "sleighOwner",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "gameSettings",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sleigh",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighPropulsionPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighLandingGearPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighNavigationPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighPresentsBagPartsAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "propulsionMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "landingGearMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "navigationMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "presentsBagMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "repairPropulsionHp",
+          "type": "u8"
+        },
+        {
+          "name": "repairLandingGearHp",
+          "type": "u8"
+        },
+        {
+          "name": "repairNavigationHp",
+          "type": "u8"
+        },
+        {
+          "name": "repairPresentsBagHp",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "retire",
+      "docs": [
+        "* Can be called by sleigh owner at any time to scuttle the sleigh and return bonk to the owner\n     * If the sleigh was never built (built_index=0), then returns full bonk amount\n     * Otherwise returns 70*(stake-mintcost) + spoils + prize pool if last sleigh\n     * CHECK to see if anchor closes the account before or after the code in this function executes,\n     * otherwise close the account manually"
+      ],
+      "accounts": [
+        {
+          "name": "sleighOwner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sleigh",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "gameSettings",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "gameTokenAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sleighOwnerAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "coinMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "elvishCoffee",
+      "docs": [
+        "* Admin can only withdraw from the wallet when the game is OVER"
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "gameSettings",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "gameTokenAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "adminAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "coinMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amt",
+          "type": "u64"
         }
       ]
     }
@@ -552,11 +1153,35 @@ export const IDL: Bonkers = {
             "type": "u64"
           },
           {
+            "name": "sleighsRetired",
+            "type": "u64"
+          },
+          {
             "name": "totalSpoils",
             "type": "u64"
           },
           {
             "name": "mintCostMultiplier",
+            "type": "u64"
+          },
+          {
+            "name": "propulsionPartsMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "landingGearPartsMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "navigationPartsMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "presentsBagPartsMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "prizePool",
             "type": "u64"
           }
         ]
@@ -618,35 +1243,23 @@ export const IDL: Bonkers = {
             "type": "u64"
           },
           {
-            "name": "propulsionStatus",
-            "type": "bool"
+            "name": "lastDeliveryRoll",
+            "type": "u64"
           },
           {
-            "name": "propulsionRepaired",
+            "name": "propulsionHp",
             "type": "u8"
           },
           {
-            "name": "landingGearStatus",
-            "type": "bool"
-          },
-          {
-            "name": "landingGearRepaired",
+            "name": "landingGearHp",
             "type": "u8"
           },
           {
-            "name": "navigationStatus",
-            "type": "bool"
-          },
-          {
-            "name": "navigationRepaired",
+            "name": "navigationHp",
             "type": "u8"
           },
           {
-            "name": "presentsBagStatus",
-            "type": "bool"
-          },
-          {
-            "name": "presentsBagRepaired",
+            "name": "presentsBagHp",
             "type": "u8"
           }
         ]
@@ -677,6 +1290,21 @@ export const IDL: Bonkers = {
     {
       "code": 6004,
       "name": "InvalidRollForClaim",
+      "msg": ""
+    },
+    {
+      "code": 6005,
+      "name": "Stage1NotOver",
+      "msg": ""
+    },
+    {
+      "code": 6006,
+      "name": "SleighBroken",
+      "msg": ""
+    },
+    {
+      "code": 6007,
+      "name": "GameNotOver",
       "msg": ""
     }
   ]

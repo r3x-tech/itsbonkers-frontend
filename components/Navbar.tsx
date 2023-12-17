@@ -220,22 +220,23 @@ export const Navbar: React.FC = () => {
         <>
           <Button
             onClick={() => router.push("/login")}
-            bg={theme.colors.background}
+            bg={theme.colors.primary}
+            w="20rem"
             py="1.5rem"
             h="2rem"
             px="3rem"
             cursor="pointer"
-            borderColor={theme.colors.white}
+            borderColor={theme.colors.primary}
             borderWidth="2px"
             borderRadius="30px"
             color={theme.colors.white}
-            fontSize="1rem"
+            fontSize="1.25rem"
             letterSpacing="1px"
-            fontWeight="600"
+            fontWeight="700"
             _hover={{
-              color: theme.colors.background,
-              borderColor: theme.colors.white,
-              bg: theme.colors.white,
+              color: theme.colors.white,
+              borderColor: theme.colors.accentThree,
+              bg: theme.colors.accentThree,
             }}
           >
             LOGIN
