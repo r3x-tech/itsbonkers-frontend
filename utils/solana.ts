@@ -257,7 +257,7 @@ export const deliveryTx = async (
     )[0];
     const gameRollsPDA = PublicKey.findProgramAddressSync(
       [
-        Buffer.from("game_rolls_stg1"),
+        Buffer.from("game_rolls_stg2"),
         Uint8Array.from(
           serializeUint64(BigInt(GAME_ID.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
