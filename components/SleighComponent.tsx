@@ -274,7 +274,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                   fontFamily={theme.fonts.body}
                   color={theme.colors.white}
                 >
-                  {sleigh.lvl}
+                  {sleigh.level}
                 </Text>
               </Flex>
               <Text
@@ -283,7 +283,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                 fontFamily={theme.fonts.header}
                 color={theme.colors.white}
               >
-                {sleigh.name}
+                {sleigh.owner}
               </Text>
             </Flex>
             <Flex>
@@ -317,7 +317,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                     fontFamily={theme.fonts.body}
                     color={theme.colors.white}
                   >
-                    {sleigh.lvl}
+                    {sleigh.level}
                   </Text>
                 </Flex>
                 <Flex justifyContent="center" alignContent="center" mt="2rem">
@@ -356,7 +356,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                 onCloseRetireSleighModal={onRetireWarningClose}
                 retireSleigh={retireSleigh}
                 retireInProgress={retireInProgress}
-                sleighName={sleigh.name}
+                sleighName={sleigh.owner}
               />
             </Flex>
           </Flex>

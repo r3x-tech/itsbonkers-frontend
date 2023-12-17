@@ -1,6 +1,6 @@
 import { Sleigh } from "@/types/types";
 
-export const sampleSleighs = [
+export const sampleSleighsOld = [
   {
     name: "Blitzkreig",
     lvl: 11,
@@ -32,5 +32,56 @@ export const sampleSleighs = [
         landing_gear: 55,
       },
     },
+  },
+];
+
+export const sampleSleighs: Sleigh[] = [
+  {
+    owner: "owner_pubkey_1",
+    level: 11,
+    gameId: 1234567890,
+    builtIndex: 1,
+    mintCost: 1000000,
+    stakeAmt: 20000000,
+    broken: false,
+    stakedAfterRoll: 5,
+    lastCheckedRoll: 10,
+    lastDeliveryRoll: 15,
+    propulsionHp: 100,
+    landingGearHp: 55,
+    navigationHp: 80,
+    presentsBagHp: 90,
+  },
+  {
+    owner: "owner_pubkey_2",
+    level: 8,
+    gameId: 1234567890,
+    builtIndex: 2,
+    mintCost: 800000,
+    stakeAmt: 16000000,
+    broken: false,
+    stakedAfterRoll: 3,
+    lastCheckedRoll: 8,
+    lastDeliveryRoll: 13,
+    propulsionHp: 95,
+    landingGearHp: 60,
+    navigationHp: 85,
+    presentsBagHp: 95,
+  },
+  {
+    owner: "owner_pubkey_3",
+    level: 9,
+    gameId: 1234567890,
+    builtIndex: 3,
+    mintCost: 900000,
+    stakeAmt: 18000000,
+    broken: false,
+    stakedAfterRoll: 4,
+    lastCheckedRoll: 9,
+    lastDeliveryRoll: 14,
+    propulsionHp: 98,
+    landingGearHp: 58,
+    navigationHp: 88,
+    presentsBagHp: 92,
   },
 ];
