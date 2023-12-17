@@ -62,8 +62,8 @@ function HomePage() {
     setSelectedSleigh(sleigh);
   };
 
-  const [stakeAmount, setStakeAmount] = useState(1000);
-  const [minStakeAmount, setMinStakeAmount] = useState(0);
+  const [stakeAmount, setStakeAmount] = useState(250);
+  const [minStakeAmount, setMinStakeAmount] = useState(250);
   const [maxStakeAmount, setMaxStakeAmount] = useState(100000000000);
 
   const handleSliderChange = (value: any) => {
