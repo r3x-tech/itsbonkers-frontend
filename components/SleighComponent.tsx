@@ -219,8 +219,8 @@ export function SleighComponent({ sleigh }: SleighProps) {
                 mb="1rem"
                 h="3.5rem"
                 color={theme.colors.white}
-                isDisabled={retireInProgress}
-                isLoading={retireInProgress}
+                isDisabled={startingDeliveryInProgress}
+                isLoading={startingDeliveryInProgress}
                 spinner={
                   <Flex flexDirection="row" align="center">
                     <Spinner color={theme.colors.white} size="sm" />
@@ -321,14 +321,25 @@ export function SleighComponent({ sleigh }: SleighProps) {
                     >
                       NAVIGATION
                     </Text>
-                    <Text
-                      fontSize="1rem"
-                      fontWeight="700"
-                      fontFamily={theme.fonts.body}
-                      color={theme.colors.white}
-                    >
-                      {sleigh.level}
-                    </Text>
+                    {sleigh.broken ? (
+                      <Text
+                        fontSize="1rem"
+                        fontWeight="700"
+                        fontFamily={theme.fonts.body}
+                        color={theme.colors.red}
+                      >
+                        BROKEN
+                      </Text>
+                    ) : (
+                      <Text
+                        fontSize="1rem"
+                        fontWeight="700"
+                        fontFamily={theme.fonts.body}
+                        color={theme.colors.green}
+                      >
+                        ACTIVE
+                      </Text>
+                    )}
                   </Flex>
                   <Flex justifyContent="center" alignContent="center" mt="2rem">
                     <Button
@@ -342,7 +353,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                       w="100%"
                       h="3rem"
                       color={theme.colors.white}
-                      isDisabled={sleigh == null}
+                      isDisabled={!sleigh.broken}
                       isLoading={sleigh == null}
                       spinner={
                         <Flex flexDirection="row" align="center">
@@ -385,14 +396,25 @@ export function SleighComponent({ sleigh }: SleighProps) {
                   >
                     PROPULSION
                   </Text>
-                  <Text
-                    fontSize="1rem"
-                    fontWeight="700"
-                    fontFamily={theme.fonts.body}
-                    color={theme.colors.white}
-                  >
-                    {sleigh.level}
-                  </Text>
+                  {sleigh.broken ? (
+                    <Text
+                      fontSize="1rem"
+                      fontWeight="700"
+                      fontFamily={theme.fonts.body}
+                      color={theme.colors.red}
+                    >
+                      BROKEN
+                    </Text>
+                  ) : (
+                    <Text
+                      fontSize="1rem"
+                      fontWeight="700"
+                      fontFamily={theme.fonts.body}
+                      color={theme.colors.green}
+                    >
+                      ACTIVE
+                    </Text>
+                  )}
                 </Flex>
                 <Flex justifyContent="center" alignContent="center" mt="2rem">
                   <Button
@@ -406,7 +428,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                     w="100%"
                     h="3rem"
                     color={theme.colors.white}
-                    isDisabled={sleigh == null}
+                    isDisabled={!sleigh.broken}
                     isLoading={sleigh == null}
                     spinner={
                       <Flex flexDirection="row" align="center">
@@ -446,14 +468,25 @@ export function SleighComponent({ sleigh }: SleighProps) {
                   >
                     PAYLOAD
                   </Text>
-                  <Text
-                    fontSize="1rem"
-                    fontWeight="700"
-                    fontFamily={theme.fonts.body}
-                    color={theme.colors.white}
-                  >
-                    {sleigh.level}
-                  </Text>
+                  {sleigh.broken ? (
+                    <Text
+                      fontSize="1rem"
+                      fontWeight="700"
+                      fontFamily={theme.fonts.body}
+                      color={theme.colors.red}
+                    >
+                      BROKEN
+                    </Text>
+                  ) : (
+                    <Text
+                      fontSize="1rem"
+                      fontWeight="700"
+                      fontFamily={theme.fonts.body}
+                      color={theme.colors.green}
+                    >
+                      ACTIVE
+                    </Text>
+                  )}
                 </Flex>
                 <Flex justifyContent="center" alignContent="center" mt="2rem">
                   <Button
@@ -467,7 +500,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                     w="100%"
                     h="3rem"
                     color={theme.colors.white}
-                    isDisabled={sleigh == null}
+                    isDisabled={!sleigh.broken}
                     isLoading={sleigh == null}
                     spinner={
                       <Flex flexDirection="row" align="center">
@@ -507,14 +540,25 @@ export function SleighComponent({ sleigh }: SleighProps) {
                   >
                     LANDING GEAR
                   </Text>
-                  <Text
-                    fontSize="1rem"
-                    fontWeight="700"
-                    fontFamily={theme.fonts.body}
-                    color={theme.colors.white}
-                  >
-                    {sleigh.level}
-                  </Text>
+                  {sleigh.broken ? (
+                    <Text
+                      fontSize="1rem"
+                      fontWeight="700"
+                      fontFamily={theme.fonts.body}
+                      color={theme.colors.red}
+                    >
+                      BROKEN
+                    </Text>
+                  ) : (
+                    <Text
+                      fontSize="1rem"
+                      fontWeight="700"
+                      fontFamily={theme.fonts.body}
+                      color={theme.colors.green}
+                    >
+                      ACTIVE
+                    </Text>
+                  )}
                 </Flex>
                 <Flex justifyContent="center" alignContent="center" mt="2rem">
                   <Button
@@ -528,7 +572,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                     w="100%"
                     h="3rem"
                     color={theme.colors.white}
-                    isDisabled={sleigh == null}
+                    isDisabled={!sleigh.broken}
                     isLoading={sleigh == null}
                     spinner={
                       <Flex flexDirection="row" align="center">

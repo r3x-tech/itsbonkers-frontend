@@ -37,9 +37,9 @@ export const sampleSleighsOld = [
 
 export const sampleSleighs: Sleigh[] = [
   {
-    sleighId: "10",
+    sleighId: "Merry Chariot",
     owner: "owner_pubkey_1",
-    level: 11,
+    level: 2,
     gameId: 1234567890,
     builtIndex: 1,
     mintCost: 1000000,
@@ -54,7 +54,7 @@ export const sampleSleighs: Sleigh[] = [
     presentsBagHp: 90,
   },
   {
-    sleighId: "4",
+    sleighId: "Evergreen Cruiser",
     owner: "owner_pubkey_2",
     level: 8,
     gameId: 1234567890,
@@ -71,7 +71,7 @@ export const sampleSleighs: Sleigh[] = [
     presentsBagHp: 95,
   },
   {
-    sleighId: "3",
+    sleighId: "Elder Blitzkreig",
     owner: "owner_pubkey_3",
     level: 9,
     gameId: 1234567890,

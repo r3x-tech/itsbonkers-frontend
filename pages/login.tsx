@@ -128,19 +128,19 @@ function LoginPage() {
       }
 
       if (ixs.length > 0) {
-        sendAllTxParallel(
+        await sendAllTxParallel(
           connection,
           ixs,
           currentPublicKey,
           signAllTransactions
         );
+        router.push("/home");
       }
-
-      router.push("/home");
     };
 
     if (loggedIn && connection && publicKey != null) {
-      fetchandCreateAtas(publicKey);
+      // fetchandCreateAtas(publicKey);
+      router.push("/home");
     }
   }, [connection, loggedIn, publicKey, router, signAllTransactions]);
 
@@ -148,10 +148,6 @@ function LoginPage() {
     const fetchData = async () => {
       if (connection && publicKey && !loggedIn && wallet) {
         setLoginInProgress(true);
-
-        // console.log("connection: ", connection);
-        // console.log("wallet: ", wallet);
-
         let keypair = Keypair.generate();
 
         let KEY: any = keypair;
