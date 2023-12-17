@@ -85,7 +85,7 @@ function HomePage() {
       }
 
       const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
-      const stakeAmt = 100000;
+      const stakeAmt = stakeAmount;
 
       // Call createSleighTx function and wait for the transaction to be ready
       const tx = await createSleighTx(
@@ -270,7 +270,7 @@ function HomePage() {
                     <StakeSleighModal
                       isOpen={isOpen}
                       onOpen={onOpen}
-                      onClose={onClose}
+                      onClose={onSleighWarningClose}
                       stakeAmount={stakeAmount}
                       minStakeAmount={minStakeAmount}
                       maxStakeAmount={maxStakeAmount}
