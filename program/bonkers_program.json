@@ -501,10 +501,6 @@
             "type": "u64"
           },
           {
-            "name": "totalSpoils",
-            "type": "u64"
-          },
-          {
             "name": "mintCostMultiplier",
             "type": "u64"
           },

@@ -2,6 +2,10 @@ import { apiRequest } from ".";
 import axios from "axios";
 import { Bonkers } from "../program/bonkers_program";
 import {
+  TOKEN_PROGRAM_ID,
+  getAssociatedTokenAddressSync,
+} from "@solana/spl-token";
+import {
   PublicKey,
   SystemProgram,
   Transaction,
@@ -19,8 +23,13 @@ import {
   Instruction,
 } from "@coral-xyz/anchor";
 import { Buffer } from "buffer";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import toast from "react-hot-toast";
+//@ts-ignore
+import { ByteifyEndianess, serializeUint64 } from "byteify";
+import { GAME_ID, TOKEN_MINT_ADDRESS } from "@/constants";
+// import ByteifyEndianess from "byteify";
+// import serializeUint64 from "byteify";
+
 const bonkersIDL = require("../program/bonkers_program.json");
 const BONKERS_PROGRAM_PROGRAMID =
   "DYjXGPz5HGneqvA7jsgRVKTTaeoarCPNCH6pr9Lu2L3F";
@@ -37,23 +46,63 @@ export const createSleighTx = async (
   }
 
   try {
-    const sleighIdHex = _sleighId.toString(16);
-    const sleighIdBN = new BN(sleighIdHex, 16);
+    const sleighIdBN = new BN(_sleighId.toString());
+
     const BONKERS_PROGRAM: Program<Bonkers> = new Program(
       bonkersIDL,
       BONKERS_PROGRAM_PROGRAMID,
       { connection }
     );
-
     const sleighOwner = publicKey;
     const systemProgram = SystemProgram.programId;
-    const gameSettingsPubkey = new PublicKey("...");
-    const gameRollsPubkey = new PublicKey("...");
-    const sleighPubkey = new PublicKey("..."); // PDA?
-    const gameTokenAta = new PublicKey("...");
-    const sleighOwnerAta = new PublicKey("...");
-    const coinMintAddress = new PublicKey("...");
-    const tokenProgram = new PublicKey("...");
+    const gameSettingsPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("settings"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+    const gameRollsPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("game_rolls_stg1"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+    const sleighPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("sleigh"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+        Uint8Array.from(
+          serializeUint64(BigInt(sleighIdBN.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+
+    const gameTokenAta = getAssociatedTokenAddressSync(
+      new PublicKey(TOKEN_MINT_ADDRESS),
+      gameSettingsPDA
+    );
+    const sleighOwnerAta = getAssociatedTokenAddressSync(
+      new PublicKey(TOKEN_MINT_ADDRESS),
+      publicKey
+    );
+    const coinMintAddress = new PublicKey(TOKEN_MINT_ADDRESS);
 
     // Create the instruction
     const ix = await BONKERS_PROGRAM.methods
@@ -61,13 +110,13 @@ export const createSleighTx = async (
       .accounts({
         sleighOwner,
         systemProgram,
-        gameSettings: gameSettingsPubkey,
-        gameRolls: gameRollsPubkey,
-        sleigh: sleighPubkey,
+        gameSettings: gameSettingsPDA,
+        gameRolls: gameRollsPDA,
+        sleigh: sleighPDA,
         gameTokenAta: gameTokenAta,
         sleighOwnerAta: sleighOwnerAta,
         coinMint: coinMintAddress,
-        tokenProgram: tokenProgram,
+        tokenProgram: TOKEN_PROGRAM_ID,
       })
       .instruction();
 
@@ -100,8 +149,8 @@ export const claimLevelsTx = async (
   }
 
   try {
-    const sleighIdHex = _sleighId.toString(16);
-    const sleighIdBN = new BN(sleighIdHex, 16);
+    const sleighIdBN = new BN(_sleighId.toString());
+
     const rollIndexesBN = rollIndexes.map((index) => new BN(index));
 
     const BONKERS_PROGRAM: Program<any> = new Program(
@@ -110,18 +159,53 @@ export const claimLevelsTx = async (
       { connection }
     );
 
-    const sleighPubkey = new PublicKey("Sleigh_Public_Key");
     const sleighOwner = publicKey;
-    const gameSettingsPubkey = new PublicKey("...");
-    const gameRollsPubkey = new PublicKey("...");
+    const sleighPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("sleigh"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+        Uint8Array.from(
+          serializeUint64(BigInt(sleighIdBN.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+    const gameSettingsPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("settings"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+    const gameRollsPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("game_rolls_stg1"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
 
     const ix = await BONKERS_PROGRAM.methods
       .claimLevels(sleighIdBN, rollIndexesBN)
       .accounts({
         sleighOwner: sleighOwner,
-        sleigh: sleighPubkey,
-        gameSettings: gameSettingsPubkey,
-        gameRolls: gameRollsPubkey,
+        sleigh: sleighPDA,
+        gameSettings: gameSettingsPDA,
+        gameRolls: gameRollsPDA,
       })
       .instruction();
 
@@ -153,17 +237,51 @@ export const deliveryTx = async (
   }
 
   try {
-    const sleighIdHex = _sleighId.toString(16);
-    const sleighIdBN = new BN(sleighIdHex, 16);
+    const sleighIdBN = new BN(_sleighId.toString());
     const BONKERS_PROGRAM: Program<any> = new Program(
       bonkersIDL,
       BONKERS_PROGRAM_PROGRAMID,
       { connection }
     );
 
-    const gameSettingsPubkey = new PublicKey("...");
-    const gameRollsPubkey = new PublicKey("...");
-    const sleighPubkey = new PublicKey("...");
+    const gameSettingsPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("settings"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+    const gameRollsPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("game_rolls_stg1"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+    const sleighPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("sleigh"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+        Uint8Array.from(
+          serializeUint64(BigInt(sleighIdBN.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
     const sleighPropulsionPartsAta = new PublicKey("...");
     const sleighLandingGearPartsAta = new PublicKey("...");
     const sleighNavigationPartsAta = new PublicKey("...");
@@ -172,14 +290,13 @@ export const deliveryTx = async (
     const landingGearMintAddress = new PublicKey("...");
     const navigationAddress = new PublicKey("...");
     const presentsBagMintAddress = new PublicKey("...");
-    const tokenProgram = new PublicKey("...");
 
     const ix = await BONKERS_PROGRAM.methods
       .delivery()
       .accounts({
-        gameSettings: gameSettingsPubkey,
-        gameRolls: gameRollsPubkey,
-        sleigh: sleighPubkey,
+        gameSettings: gameSettingsPDA,
+        gameRolls: gameRollsPDA,
+        sleigh: sleighPDA,
         sleighPropulsionPartsAta: sleighPropulsionPartsAta,
         sleighLandingGearPartsAta: sleighLandingGearPartsAta,
         sleighNavigationPartsAta: sleighNavigationPartsAta,
@@ -188,7 +305,7 @@ export const deliveryTx = async (
         landingGearMint: landingGearMintAddress,
         navigationMint: navigationAddress,
         presentsBagMint: presentsBagMintAddress,
-        tokenProgram: tokenProgram,
+        tokenProgram: TOKEN_PROGRAM_ID,
       })
       .instruction();
 
@@ -233,8 +350,8 @@ export const repairSleighTx = async (
   }
 
   try {
-    const sleighIdHex = _sleighId.toString(16);
-    const sleighIdBN = new BN(sleighIdHex, 16);
+    const sleighIdBN = new BN(_sleighId.toString());
+
     const BONKERS_PROGRAM: Program<any> = new Program(
       bonkersIDL,
       BONKERS_PROGRAM_PROGRAMID,
@@ -242,8 +359,33 @@ export const repairSleighTx = async (
     );
 
     const sleighOwner = publicKey;
-    const sleighPubkey = new PublicKey("...");
-    const gameSettings = new PublicKey("...");
+    const sleighPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("sleigh"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+        Uint8Array.from(
+          serializeUint64(BigInt(sleighIdBN.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+    const gameSettingsPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("settings"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
     const sleighPropulsionPartsAta = new PublicKey("...");
     const sleighLandingGearPartsAta = new PublicKey("...");
     const sleighNavigationPartsAta = new PublicKey("...");
@@ -252,7 +394,6 @@ export const repairSleighTx = async (
     const landingGearMintAddress = new PublicKey("...");
     const navigationMintAddress = new PublicKey("...");
     const presentsBagMintAddress = new PublicKey("...");
-    const tokenProgram = new PublicKey("...");
 
     const ix = await BONKERS_PROGRAM.methods
       .repair(
@@ -263,8 +404,8 @@ export const repairSleighTx = async (
       )
       .accounts({
         sleighOwner,
-        sleigh: sleighPubkey,
-        gameSettings: gameSettings,
+        sleigh: sleighPDA,
+        gameSettings: gameSettingsPDA,
         sleighPropulsionPartsAta: sleighPropulsionPartsAta,
         sleighLandingGearPartsAta: sleighLandingGearPartsAta,
         sleighNavigationPartsAta: sleighNavigationPartsAta,
@@ -273,7 +414,7 @@ export const repairSleighTx = async (
         landingGearMint: landingGearMintAddress,
         navigationMint: navigationMintAddress,
         presentsBagMint: presentsBagMintAddress,
-        tokenProgram: tokenProgram,
+        tokenProgram: TOKEN_PROGRAM_ID,
       })
       .instruction();
 
@@ -305,8 +446,8 @@ export const retireSleighTx = async (
   }
 
   try {
-    const sleighIdHex = _sleighId.toString(16);
-    const sleighIdBN = new BN(sleighIdHex, 16);
+    const sleighIdBN = new BN(_sleighId.toString());
+
     const BONKERS_PROGRAM: Program<any> = new Program(
       bonkersIDL,
       BONKERS_PROGRAM_PROGRAMID,
@@ -314,23 +455,65 @@ export const retireSleighTx = async (
     );
 
     const sleighOwner = publicKey;
-    const sleighPubkey = new PublicKey("...");
-    const gameSettings = new PublicKey("...");
-    const gameTokenAta = new PublicKey("...");
-    const sleighOwnerAta = new PublicKey("...");
-    const coinMintAddress = new PublicKey("...");
-    const tokenProgram = new PublicKey("...");
+    const sleighPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("sleigh"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+        Uint8Array.from(
+          serializeUint64(BigInt(sleighIdBN.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+    const gameSettingsPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("settings"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+    PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("settings"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+
+    const gameTokenAta = getAssociatedTokenAddressSync(
+      new PublicKey(TOKEN_MINT_ADDRESS),
+      gameSettingsPDA
+    );
+    const sleighOwnerAta = getAssociatedTokenAddressSync(
+      new PublicKey(TOKEN_MINT_ADDRESS),
+      publicKey
+    );
+    const coinMintAddress = new PublicKey(TOKEN_MINT_ADDRESS);
 
     const ix = await BONKERS_PROGRAM.methods
       .retire()
       .accounts({
         sleighOwner,
-        sleigh: sleighPubkey,
-        gameSettings: gameSettings,
+        sleigh: sleighPDA,
+        gameSettings: gameSettingsPDA,
         gameTokenAta: gameTokenAta,
         sleighOwnerAta: sleighOwnerAta,
         coinMint: coinMintAddress,
-        tokenProgram: tokenProgram,
+        tokenProgram: TOKEN_PROGRAM_ID,
       })
       .instruction();
 
