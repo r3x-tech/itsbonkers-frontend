@@ -234,8 +234,8 @@ function LoginPage() {
         <Flex w="60rem" mt="10rem">
           {!isLoginInProgress && !connecting ? (
             <Stack h="100%" w="100%">
-              {/* <WalletMultiButton /> */}
-              <Button
+              <WalletMultiButton />
+              {/* <Button
                 bg={theme.colors.primary}
                 w="100%"
                 py="1.5rem"
@@ -319,7 +319,7 @@ function LoginPage() {
                     MIN
                   </Text>
                 </Flex>
-              </Button>
+              </Button> */}
             </Stack>
           ) : (
             <Flex
