@@ -204,14 +204,21 @@ function LoginPage() {
       alignItems="center"
       h="100vh"
       w="100vw"
-      bg={theme.colors.background}
+      bgImage="url('/snowfall.gif')"
+      backgroundSize="cover"
+      backgroundRepeat="no-repeat"
+      backgroundPosition="center"
     >
       <Flex
         direction="column"
         alignItems="center"
+        justifyContent="center"
         fontFamily="Montserrat"
         p="1rem"
         minWidth="22rem"
+        h="100vh"
+        w="100vw"
+        backgroundColor="rgba(0, 0, 0, 0.25)" // Optional: Adds a dark overlay for better readability
       >
         <Flex justifyContent="center">
           <Image
@@ -224,18 +231,16 @@ function LoginPage() {
             }}
           />
         </Flex>
-        <Flex w="100%" mt="10rem">
+        <Flex w="60rem" mt="10rem">
           {!isLoginInProgress && !connecting ? (
             <Stack h="100%" w="100%">
               {/* <WalletMultiButton /> */}
               <Button
-                onClick={() => {}}
                 bg={theme.colors.primary}
                 w="100%"
                 py="1.5rem"
                 h="5rem"
                 px="3rem"
-                cursor="pointer"
                 borderColor={theme.colors.primary}
                 borderWidth="2px"
                 borderRadius="30px"
@@ -249,6 +254,11 @@ function LoginPage() {
                   color: theme.colors.white,
                   borderColor: theme.colors.accentThree,
                   bg: theme.colors.accentThree,
+                }}
+                _disabled={{
+                  color: theme.colors.white,
+                  borderColor: theme.colors.primary,
+                  bg: theme.colors.primary,
                 }}
               >
                 <Text
