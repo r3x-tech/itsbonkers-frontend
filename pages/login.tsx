@@ -8,7 +8,7 @@ import {
   Heading,
   Image,
 } from "@chakra-ui/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import theme from "@/styles/theme";
 import userStore from "@/stores/userStore";
 import toast from "react-hot-toast";
@@ -49,6 +49,7 @@ function LoginPage() {
   } = useWallet();
 
   const { username, loggedIn } = userStore();
+  const signupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchandCreateAtas = async (currentPublicKey: PublicKey) => {
@@ -324,7 +325,9 @@ function LoginPage() {
                   w="100%"
                   h="5rem"
                   color={theme.colors.white}
-                  onClick={() => {}}
+                  onClick={() =>
+                    signupRef.current?.scrollIntoView({ behavior: "smooth" })
+                  }
                   _hover={{
                     color: theme.colors.background,
                     borderColor: theme.colors.quaternary,
@@ -493,7 +496,12 @@ function LoginPage() {
               w="100%"
               h="5rem"
               color={theme.colors.white}
-              onClick={() => {}}
+              onClick={() => {
+                window.open(
+                  "https://spacemandev.notion.site/It-s-Bonkers-How-to-Play-6f70818c0b0c42039ca33f5985e25b64",
+                  "_blank"
+                );
+              }}
               _hover={{
                 color: theme.colors.background,
                 borderColor: theme.colors.quaternary,
@@ -513,7 +521,9 @@ function LoginPage() {
               w="100%"
               h="5rem"
               color={theme.colors.white}
-              onClick={() => {}}
+              onClick={() =>
+                window.open("https://twitter.com/itsbonkers_xyz", "_blank")
+              }
               _hover={{
                 color: theme.colors.background,
                 borderColor: theme.colors.quaternary,
@@ -534,6 +544,7 @@ function LoginPage() {
         minWidth="22rem"
         h="100vh"
         w="100vw"
+        ref={signupRef}
       >
         <Flex
           direction="column"
