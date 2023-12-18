@@ -50,6 +50,7 @@ function LoginPage() {
 
   const { username, loggedIn } = userStore();
   const signupRef = useRef<HTMLDivElement>(null);
+  const learnMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchandCreateAtas = async (currentPublicKey: PublicKey) => {
@@ -205,10 +206,10 @@ function LoginPage() {
       direction="column"
       justifyContent="start"
       alignItems="center"
-      h="400vh"
-      w="100vw"
-      bgImage="url('/snowscene3.gif')"
-      backgroundSize="cover"
+      h="400vh" // Four times the height of the viewport
+      w="100vw" // Full width of the viewport
+      bgImage="url('/snowscene4.gif')"
+      backgroundSize="100% 100%" // Stretch to fill both width and height
       backgroundRepeat="no-repeat"
       backgroundPosition="center"
     >
@@ -223,12 +224,12 @@ function LoginPage() {
         w="100vw"
       >
         <Flex
-          h="5rem"
+          h="5vh"
           mt="2rem"
           px="3rem"
           py="1rem"
           color={theme.colors.background}
-          fontSize="1.5rem"
+          fontSize={["1.25rem", "1.5rem"]}
           letterSpacing="1px"
           fontWeight="700"
           fontFamily={theme.fonts.body}
@@ -239,23 +240,28 @@ function LoginPage() {
           bg={theme.colors.quaternary}
         >
           <Text
-            mr="2rem"
-            fontSize="2.5rem"
+            mr={["1rem", "2rem"]}
+            fontSize={["2.5rem", "2.5rem"]}
             fontWeight="700"
             color={theme.colors.white}
           >
             SEASON 1
           </Text>{" "}
           STARTING IN
-          <Flex justifyContent="end" align="center" ml="2rem" gap={2}>
+          <Flex
+            justifyContent="end"
+            align="center"
+            ml={["1rem", "2rem"]}
+            gap={2}
+          >
             <Text fontSize="3rem" fontWeight="700" color={theme.colors.white}>
               {timeLeft.days}
             </Text>
             <Text
-              fontSize="1.5rem"
+              fontSize={["1.25rem", "1.5rem"]}
               fontWeight="700"
               color={theme.colors.background}
-              mx="0.5rem"
+              mx={["0.25rem", "0.5rem"]}
             >
               DAYS
             </Text>
@@ -263,10 +269,10 @@ function LoginPage() {
               {timeLeft.hours}
             </Text>
             <Text
-              fontSize="1.5rem"
+              fontSize={["1.25rem", "1.5rem"]}
               fontWeight="700"
               color={theme.colors.background}
-              mx="0.5rem"
+              mx={["0.25rem", "0.5rem"]}
             >
               HRS
             </Text>
@@ -279,11 +285,11 @@ function LoginPage() {
               {timeLeft.minutes}
             </Text>
             <Text
-              fontSize="1.5rem"
+              fontSize={["1.25rem", "1.5rem"]}
               fontWeight="700"
               color={theme.colors.background}
               fontFamily={theme.fonts.body}
-              mx="0.5rem"
+              mx={["0.25rem", "0.5rem"]}
             >
               MIN
             </Text>
@@ -291,29 +297,28 @@ function LoginPage() {
         </Flex>
         <Flex
           mt="8rem"
-          w="50vw"
-          h="45vh"
+          p="5rem"
           borderRadius="3rem"
           flexDirection="column"
           justifyContent="center"
           align="center"
-          bg="#FFB601"
+          bg={theme.colors.accentFive}
         >
           <Flex justifyContent="center">
             <Image
               src="/bonkerslargelogo.png"
               alt="User Profile Pic"
-              w="40vw"
+              w={["60vw", "40vw"]}
               cursor="pointer"
               onClick={() => {
                 // router.push("/account");
               }}
             />
           </Flex>
-          <Flex w="40vw" mt="5rem">
+          <Flex w={["60vw", "40vw"]} mt="5rem">
             {!isLoginInProgress && !connecting ? (
               <Stack h="100%" w="100%">
-                {/* <WalletMultiButton /> */}
+                <WalletMultiButton />
                 <Button
                   borderWidth="2px"
                   borderColor={theme.colors.primary}
@@ -343,8 +348,8 @@ function LoginPage() {
                 flexDirection="column"
                 align="center"
                 justifyContent="center"
-                color={theme.colors.white}
-                my="4.58rem"
+                color={theme.colors.background}
+                mt="5rem"
               >
                 <Spinner size="sm" />
                 <Text mt={3} fontSize="0.75rem" fontWeight="500">
@@ -358,19 +363,20 @@ function LoginPage() {
           direction="column"
           alignItems="center"
           justifyContent="center"
-          mt="2rem"
-          onClick={() => {}}
+          onClick={() =>
+            learnMoreRef.current?.scrollIntoView({ behavior: "smooth" })
+          }
           cursor="pointer"
         >
           <Text
-            color={theme.colors.tertiary}
+            color={theme.colors.accentFive}
             fontSize="2rem"
             fontWeight="700"
             fontFamily={theme.fonts.body}
           >
             LEARN MORE
           </Text>
-          <IoIosArrowDown size="2rem" color={theme.colors.tertiary} />{" "}
+          <IoIosArrowDown size="2rem" color={theme.colors.accentFive} />{" "}
         </Flex>
       </Flex>
       <Flex
@@ -380,47 +386,73 @@ function LoginPage() {
         p="1rem"
         h="100vh"
         w="100vw"
+        ref={learnMoreRef}
       >
         <Flex
           direction="column"
           alignItems="start"
-          justifyContent="space-between"
-          w="70%"
-          h="72%"
-          mt="6rem"
-          ml="3rem"
-          mb="2rem"
+          justifyContent="start"
+          w="80%"
+          py="5rem"
+          mb="1rem"
+          px="6rem"
+          color={theme.colors.background}
+          fontSize="1.5rem"
+          letterSpacing="1px"
+          fontWeight="700"
+          fontFamily={theme.fonts.body}
+          align="center"
+          borderRadius="30px"
+          borderColor={theme.colors.accentFive}
+          bg={theme.colors.accentFive}
         >
-          <Flex w="100%" alignItems="start" justifyContent="start">
+          <Flex
+            w="100%"
+            flexDirection={["column", "row"]}
+            alignItems="start"
+            justifyContent="start"
+          >
             <Text
               color={theme.colors.primary}
-              letterSpacing="3px"
-              fontSize="5rem"
+              letterSpacing={["1px", "3px"]}
+              fontSize={["4rem", "5rem"]}
               fontWeight="700"
               fontFamily={theme.fonts.header}
-              mr="2rem"
+              mr={["1rem", "2rem"]}
             >
-              Welcome to It&apos;s
+              Welcome to
             </Text>{" "}
-            <Text
-              color={theme.colors.white}
-              letterSpacing="3px"
-              fontSize="5rem"
-              fontWeight="700"
-              fontFamily={theme.fonts.header}
-              mr="0.5rem"
-            >
-              BONK
-            </Text>
-            <Text
-              color={theme.colors.primary}
-              letterSpacing="3px"
-              fontSize="5rem"
-              fontWeight="700"
-              fontFamily={theme.fonts.header}
-            >
-              ers!!!
-            </Text>
+            <Flex>
+              <Text
+                color={theme.colors.primary}
+                letterSpacing={["1px", "3px"]}
+                fontSize={["4rem", "5rem"]}
+                fontWeight="700"
+                fontFamily={theme.fonts.header}
+                mr={["1rem", "2rem"]}
+              >
+                It&apos;s
+              </Text>
+              <Text
+                color={theme.colors.white}
+                letterSpacing={["1px", "3px"]}
+                fontSize={["4rem", "5rem"]}
+                fontWeight="700"
+                fontFamily={theme.fonts.header}
+                mr={["0.25rem", "0.5rem"]}
+              >
+                BONK
+              </Text>
+              <Text
+                color={theme.colors.primary}
+                letterSpacing={["1px", "3px"]}
+                fontSize={["4rem", "5rem"]}
+                fontWeight="700"
+                fontFamily={theme.fonts.header}
+              >
+                ers!!!
+              </Text>
+            </Flex>
           </Flex>
 
           <Text
@@ -471,9 +503,10 @@ function LoginPage() {
             flexDirection="row"
             justifyContent="start"
             align="start"
-            mt="5rem"
+            mt="8rem"
+            mb="1rem"
             w="100%"
-            gap="10rem"
+            gap="5vw"
           >
             <Button
               borderWidth="2px"
@@ -538,106 +571,61 @@ function LoginPage() {
       >
         <Flex
           direction="column"
-          alignItems="start"
-          justifyContent="center"
-          w="60%"
-          ml="10rem"
+          align="center"
+          justifyContent="start"
+          w={["60%", "80%"]}
+          h={["60%", "80%"]}
+          bgImage="url('/chat.svg')"
+          backgroundSize="cover"
+          backgroundRepeat="no-repeat"
+          backgroundPosition="center"
         >
-          <Flex justifyContent="space-between" w="100%">
-            <Flex w="80%" alignItems="start" justifyContent="start">
-              <Text
-                color={theme.colors.white}
-                letterSpacing="3px"
-                fontSize="5rem"
-                fontWeight="700"
-                fontFamily={theme.fonts.header}
-                mr="2rem"
-              >
-                SEASON 1
-              </Text>{" "}
-              <Text
-                color={theme.colors.primary}
-                letterSpacing="3px"
-                fontSize="5rem"
-                fontWeight="700"
-                fontFamily={theme.fonts.header}
-                mr="0.5rem"
-              >
-                SIGNUP
-              </Text>
+          <Flex
+            mt="5rem"
+            ml="3rem"
+            direction="column"
+            alignItems="start"
+            justifyContent="start"
+          >
+            <Flex justifyContent="space-between" w="100%">
+              <Flex w="100%" alignItems="start" justifyContent="start">
+                <Text
+                  color={theme.colors.white}
+                  letterSpacing="3px"
+                  fontSize="5rem"
+                  fontWeight="700"
+                  fontFamily={theme.fonts.header}
+                  mr="2rem"
+                >
+                  SEASON 1
+                </Text>{" "}
+                <Text
+                  color={theme.colors.primary}
+                  letterSpacing="3px"
+                  fontSize="5rem"
+                  fontWeight="700"
+                  fontFamily={theme.fonts.header}
+                  mr="0.5rem"
+                >
+                  SIGNUP
+                </Text>
+              </Flex>
             </Flex>
-          </Flex>
-
-          <Flex
-            flexDirection="column"
-            alignItems="start"
-            justifyContent="start"
-            mt="2rem"
-            mb="4rem"
-          >
-            <Text
-              color={theme.colors.background}
-              fontSize="2rem"
-              fontWeight="700"
-              fontFamily={theme.fonts.body}
-            >
-              1. CONNECT YOUR WALLET
-            </Text>
-            <Button
+            <Flex
+              flexDirection="column"
+              alignItems="start"
+              justifyContent="start"
               mt="2rem"
-              borderWidth="2px"
-              borderColor={theme.colors.primary}
-              bg={theme.colors.primary}
-              borderRadius="30px"
-              fontWeight="700"
-              fontSize="1.5rem"
-              fontFamily={theme.fonts.body}
-              w="30rem"
-              h="5rem"
-              color={theme.colors.white}
-              onClick={() => {}}
-              _hover={{
-                color: theme.colors.background,
-                borderColor: theme.colors.quaternary,
-                bg: theme.colors.quaternary,
-              }}
+              mb="4rem"
             >
-              CONNECT WALLET
-            </Button>
-          </Flex>
-
-          <Flex
-            w="100%"
-            flexDirection="column"
-            alignItems="start"
-            justifyContent="start"
-          >
-            <Text
-              color={theme.colors.background}
-              fontSize="2rem"
-              fontWeight="700"
-              fontFamily={theme.fonts.body}
-            >
-              2. EMAIL ADDRESS FOR GAME NOTIFICATIONS
-            </Text>
-            <Flex>
-              <Input
-                mt="2rem"
-                mr="2rem"
-                borderWidth="2px"
-                borderColor={theme.colors.background}
-                bg={theme.colors.background}
-                borderRadius="30px"
+              <Text
+                color={theme.colors.background}
+                fontSize="2rem"
                 fontWeight="700"
-                fontSize="1.5rem"
                 fontFamily={theme.fonts.body}
-                w="40rem"
-                h="5rem"
-                p="2rem"
-                placeholder="ENTER YOUR EMAIL ADDRESS"
-                color={theme.colors.white}
-                _placeholder={{ color: theme.colors.white }}
-              />
+              >
+                1. CONNECT YOUR WALLET
+              </Text>
               <Button
                 mt="2rem"
                 borderWidth="2px"
@@ -647,7 +635,7 @@ function LoginPage() {
                 fontWeight="700"
                 fontSize="1.5rem"
                 fontFamily={theme.fonts.body}
-                w="25rem"
+                w="30rem"
                 h="5rem"
                 color={theme.colors.white}
                 onClick={() => {}}
@@ -657,46 +645,101 @@ function LoginPage() {
                   bg: theme.colors.quaternary,
                 }}
               >
-                VERIFY
+                CONNECT WALLET
               </Button>
             </Flex>
-            <Flex w="100%" align="center">
+            <Flex
+              w="100%"
+              flexDirection="column"
+              alignItems="start"
+              justifyContent="start"
+            >
               <Text
-                ml="1.25rem"
-                mt="1.25rem"
                 color={theme.colors.background}
-                fontSize="1.25rem"
+                fontSize="2rem"
                 fontWeight="700"
                 fontFamily={theme.fonts.body}
               >
-                ~SIGNING UP WILL ALLOW YOU TO RECEIVE IT&apos;S BONKERS GAME
-                INFO VIA
+                2. EMAIL ADDRESS FOR GAME NOTIFICATIONS
               </Text>
-              <Text
-                ml="0.75rem"
-                mt="1.25rem"
-                color={theme.colors.background}
-                onClick={() =>
-                  window.open("https://reload.r3x.tech/", "_blank")
-                }
-                cursor="pointer"
-                fontSize="1.25rem"
-                fontWeight="700"
-                fontFamily={theme.fonts.body}
-                textDecoration="underline"
-              >
-                R3L04D
-              </Text>{" "}
-              <Text
-                ml="0.75rem"
-                mt="1.25rem"
-                color={theme.colors.background}
-                fontSize="1.25rem"
-                fontWeight="700"
-                fontFamily={theme.fonts.body}
-              >
-                TO YOUR EMAIL~
-              </Text>
+              <Flex>
+                <Input
+                  mt="2rem"
+                  mr="2rem"
+                  borderWidth="2px"
+                  borderColor={theme.colors.background}
+                  bg={theme.colors.background}
+                  borderRadius="30px"
+                  fontWeight="700"
+                  fontSize="1.5rem"
+                  fontFamily={theme.fonts.body}
+                  w="40rem"
+                  h="5rem"
+                  p="2rem"
+                  placeholder="ENTER YOUR EMAIL ADDRESS"
+                  color={theme.colors.white}
+                  _placeholder={{ color: theme.colors.white }}
+                />
+                <Button
+                  mt="2rem"
+                  borderWidth="2px"
+                  borderColor={theme.colors.primary}
+                  bg={theme.colors.primary}
+                  borderRadius="30px"
+                  fontWeight="700"
+                  fontSize="1.5rem"
+                  fontFamily={theme.fonts.body}
+                  w="25rem"
+                  h="5rem"
+                  color={theme.colors.white}
+                  onClick={() => {}}
+                  _hover={{
+                    color: theme.colors.background,
+                    borderColor: theme.colors.quaternary,
+                    bg: theme.colors.quaternary,
+                  }}
+                >
+                  VERIFY
+                </Button>
+              </Flex>
+              <Flex w="100%" align="center">
+                <Text
+                  ml="1.25rem"
+                  mt="1.25rem"
+                  color={theme.colors.background}
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  fontFamily={theme.fonts.body}
+                >
+                  ~SIGNING UP WILL ALLOW YOU TO RECEIVE IT&apos;S BONKERS GAME
+                  INFO VIA
+                </Text>
+                <Text
+                  ml="0.75rem"
+                  mt="1.25rem"
+                  color={theme.colors.background}
+                  onClick={() =>
+                    window.open("https://reload.r3x.tech/", "_blank")
+                  }
+                  cursor="pointer"
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  fontFamily={theme.fonts.body}
+                  textDecoration="underline"
+                >
+                  R3L04D
+                </Text>{" "}
+                <Text
+                  ml="0.75rem"
+                  mt="1.25rem"
+                  color={theme.colors.background}
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  fontFamily={theme.fonts.body}
+                >
+                  TO YOUR EMAIL~
+                </Text>
+              </Flex>
             </Flex>
           </Flex>
         </Flex>
