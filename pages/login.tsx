@@ -50,6 +50,7 @@ function LoginPage() {
 
   const { username, loggedIn } = userStore();
   const signupRef = useRef<HTMLDivElement>(null);
+  const learnMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchandCreateAtas = async (currentPublicKey: PublicKey) => {
@@ -359,7 +360,9 @@ function LoginPage() {
           alignItems="center"
           justifyContent="center"
           mt="2rem"
-          onClick={() => {}}
+          onClick={() =>
+            learnMoreRef.current?.scrollIntoView({ behavior: "smooth" })
+          }
           cursor="pointer"
         >
           <Text
@@ -380,6 +383,7 @@ function LoginPage() {
         p="1rem"
         h="100vh"
         w="100vw"
+        ref={learnMoreRef}
       >
         <Flex
           direction="column"
