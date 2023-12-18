@@ -475,16 +475,6 @@ function LoginPage() {
             w="100%"
             gap="10rem"
           >
-            {/* <Text
-              mt="5rem"
-              color={theme.colors.primary}
-              letterSpacing="3px"
-              fontSize="2.5rem"
-              fontWeight="700"
-              fontFamily={theme.fonts.header}
-            >
-              WANT TO LEARN MORE?
-            </Text> */}
             <Button
               borderWidth="2px"
               borderColor={theme.colors.primary}
