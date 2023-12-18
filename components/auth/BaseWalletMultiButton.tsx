@@ -54,11 +54,11 @@ const baseButtonStyle: CSSProperties = {
 
 const hoverButtonStyle: CSSProperties = {
   ...baseButtonStyle,
-  backgroundColor: `${theme.colors.accentThree}`,
-  borderColor: `${theme.colors.accentThree}`,
+  backgroundColor: `${theme.colors.quaternary}`,
+  borderColor: `${theme.colors.quaternary}`,
   borderWidth: "2px",
   borderRadius: "30px",
-  color: `${theme.colors.white}`,
+  color: `${theme.colors.background}`,
 };
 
 export default function BaseWalletMultiButton({
