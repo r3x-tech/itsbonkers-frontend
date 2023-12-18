@@ -75,6 +75,38 @@ export function SleighComponent({ sleigh }: SleighProps) {
     }
   };
 
+  // const repairSleigh = async () => {
+  //   setRepairInProgress(true);
+
+  //   try {
+  //     if (!signTransaction || !connection || !publicKey) {
+  //       throw Error("Staking failed");
+  //     }
+
+  //     const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
+
+  //     // Call createSleighTx function and wait for the transaction to be ready
+  //     const tx = await retireSleighTx(sleighId, connection, publicKey);
+  //     if (!tx) {
+  //       throw Error("Failed to create tx");
+  //     }
+  //     // const signedTx = await signTransaction(tx);
+  //     // await connection.sendTransaction(tx);
+  //     // console.log("Signed tx: ", signedTx);
+
+  //     // Simulate a request with a 10-second delay
+  //     await new Promise((resolve) => setTimeout(resolve, 10000));
+
+  //     toast.success("Staked");
+  //   } catch (e) {
+  //     console.error("Error during staking: ", e);
+  //     toast.error("Failed to stake");
+  //   } finally {
+  //     setRetireInProgress(false);
+  //     onClose();
+  //   }
+  // };
+
   const startDelivery = async () => {
     setStartingDeliveryInProgress(true);
 
