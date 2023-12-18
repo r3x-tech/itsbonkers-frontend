@@ -8,7 +8,7 @@ import {
   Heading,
   Image,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import theme from "@/styles/theme";
 import userStore from "@/stores/userStore";
 import toast from "react-hot-toast";
@@ -169,6 +169,35 @@ function LoginPage() {
     fetchData();
   }, [connection, loggedIn, publicKey, wallet]);
 
+  const calculateTimeLeft = useCallback(() => {
+    const targetDate = new Date("2023-12-21 18:00:00");
+
+    const now = new Date();
+    const timeDiff = targetDate.getTime() - now.getTime();
+
+    if (timeDiff <= 0) {
+      return { days: "00", hours: "00", minutes: "00" };
+    }
+
+    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+
+    return { days, hours, minutes };
+  }, []);
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 60000);
+
+    return () => clearInterval(timer);
+  }, [calculateTimeLeft]);
+
   return (
     <Flex
       justifyContent="center"
@@ -198,7 +227,89 @@ function LoginPage() {
         <Flex w="100%" mt="10rem">
           {!isLoginInProgress && !connecting ? (
             <Stack h="100%" w="100%">
-              <WalletMultiButton />
+              {/* <WalletMultiButton /> */}
+              <Button
+                onClick={() => {}}
+                bg={theme.colors.primary}
+                w="100%"
+                py="1.5rem"
+                h="5rem"
+                px="3rem"
+                cursor="pointer"
+                borderColor={theme.colors.primary}
+                borderWidth="2px"
+                borderRadius="30px"
+                color={theme.colors.white}
+                fontSize="1.5rem"
+                letterSpacing="1px"
+                fontWeight="700"
+                isDisabled={true}
+                fontFamily={theme.fonts.body}
+                _hover={{
+                  color: theme.colors.white,
+                  borderColor: theme.colors.accentThree,
+                  bg: theme.colors.accentThree,
+                }}
+              >
+                <Text
+                  mr="2rem"
+                  fontSize="2.5rem"
+                  fontWeight="700"
+                  color={theme.colors.tertiary}
+                >
+                  SEASON 1
+                </Text>{" "}
+                STARTING IN
+                <Flex justifyContent="end" align="center" ml="2rem" gap={2}>
+                  <Text
+                    fontSize="3rem"
+                    fontWeight="700"
+                    color={theme.colors.tertiary}
+                  >
+                    {timeLeft.days}
+                  </Text>
+                  <Text
+                    fontSize="1.5rem"
+                    fontWeight="700"
+                    color={theme.colors.white}
+                    mx="0.5rem"
+                  >
+                    DAYS
+                  </Text>
+                  <Text
+                    fontSize="3rem"
+                    fontWeight="700"
+                    color={theme.colors.tertiary}
+                  >
+                    {timeLeft.hours}
+                  </Text>
+                  <Text
+                    fontSize="1.5rem"
+                    fontWeight="700"
+                    color={theme.colors.white}
+                    mx="0.5rem"
+                  >
+                    HRS
+                  </Text>
+                  <Text
+                    fontSize="3rem"
+                    fontWeight="700"
+                    color={theme.colors.tertiary}
+                    fontFamily={theme.fonts.body}
+                  >
+                    {timeLeft.minutes}
+                  </Text>
+                  <Text
+                    fontSize="1.5rem"
+                    fontWeight="700"
+                    color={theme.colors.white}
+                    fontFamily={theme.fonts.body}
+                    mx="0.5rem"
+                  >
+                    MIN
+                  </Text>
+                </Flex>
+              </Button>
             </Stack>
           ) : (
             <Flex
