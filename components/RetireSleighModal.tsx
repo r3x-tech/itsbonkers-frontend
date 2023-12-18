@@ -67,7 +67,11 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
       >
         RETIRE SLEIGH
       </Button>
-      <Modal isOpen={isRetireModalOpen} onClose={onCloseRetireSleighModal}>
+      <Modal
+        isOpen={isRetireModalOpen}
+        onClose={onCloseRetireSleighModal}
+        isCentered
+      >
         <ModalOverlay />
         <ModalContent
           bg={theme.colors.secondary}
@@ -81,9 +85,13 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
             fontSize="2rem"
             fontFamily={theme.fonts.header}
           >
-            STAKE NEW SLEIGH
+            RETIRE SLEIGH
           </ModalHeader>
-          <ModalCloseButton m="1.5rem" color={theme.colors.white} />
+          <ModalCloseButton
+            m="2rem"
+            fontSize="1.25rem"
+            color={theme.colors.white}
+          />
           <ModalBody
             my="2rem"
             w="100%"
@@ -95,25 +103,22 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
               w="100%"
               flexDirection="row"
               justifyContent="center"
-              alignItems="center"
+              alignItems="end"
             >
               <Text
                 textAlign="start"
-                w="100%"
-                mb="1rem"
                 color={theme.colors.white}
                 fontWeight="700"
-                fontSize="1.25rem"
+                fontSize="1.75rem"
               >
-                AMOUNT TO STAKE:
+                SLEIGH NAME:
               </Text>
               <Text
                 textAlign="start"
-                w="100%"
-                mb="1rem"
-                color={theme.colors.white}
+                ml="1rem"
+                color={theme.colors.tertiary}
                 fontWeight="700"
-                fontSize="1.25rem"
+                fontSize="2rem"
               >
                 {sleighName}
               </Text>
@@ -161,10 +166,10 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
                   {sleighName}
                 </Box>
                 <Box as="span" color={theme.colors.white}>
-                  THIS ACTION IS IRREVERSIBLE & SHOULD YOU CHOOSE TO REMOVE YOUR
-                  STAKE YOU WILL LOSE THE STAKED AMOUNT OF BONK. SHOULD YOU
-                  RE-STAKE AFTER UN-STAKING YOU WILL RECEIVE 70% OF YOUR
-                  ORIGINAL STAKE BACK.{" "}
+                  . THIS ACTION IS IRREVERSIBLE & SHOULD YOU CHOOSE TO RETIRE
+                  YOUR SLEIGH YOU WILL LOSE THE STAKED AMOUNT OF BONK. SHOULD
+                  YOU RE-STAKE AFTER RETIRING YOUR SLEIGH YOU WILL RECEIVE 70%
+                  OF YOUR ORIGINAL STAKE BACK.{" "}
                 </Box>{" "}
               </Text>
             </Flex>

@@ -76,7 +76,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
       >
         STAKE NEW SLEIGH +
       </Button>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent
           bg={theme.colors.secondary}
@@ -92,7 +92,11 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
           >
             STAKE NEW SLEIGH
           </ModalHeader>
-          <ModalCloseButton m="1.5rem" color={theme.colors.white} />
+          <ModalCloseButton
+            m="2rem"
+            fontSize="1.25rem"
+            color={theme.colors.white}
+          />
           <ModalBody
             my="2rem"
             w="100%"

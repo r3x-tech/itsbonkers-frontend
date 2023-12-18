@@ -200,11 +200,12 @@ function LoginPage() {
 
   return (
     <Flex
-      justifyContent="center"
+      direction="column"
+      justifyContent="start"
       alignItems="center"
-      h="100vh"
+      h="400vh"
       w="100vw"
-      bgImage="url('/snowfall.gif')"
+      bgImage="url('/snowscene3.gif')"
       backgroundSize="cover"
       backgroundRepeat="no-repeat"
       backgroundPosition="center"
@@ -218,24 +219,33 @@ function LoginPage() {
         minWidth="22rem"
         h="100vh"
         w="100vw"
-        backgroundColor="rgba(0, 0, 0, 0.25)" // Optional: Adds a dark overlay for better readability
       >
-        <Flex justifyContent="center">
-          <Image
-            src="/bonkerslargelogo.png"
-            alt="User Profile Pic"
-            w="50rem"
-            cursor="pointer"
-            onClick={() => {
-              // router.push("/account");
-            }}
-          />
-        </Flex>
-        <Flex w="60rem" mt="10rem">
-          {!isLoginInProgress && !connecting ? (
-            <Stack h="100%" w="100%">
-              <WalletMultiButton />
-              {/* <Button
+        <Flex
+          mt="10rem"
+          w="50vw"
+          h="45vh"
+          borderRadius="3rem"
+          flexDirection="column"
+          justifyContent="center"
+          align="center"
+          backgroundColor="rgba(255, 182, 0, 1)"
+        >
+          <Flex justifyContent="center">
+            <Image
+              src="/bonkerslargelogo.png"
+              alt="User Profile Pic"
+              w="40vw"
+              cursor="pointer"
+              onClick={() => {
+                // router.push("/account");
+              }}
+            />
+          </Flex>
+          <Flex w="40vw" mt="5rem">
+            {!isLoginInProgress && !connecting ? (
+              <Stack h="100%" w="100%">
+                <WalletMultiButton />
+                {/* <Button
                 bg={theme.colors.primary}
                 w="100%"
                 py="1.5rem"
@@ -320,24 +330,50 @@ function LoginPage() {
                   </Text>
                 </Flex>
               </Button> */}
-            </Stack>
-          ) : (
-            <Flex
-              w="100%"
-              flexDirection="column"
-              align="center"
-              justifyContent="center"
-              color={theme.colors.white}
-              my="4.58rem"
-            >
-              <Spinner size="sm" />
-              <Text mt={3} fontSize="0.75rem" fontWeight="500">
-                LOGGING IN
-              </Text>
-            </Flex>
-          )}
+              </Stack>
+            ) : (
+              <Flex
+                w="100%"
+                flexDirection="column"
+                align="center"
+                justifyContent="center"
+                color={theme.colors.white}
+                my="4.58rem"
+              >
+                <Spinner size="sm" />
+                <Text mt={3} fontSize="0.75rem" fontWeight="500">
+                  LOGGING IN
+                </Text>
+              </Flex>
+            )}
+          </Flex>
+          <Flex>
+            <Text></Text>
+          </Flex>
         </Flex>
       </Flex>
+      <Flex
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        fontFamily="Montserrat"
+        p="1rem"
+        minWidth="22rem"
+        h="100vh"
+        w="100vw"
+        backgroundColor="rgba(255, 182, 0, 0.15)"
+      ></Flex>
+      <Flex
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        fontFamily="Montserrat"
+        p="1rem"
+        minWidth="22rem"
+        h="100vh"
+        w="100vw"
+        backgroundColor="rgba(255, 182, 0, 0.25)"
+      ></Flex>
     </Flex>
   );
 }

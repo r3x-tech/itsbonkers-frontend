@@ -8,6 +8,8 @@ import userStore from "@/stores/userStore";
 import theme from "@/styles/theme";
 import { Sleigh } from "@/types/types";
 import { createSleighTx } from "@/utils";
+import { GiSkis } from "react-icons/gi";
+
 import {
   Box,
   Image,
@@ -150,7 +152,7 @@ function HomePage() {
               <Flex
                 direction="column"
                 justifyContent="start"
-                h="20%"
+                h="25%"
                 py="2rem"
                 px="3rem"
                 borderBottomWidth="4px"
@@ -164,37 +166,133 @@ function HomePage() {
                 >
                   RESOURCES
                 </Text>
-                <Flex justifyContent="space-between" mt="1.25rem" w="100%">
+                <Grid
+                  templateColumns="repeat(2, 1fr)"
+                  gap={4}
+                  mt="1.25rem"
+                  w="100%"
+                >
                   <Box
                     bg={theme.colors.background}
-                    boxSize="4.5rem"
+                    w="100%"
+                    height="4.5rem"
                     borderRadius="0.75rem"
                     boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
-                  ></Box>
+                    justifyContent="center"
+                    alignContent="center"
+                    p="1rem"
+                  >
+                    <Flex
+                      w="100%"
+                      h="100%"
+                      justifyContent="space-between"
+                      align="center"
+                    >
+                      <Image src="/reindeer.png" alt="skis" boxSize="2.5rem" />
+                      <Text
+                        fontSize="1.25rem"
+                        fontWeight="700"
+                        fontFamily={theme.fonts.body}
+                      >
+                        x21
+                      </Text>
+                    </Flex>
+                  </Box>
+
                   <Box
                     bg={theme.colors.background}
-                    boxSize="4.5rem"
+                    w="100%"
+                    height="4.5rem"
                     borderRadius="0.75rem"
                     boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
-                  ></Box>
+                    justifyContent="center"
+                    alignContent="center"
+                    p="1rem"
+                  >
+                    <Flex
+                      w="100%"
+                      h="100%"
+                      justifyContent="space-between"
+                      align="center"
+                    >
+                      <Image src="/gps.png" alt="skis" boxSize="2.5rem" />
+                      <Text
+                        fontSize="1.25rem"
+                        fontWeight="700"
+                        fontFamily={theme.fonts.body}
+                      >
+                        x21
+                      </Text>
+                    </Flex>
+                  </Box>
                   <Box
                     bg={theme.colors.background}
-                    boxSize="4.5rem"
+                    w="100%"
+                    height="4.5rem"
                     borderRadius="0.75rem"
                     boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
-                  ></Box>
+                    justifyContent="space-between"
+                    alignContent="center"
+                    p="1rem"
+                  >
+                    {/* <Flex                       w="100%"
+                      h="100%"
+                      justifyContent="start"
+                      align="center">
+                      <Image src="/skis.png" alt="skis" boxSize="2.5rem" />
+                    </Flex> */}
+                    <Flex
+                      w="100%"
+                      h="100%"
+                      justifyContent="space-between"
+                      align="center"
+                    >
+                      <GiSkis fontSize="2rem" />
+                      <Text
+                        fontSize="1.25rem"
+                        fontWeight="700"
+                        fontFamily={theme.fonts.body}
+                      >
+                        x34
+                      </Text>
+                    </Flex>
+                  </Box>
                   <Box
                     bg={theme.colors.background}
-                    boxSize="4.5rem"
+                    w="100%"
+                    height="4.5rem"
                     borderRadius="0.75rem"
                     boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
-                  ></Box>
-                </Flex>
+                    justifyContent="center"
+                    alignContent="center"
+                    p="1rem"
+                  >
+                    <Flex
+                      w="100%"
+                      h="100%"
+                      justifyContent="space-between"
+                      align="center"
+                    >
+                      <Image
+                        src="/presentsbag.png"
+                        alt="skis"
+                        boxSize="2.5rem"
+                      />
+                      <Text
+                        fontSize="1.25rem"
+                        fontWeight="700"
+                        fontFamily={theme.fonts.body}
+                      >
+                        x10
+                      </Text>
+                    </Flex>
+                  </Box>
+                </Grid>
               </Flex>
               <Flex
                 direction="column"
                 justifyContent="start"
-                h="80%"
+                h="75%"
                 py="2rem"
                 px="3rem"
               >
