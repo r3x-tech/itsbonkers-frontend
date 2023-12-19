@@ -21,27 +21,46 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import theme from "@/styles/theme";
+import { GameSettings, Sleigh } from "@/types/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import useSolana from "@/hooks/useSolana";
-import { createSleighTx } from "@/utils";
-import { randomBytes } from "crypto";
 import toast from "react-hot-toast";
+import { repairSleighTx } from "@/utils";
 
-interface StakeSleighModalProps {
-  minStakeAmount: number;
-  maxStakeAmount: number;
-  stakingInProgress: boolean;
-  setStakingInProgress: (value: boolean) => void;
+interface RepairSleighModalProps {
+  repairSleighInProgress: boolean;
+  setRepairSleighInProgress: (value: boolean) => void;
+  currentStage: string;
+  currentSleigh: Sleigh;
+  partToRepair: string;
+  hp: number;
 }
 
-export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
-  minStakeAmount,
-  maxStakeAmount,
-  stakingInProgress,
-  setStakingInProgress,
+export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
+  repairSleighInProgress,
+  setRepairSleighInProgress,
+  currentStage,
+  currentSleigh,
+  partToRepair,
+  hp,
 }) => {
-  const [stakeAmount, setStakeAmount] = useState(250);
+  const [repairAmount, setRepairAmount] = useState(0);
+  const [minRepairAmount, setMinRepairAmount] = useState(0);
+  const maxR = 255 - hp;
+  const [maxRepairAmount, setMaxRepairAmount] = useState(maxR);
 
+  const handleRepairSliderChange = (value: any) => {
+    setRepairAmount(value);
+  };
+
+  const handleRepairInputChange = (
+    valueAsString: string,
+    valueAsNumber: number
+  ) => {
+    setRepairAmount(valueAsNumber);
+  };
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { connection } = useSolana();
   const {
     wallet,
@@ -51,30 +70,28 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
     connecting,
     disconnecting,
   } = useWallet();
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleSliderChange = (value: any) => {
-    setStakeAmount(value);
-  };
+  const repairSleigh = async (
+    propulsion: number,
+    landingGear: number,
+    navigation: number,
+    presentsBag: number
+  ) => {
+    setRepairSleighInProgress(true);
 
-  const handleInputChange = (valueAsString: string, valueAsNumber: number) => {
-    setStakeAmount(valueAsNumber);
-  };
-
-  const stakeSleigh = async () => {
-    setStakingInProgress(true);
     try {
-      if (!signTransaction || !connection || !publicKey) {
-        throw Error("Staking failed");
+      if (!signTransaction || !connection || !publicKey || !currentSleigh) {
+        throw Error("Repair sleigh failed");
       }
 
-      const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
-      const stakeAmt = stakeAmount;
-
-      // Call createSleighTx function and wait for the transaction to be ready
-      const tx = await createSleighTx(
-        sleighId,
-        stakeAmt,
+      const tx = await repairSleighTx(
+        BigInt(currentSleigh.sleighId),
+        {
+          propulsion,
+          landingGear,
+          navigation,
+          presentsBag,
+        },
         connection,
         publicKey
       );
@@ -88,37 +105,36 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
       // Simulate a request with a 10-second delay
       // await new Promise((resolve) => setTimeout(resolve, 10000));
 
-      toast.success("Staked sleigh");
+      toast.success("Sleigh repaired");
       onClose();
     } catch (e) {
       console.error("Error during staking: ", e);
-      toast.error("Failed to stake sleigh");
+      toast.error("Failed to repair");
     } finally {
-      setStakingInProgress(false);
+      setRepairSleighInProgress(false);
     }
-  };
-
-  const onSleighWarningClose = () => {
-    setStakingInProgress(false);
-    onClose();
   };
 
   return (
     <>
       <Button
         borderWidth="2px"
-        borderColor={theme.colors.tertiary}
-        bg={theme.colors.tertiary}
+        borderColor={theme.colors.primary}
+        bg={theme.colors.primary}
         borderRadius="30px"
-        fontWeight="600"
-        fontSize="1.25rem"
+        fontWeight="700"
+        fontSize="1rem"
         fontFamily={theme.fonts.body}
         w="100%"
-        mb="1rem"
         h="3rem"
-        color={theme.colors.background}
-        isDisabled={stakingInProgress}
-        isLoading={stakingInProgress}
+        color={theme.colors.white}
+        isDisabled={
+          currentSleigh.broken ||
+          hp == 255 ||
+          repairSleighInProgress ||
+          currentStage == "BUILD"
+        }
+        isLoading={repairSleighInProgress}
         spinner={
           <Flex flexDirection="row" align="center">
             <Spinner color={theme.colors.white} size="sm" />
@@ -126,14 +142,14 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
         }
         onClick={onOpen}
         _hover={{
-          color: theme.colors.background,
-          borderColor: theme.colors.quaternary,
-          bg: theme.colors.quaternary,
+          color: theme.colors.white,
+          borderColor: theme.colors.accentThree,
+          bg: theme.colors.accentThree,
         }}
       >
-        STAKE NEW SLEIGH +
+        REPAIR
       </Button>
-      <Modal isOpen={isOpen} onClose={onSleighWarningClose} isCentered>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent
           bg={theme.colors.secondary}
@@ -147,7 +163,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
             fontSize="2rem"
             fontFamily={theme.fonts.header}
           >
-            STAKE NEW SLEIGH
+            REPAIR SLEIGH {partToRepair}
           </ModalHeader>
           <ModalCloseButton
             m="2rem"
@@ -167,6 +183,35 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
               justifyContent="center"
               alignItems="center"
             >
+              <Flex justifyContent="start" alignItems="center" w="100%">
+                <Text fontWeight="bold" mb="3rem">
+                  <Box
+                    as="span"
+                    color={theme.colors.white}
+                    fontWeight="700"
+                    fontSize="1.25rem"
+                  >
+                    CURRENT {partToRepair} HP:
+                  </Box>{" "}
+                  <Box
+                    as="span"
+                    color={
+                      hp < 60
+                        ? theme.colors.primary
+                        : hp < 120
+                        ? theme.colors.quaternary
+                        : hp < 200
+                        ? theme.colors.tertiary
+                        : theme.green[700]
+                    }
+                    fontWeight="700"
+                    fontSize="1.5rem"
+                  >
+                    {hp} HP
+                  </Box>
+                </Text>
+              </Flex>
+
               <Text
                 textAlign="start"
                 w="100%"
@@ -175,7 +220,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                 fontWeight="700"
                 fontSize="1.25rem"
               >
-                AMOUNT TO STAKE:
+                AMOUNT TO REPAIR:
               </Text>
               <Flex
                 w="100%"
@@ -186,11 +231,11 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                 <Slider
                   w="70%"
                   id="slider"
-                  defaultValue={minStakeAmount}
-                  min={minStakeAmount}
-                  max={maxStakeAmount}
-                  value={stakeAmount}
-                  onChange={handleSliderChange}
+                  defaultValue={minRepairAmount}
+                  min={minRepairAmount}
+                  max={maxRepairAmount}
+                  value={repairAmount}
+                  onChange={handleRepairSliderChange}
                 >
                   <SliderTrack
                     bg={theme.colors.background}
@@ -208,11 +253,11 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                 </Slider>
                 <NumberInput
                   ml="2rem"
-                  defaultValue={minStakeAmount}
-                  min={minStakeAmount}
-                  max={maxStakeAmount}
-                  value={stakeAmount}
-                  onChange={handleInputChange}
+                  defaultValue={minRepairAmount}
+                  min={minRepairAmount}
+                  max={maxRepairAmount}
+                  value={repairAmount}
+                  onChange={handleRepairInputChange}
                 >
                   <NumberInputField
                     h="4rem"
@@ -232,7 +277,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                   fontWeight="700"
                   color={theme.colors.white}
                 >
-                  BONK
+                  HP
                 </Text>
               </Flex>
             </Flex>
@@ -252,14 +297,43 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                 my="1rem"
                 h="3rem"
                 color={theme.colors.white}
-                isDisabled={stakingInProgress}
-                isLoading={stakingInProgress}
+                isDisabled={repairSleighInProgress}
+                isLoading={repairSleighInProgress}
                 spinner={
                   <Flex flexDirection="row" align="center">
                     <Spinner color={theme.colors.white} size="sm" />
                   </Flex>
                 }
-                onClick={stakeSleigh}
+                onClick={() => {
+                  let propulsion = 0,
+                    landingGear = 0,
+                    navigation = 0,
+                    presentsBag = 0;
+
+                  switch (partToRepair) {
+                    case "PROPULSION":
+                      propulsion = repairAmount;
+                      break;
+                    case "LANDING GEAR":
+                      landingGear = repairAmount;
+                      break;
+                    case "NAVIGATION":
+                      navigation = repairAmount;
+                      break;
+                    case "PRESENTS BAG":
+                      presentsBag = repairAmount;
+                      break;
+                    default:
+                      break; // or handle an unexpected case
+                  }
+
+                  repairSleigh(
+                    propulsion,
+                    landingGear,
+                    navigation,
+                    presentsBag
+                  );
+                }}
                 _hover={{
                   color: theme.colors.white,
                   borderColor: theme.colors.accentThree,
@@ -273,17 +347,20 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                   WARNING!
                 </Box>{" "}
                 <Box as="span" color={theme.colors.white}>
-                  YOU ARE ABOUT TO STAKE
+                  YOU ARE ABOUT TO USE
                 </Box>{" "}
                 <Box as="span" color={theme.colors.tertiary}>
-                  {stakeAmount} BONK{" "}
+                  {repairAmount} {partToRepair} RESOURCES
+                </Box>{" "}
+                <Box as="span" color={theme.colors.white}>
+                  TO REPAIR YOUR SLEIGH&apos;S
+                </Box>{" "}
+                <Box as="span" color={theme.colors.tertiary}>
+                  {partToRepair}
                 </Box>
                 <Box as="span" color={theme.colors.white}>
-                  THIS ACTION IS IRREVERSIBLE & SHOULD YOU CHOOSE TO REMOVE YOUR
-                  STAKE YOU WILL LOSE THE STAKED AMOUNT OF BONK. SHOULD YOU
-                  RE-STAKE AFTER UN-STAKING YOU WILL RECEIVE 70% OF YOUR
-                  ORIGINAL STAKE BACK.{" "}
-                </Box>{" "}
+                  .
+                </Box>
               </Text>
             </Flex>
           </ModalFooter>

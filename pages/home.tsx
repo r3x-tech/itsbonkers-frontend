@@ -3,7 +3,7 @@ import { SleighCardComponent } from "@/components/SleighCardComponent";
 import { SleighComponent } from "@/components/SleighComponent";
 import { StakeSleighModal } from "@/components/StakeSleighModal";
 import useSolana from "@/hooks/useSolana";
-import { sampleSleighs } from "@/stores/sampleData";
+import { sampleGameSettings, sampleSleighs } from "@/stores/sampleData";
 import userStore from "@/stores/userStore";
 import theme from "@/styles/theme";
 import { Sleigh } from "@/types/types";
@@ -41,14 +41,21 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { randomBytes } from "crypto";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useGameSettings } from "@/hooks/useGameSettings";
+import { useCurrentSleighs } from "@/hooks/useCurrentSleighs";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCurrentWalletBonkBalance } from "@/hooks/useCurrentWalletBonkBalance";
 
 function HomePage() {
+  const [selectedSleigh, setSelectedSleigh] = useState<Sleigh | null>(null);
+  const [stakingInProgress, setStakingInProgress] = useState<boolean>(false);
+  const [currentStakeCost, setCurrentStakeCost] = useState<number>(0);
+
   const { loggedIn } = userStore();
   const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const queryClient = useQueryClient();
   const { connection } = useSolana();
   const {
     wallet,
@@ -59,66 +66,36 @@ function HomePage() {
     disconnecting,
   } = useWallet();
 
-  const [selectedSleigh, setSelectedSleigh] = useState<Sleigh | null>(null);
-  const [stakingInProgress, setStakingInProgress] = useState<boolean>(false);
+  const { data: gameSettings, isLoading: isLoadingGameSettings } =
+    useGameSettings(connection);
+  const { data: currentSleighs, isLoading: isLoadingSleighs } =
+    useCurrentSleighs(publicKey, connection);
+  const { data: walletBonkBalance, isLoading: isLoadingWalletBonkBalance } =
+    useCurrentWalletBonkBalance(publicKey, connection);
+
+  useEffect(() => {
+    if (publicKey && connection) {
+      queryClient.refetchQueries({
+        queryKey: ["gameSettings", connection],
+      });
+      queryClient.refetchQueries({
+        queryKey: ["currentSleighs", publicKey, connection],
+      });
+      queryClient.refetchQueries({
+        queryKey: ["bonkBalance", publicKey, connection],
+      });
+    }
+  }, [connection, publicKey, queryClient]);
+
+  useEffect(() => {
+    if (gameSettings) {
+      const sC = gameSettings.sleighsBuilt * gameSettings.mintCostMultiplier;
+      setCurrentStakeCost(sC);
+    }
+  }, [gameSettings]);
 
   const handleSelectSleigh = (sleigh: Sleigh) => {
     setSelectedSleigh(sleigh);
-  };
-
-  const [stakeAmount, setStakeAmount] = useState(250);
-  const [minStakeAmount, setMinStakeAmount] = useState(250);
-  const [maxStakeAmount, setMaxStakeAmount] = useState(100000000000);
-
-  const handleSliderChange = (value: any) => {
-    setStakeAmount(value);
-  };
-
-  const handleInputChange = (valueAsString: string, valueAsNumber: number) => {
-    setStakeAmount(valueAsNumber);
-  };
-
-  const stakeSleigh = async () => {
-    setStakingInProgress(true);
-
-    try {
-      if (!signTransaction || !connection || !publicKey) {
-        throw Error("Staking failed");
-      }
-
-      const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
-      const stakeAmt = stakeAmount;
-
-      // Call createSleighTx function and wait for the transaction to be ready
-      const tx = await createSleighTx(
-        sleighId,
-        stakeAmt,
-        connection,
-        publicKey
-      );
-      if (!tx) {
-        throw Error("Failed to create tx");
-      }
-      // const signedTx = await signTransaction(tx);
-      // await connection.sendTransaction(tx);
-      // console.log("Signed tx: ", signedTx);
-
-      // Simulate a request with a 10-second delay
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-
-      toast.success("Staked");
-    } catch (e) {
-      console.error("Error during staking: ", e);
-      toast.error("Failed to stake");
-    } finally {
-      setStakingInProgress(false);
-      onClose();
-    }
-  };
-
-  const onSleighWarningClose = () => {
-    setStakingInProgress(false);
-    onClose();
   };
 
   return (
@@ -325,6 +302,7 @@ function HomePage() {
                       color={theme.colors.white}
                     >
                       {sampleSleighs.length}
+                      {/* {currentSleighs?.length} */}
                     </Text>
                   </Flex>
                 </Flex>
@@ -357,6 +335,19 @@ function HomePage() {
                         }
                       />
                     ))}
+                    {/* {currentSleighs?.map((sleigh, index) => (
+                      <SleighCardComponent
+                        key={index}
+                        sleigh={sleigh}
+                        onSelect={handleSelectSleigh}
+                        isSelected={
+                          !!(
+                            selectedSleigh &&
+                            selectedSleigh.sleighId === sleigh.sleighId
+                          )
+                        }
+                      />
+                    ))} */}
                   </Flex>
                   <Flex
                     flexDirection="column"
@@ -366,16 +357,10 @@ function HomePage() {
                     h="12%"
                   >
                     <StakeSleighModal
-                      isOpen={isOpen}
-                      onOpen={onOpen}
-                      onClose={onSleighWarningClose}
-                      stakeAmount={stakeAmount}
-                      minStakeAmount={minStakeAmount}
-                      maxStakeAmount={maxStakeAmount}
-                      handleSliderChange={handleSliderChange}
-                      handleInputChange={handleInputChange}
-                      onConfirmStake={stakeSleigh}
+                      minStakeAmount={currentStakeCost}
+                      maxStakeAmount={walletBonkBalance!}
                       stakingInProgress={stakingInProgress}
+                      setStakingInProgress={setStakingInProgress}
                     />
                     <Flex>
                       <Text
@@ -393,14 +378,18 @@ function HomePage() {
                         fontFamily={theme.fonts.body}
                         color={theme.colors.white}
                       >
-                        10M BONK
+                        {currentStakeCost}
                       </Text>
                     </Flex>
                   </Flex>
                 </Flex>
               </Flex>
             </Flex>
-            <SleighComponent sleigh={selectedSleigh} />
+            <SleighComponent
+              sleigh={selectedSleigh}
+              gameSettings={sampleGameSettings[2]}
+              // gameSettings={gameSettings}
+            />
           </Flex>
         ) : (
           <Flex

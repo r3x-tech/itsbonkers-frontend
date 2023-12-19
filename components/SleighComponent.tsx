@@ -1,5 +1,5 @@
 import theme from "@/styles/theme";
-import { Sleigh } from "@/types/types";
+import { GameSettings, Sleigh } from "@/types/types";
 import {
   Image,
   Flex,
@@ -11,22 +11,40 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { RetireSleighModal } from "./RetireSleighModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useSolana from "@/hooks/useSolana";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { randomBytes } from "crypto";
-import { deliveryTx, retireSleighTx } from "@/utils/solana";
+import {
+  claimLevelsTx,
+  deliveryTx,
+  getGameRolls,
+  repairSleighTx,
+  retireSleighTx,
+} from "@/utils/solana";
+import { RepairSleighModal } from "./RepairSleighModal";
+import { sampleSleighs } from "@/stores/sampleData";
 
 interface SleighProps {
   sleigh: Sleigh | null;
+  gameSettings: GameSettings | null;
 }
 
-export function SleighComponent({ sleigh }: SleighProps) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
   const [retireInProgress, setRetireInProgress] = useState<boolean>(false);
+  const [repairSleighInProgress, setRepairSleighInProgress] =
+    useState<boolean>(false);
   const [startingDeliveryInProgress, setStartingDeliveryInProgress] =
     useState<boolean>(false);
+  const [claimingInProgress, setClaimingInProgress] = useState<boolean>(false);
+  const [currentStage, setCurrentStage] = useState<string>("BUILD");
+
+  useEffect(() => {
+    if (gameSettings && gameSettings.stage1Start > gameSettings.stage1End) {
+      setCurrentStage("DELIVERY");
+    }
+  }, [gameSettings]);
 
   const { connection } = useSolana();
   const {
@@ -38,104 +56,75 @@ export function SleighComponent({ sleigh }: SleighProps) {
     disconnecting,
   } = useWallet();
 
-  const onRetireWarningClose = () => {
-    setRetireInProgress(false);
-    onClose();
-  };
-
-  const retireSleigh = async () => {
-    setRetireInProgress(true);
-
-    try {
-      if (!signTransaction || !connection || !publicKey) {
-        throw Error("Staking failed");
-      }
-
-      const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
-
-      // Call createSleighTx function and wait for the transaction to be ready
-      const tx = await retireSleighTx(sleighId, connection, publicKey);
-      if (!tx) {
-        throw Error("Failed to create tx");
-      }
-      // const signedTx = await signTransaction(tx);
-      // await connection.sendTransaction(tx);
-      // console.log("Signed tx: ", signedTx);
-
-      // Simulate a request with a 10-second delay
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-
-      toast.success("Staked");
-    } catch (e) {
-      console.error("Error during staking: ", e);
-      toast.error("Failed to stake");
-    } finally {
-      setRetireInProgress(false);
-      onClose();
-    }
-  };
-
-  // const repairSleigh = async () => {
-  //   setRepairInProgress(true);
-
-  //   try {
-  //     if (!signTransaction || !connection || !publicKey) {
-  //       throw Error("Staking failed");
-  //     }
-
-  //     const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
-
-  //     // Call createSleighTx function and wait for the transaction to be ready
-  //     const tx = await retireSleighTx(sleighId, connection, publicKey);
-  //     if (!tx) {
-  //       throw Error("Failed to create tx");
-  //     }
-  //     // const signedTx = await signTransaction(tx);
-  //     // await connection.sendTransaction(tx);
-  //     // console.log("Signed tx: ", signedTx);
-
-  //     // Simulate a request with a 10-second delay
-  //     await new Promise((resolve) => setTimeout(resolve, 10000));
-
-  //     toast.success("Staked");
-  //   } catch (e) {
-  //     console.error("Error during staking: ", e);
-  //     toast.error("Failed to stake");
-  //   } finally {
-  //     setRetireInProgress(false);
-  //     onClose();
-  //   }
-  // };
-
   const startDelivery = async () => {
     setStartingDeliveryInProgress(true);
 
     try {
-      if (!signTransaction || !connection || !publicKey) {
+      if (!signTransaction || !connection || !publicKey || !sleigh) {
         throw Error("Staking failed");
       }
       const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
 
-      // Call createSleighTx function and wait for the transaction to be ready
       const tx = await deliveryTx(sleighId, connection, publicKey);
       if (!tx) {
         throw Error("Failed to create tx");
       }
-      // const signedTx = await signTransaction(tx);
-      // await connection.sendTransaction(tx);
-      // console.log("Signed tx: ", signedTx);
+      const signedTx = await signTransaction(tx);
+      await connection.sendTransaction(tx);
+      console.log("Signed tx: ", signedTx);
 
       // Simulate a request with a 10-second delay
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-      toast.success("Staked");
+      // await new Promise((resolve) => setTimeout(resolve, 10000));
+
+      toast.success("Delivery started");
     } catch (e) {
       console.error("Error during staking: ", e);
-      toast.error("Failed to stake");
+      toast.error("Failed to start delivery");
     } finally {
       setStartingDeliveryInProgress(false);
-      onClose();
     }
   };
+
+  const claimSleigh = async () => {
+    setClaimingInProgress(true);
+
+    try {
+      if (!signTransaction || !connection || !publicKey || !sleigh) {
+        throw Error("Staking failed");
+      }
+      const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
+
+      const gameRolls = await getGameRolls(connection, currentStage);
+
+      if (!gameRolls) {
+        throw Error("Failed to get game rolls");
+      }
+
+      const tx = await claimLevelsTx(
+        sleighId,
+        gameRolls.rolls,
+        connection,
+        publicKey
+      );
+      if (!tx) {
+        throw Error("Failed to create tx");
+      }
+      const signedTx = await signTransaction(tx);
+      await connection.sendTransaction(tx);
+      console.log("Signed tx: ", signedTx);
+
+      // Simulate a request with a 10-second delay
+      // await new Promise((resolve) => setTimeout(resolve, 10000));
+
+      toast.success("Sleigh claimed");
+    } catch (e) {
+      console.error("Error during claiming sleigh: ", e);
+      toast.error("Failed to claim sleigh");
+    } finally {
+      setClaimingInProgress(false);
+    }
+  };
+
   return (
     <Flex
       direction="column"
@@ -169,7 +158,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                 fontFamily={theme.fonts.body}
                 color={theme.colors.white}
               >
-                BUILD
+                {currentStage}
               </Text>
             </Flex>
             <Flex>
@@ -212,69 +201,71 @@ export function SleighComponent({ sleigh }: SleighProps) {
                 10M BONK
               </Text>
             </Flex>
-            <Flex
-              flexDirection="column"
-              w="20rem"
-              overflowY="auto"
-              justifyContent="space-between"
-              align="flex-end"
-            >
-              <Flex>
-                <Text
-                  fontSize="1.25rem"
-                  fontWeight="400"
-                  fontFamily={theme.fonts.body}
-                  color={theme.colors.white}
-                  mr="1rem"
-                >
-                  NEXT DELIVERY IN:{" "}
-                </Text>
-                <Text
-                  fontSize="1.25rem"
-                  fontWeight="700"
-                  fontFamily={theme.fonts.body}
-                  color={theme.colors.white}
-                >
-                  {/* {sleigh.nextDelivery} */}
-                  30 MIN
-                </Text>
-              </Flex>
-              <Button
-                borderWidth="2px"
-                borderColor={theme.colors.primary}
-                bg={theme.colors.primary}
-                borderRadius="30px"
-                fontWeight="700"
-                fontSize="1.25rem"
-                fontFamily={theme.fonts.body}
+            {currentStage == "DELIVERY" && (
+              <Flex
+                flexDirection="column"
                 w="20rem"
-                mb="1rem"
-                h="3.5rem"
-                color={theme.colors.white}
-                isDisabled={startingDeliveryInProgress}
-                isLoading={startingDeliveryInProgress}
-                spinner={
-                  <Flex flexDirection="row" align="center">
-                    <Spinner color={theme.colors.white} size="sm" />
-                  </Flex>
-                }
-                onClick={startDelivery}
-                _hover={{
-                  color: theme.colors.white,
-                  borderColor: theme.colors.accentThree,
-                  bg: theme.colors.accentThree,
-                }}
+                overflowY="auto"
+                justifyContent="space-between"
+                align="flex-end"
               >
-                <Text mr="0.5rem">DELIVER </Text>
-                <Tooltip
-                  label="PENDING DELIVIES"
-                  aria-label="PENDING DELIVIES"
-                  bg={theme.colors.black}
+                <Flex>
+                  <Text
+                    fontSize="1.25rem"
+                    fontWeight="400"
+                    fontFamily={theme.fonts.body}
+                    color={theme.colors.white}
+                    mr="1rem"
+                  >
+                    NEXT DELIVERY IN:{" "}
+                  </Text>
+                  <Text
+                    fontSize="1.25rem"
+                    fontWeight="700"
+                    fontFamily={theme.fonts.body}
+                    color={theme.colors.white}
+                  >
+                    {/* {sleigh.nextDelivery} */}
+                    30 MIN
+                  </Text>
+                </Flex>
+                <Button
+                  borderWidth="2px"
+                  borderColor={theme.colors.primary}
+                  bg={theme.colors.primary}
+                  borderRadius="30px"
+                  fontWeight="700"
+                  fontSize="1.25rem"
+                  fontFamily={theme.fonts.body}
+                  w="20rem"
+                  mb="1rem"
+                  h="3.5rem"
+                  color={theme.colors.white}
+                  isDisabled={startingDeliveryInProgress}
+                  isLoading={startingDeliveryInProgress}
+                  spinner={
+                    <Flex flexDirection="row" align="center">
+                      <Spinner color={theme.colors.white} size="sm" />
+                    </Flex>
+                  }
+                  onClick={startDelivery}
+                  _hover={{
+                    color: theme.colors.white,
+                    borderColor: theme.colors.accentThree,
+                    bg: theme.colors.accentThree,
+                  }}
                 >
-                  <Text>(3)</Text>
-                </Tooltip>
-              </Button>
-            </Flex>
+                  <Text mr="0.5rem">DELIVER </Text>
+                  <Tooltip
+                    label="PENDING DELIVIES"
+                    aria-label="PENDING DELIVIES"
+                    bg={theme.colors.black}
+                  >
+                    <Text>(3)</Text>
+                  </Tooltip>
+                </Button>
+              </Flex>
+            )}
           </Flex>
           <Flex
             direction="column"
@@ -292,11 +283,11 @@ export function SleighComponent({ sleigh }: SleighProps) {
               mb="5rem"
             >
               <Flex
-                w="50%"
+                w="60%"
                 h="10rem"
-                ml="15rem"
+                ml="10rem"
                 justifyContent="space-between"
-                alignItems="start"
+                alignItems="end"
               >
                 <Flex
                   w="30rem"
@@ -331,6 +322,36 @@ export function SleighComponent({ sleigh }: SleighProps) {
                   >
                     {sleigh.sleighId}
                   </Text>
+                  {sleigh.builtIndex == 0 && (
+                    <Button
+                      borderWidth="2px"
+                      borderColor={theme.colors.primary}
+                      bg={theme.colors.primary}
+                      borderRadius="30px"
+                      fontWeight="700"
+                      fontSize="1.25rem"
+                      fontFamily={theme.fonts.body}
+                      w="20rem"
+                      mt="1rem"
+                      h="3.5rem"
+                      color={theme.colors.white}
+                      isDisabled={claimingInProgress || sleigh.builtIndex > 0}
+                      isLoading={claimingInProgress}
+                      spinner={
+                        <Flex flexDirection="row" align="center">
+                          <Spinner color={theme.colors.white} size="sm" />
+                        </Flex>
+                      }
+                      onClick={claimSleigh}
+                      _hover={{
+                        color: theme.colors.white,
+                        borderColor: theme.colors.accentThree,
+                        bg: theme.colors.accentThree,
+                      }}
+                    >
+                      CLAIM SLEIGH
+                    </Button>
+                  )}
                 </Flex>
                 <Flex
                   flexDirection="column"
@@ -358,7 +379,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                         fontSize="1rem"
                         fontWeight="700"
                         fontFamily={theme.fonts.body}
-                        color={theme.colors.red}
+                        color={theme.colors.primary}
                       >
                         BROKEN
                       </Text>
@@ -367,47 +388,37 @@ export function SleighComponent({ sleigh }: SleighProps) {
                         fontSize="1rem"
                         fontWeight="700"
                         fontFamily={theme.fonts.body}
-                        color={theme.colors.green}
+                        color={
+                          sleigh.navigationHp < 60
+                            ? theme.colors.primary
+                            : sleigh.navigationHp < 120
+                            ? theme.colors.quaternary
+                            : sleigh.navigationHp < 200
+                            ? theme.colors.tertiary
+                            : theme.green[700]
+                        }
                       >
-                        ACTIVE
+                        {sleigh.navigationHp} HP
                       </Text>
                     )}
                   </Flex>
                   <Flex justifyContent="center" alignContent="center" mt="2rem">
-                    <Button
-                      borderWidth="2px"
-                      borderColor={theme.colors.primary}
-                      bg={theme.colors.primary}
-                      borderRadius="30px"
-                      fontWeight="700"
-                      fontSize="1rem"
-                      fontFamily={theme.fonts.body}
-                      w="100%"
-                      h="3rem"
-                      color={theme.colors.white}
-                      isDisabled={!sleigh.broken}
-                      isLoading={sleigh == null}
-                      spinner={
-                        <Flex flexDirection="row" align="center">
-                          <Spinner color={theme.colors.white} size="sm" />
-                        </Flex>
-                      }
-                      onClick={() => {}}
-                      _hover={{
-                        color: theme.colors.white,
-                        borderColor: theme.colors.accentThree,
-                        bg: theme.colors.accentThree,
-                      }}
-                    >
-                      REPAIR
-                    </Button>
+                    <RepairSleighModal
+                      repairSleighInProgress={repairSleighInProgress}
+                      setRepairSleighInProgress={setRepairSleighInProgress}
+                      currentStage={currentStage}
+                      currentSleigh={sleigh}
+                      partToRepair={"NAVIGATION"}
+                      hp={sleigh.navigationHp}
+                    />
                   </Flex>
                 </Flex>
               </Flex>
             </Flex>
-            <Flex w="100%">
+            <Flex justifyContent="center" w="100%">
               <Flex
                 flexDirection="column"
+                align="center"
                 bg={theme.colors.background}
                 w="20rem"
                 h="10rem"
@@ -433,7 +444,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                       fontSize="1rem"
                       fontWeight="700"
                       fontFamily={theme.fonts.body}
-                      color={theme.colors.red}
+                      color={theme.colors.primary}
                     >
                       BROKEN
                     </Text>
@@ -442,40 +453,34 @@ export function SleighComponent({ sleigh }: SleighProps) {
                       fontSize="1rem"
                       fontWeight="700"
                       fontFamily={theme.fonts.body}
-                      color={theme.colors.green}
+                      color={
+                        sleigh.propulsionHp < 60
+                          ? theme.colors.primary
+                          : sleigh.propulsionHp < 120
+                          ? theme.colors.quaternary
+                          : sleigh.propulsionHp < 200
+                          ? theme.colors.tertiary
+                          : theme.green[700]
+                      }
                     >
-                      ACTIVE
+                      {sleigh.propulsionHp} HP
                     </Text>
                   )}
                 </Flex>
-                <Flex justifyContent="center" alignContent="center" mt="2rem">
-                  <Button
-                    borderWidth="2px"
-                    borderColor={theme.colors.primary}
-                    bg={theme.colors.primary}
-                    borderRadius="30px"
-                    fontWeight="700"
-                    fontSize="1rem"
-                    fontFamily={theme.fonts.body}
-                    w="100%"
-                    h="3rem"
-                    color={theme.colors.white}
-                    isDisabled={!sleigh.broken}
-                    isLoading={sleigh == null}
-                    spinner={
-                      <Flex flexDirection="row" align="center">
-                        <Spinner color={theme.colors.white} size="sm" />
-                      </Flex>
-                    }
-                    onClick={() => {}}
-                    _hover={{
-                      color: theme.colors.white,
-                      borderColor: theme.colors.accentThree,
-                      bg: theme.colors.accentThree,
-                    }}
-                  >
-                    REPAIR
-                  </Button>
+                <Flex
+                  justifyContent="center"
+                  alignContent="center"
+                  mt="2rem"
+                  w="100%"
+                >
+                  <RepairSleighModal
+                    repairSleighInProgress={repairSleighInProgress}
+                    setRepairSleighInProgress={setRepairSleighInProgress}
+                    currentStage={currentStage}
+                    currentSleigh={sleigh}
+                    partToRepair={"PROPULSION"}
+                    hp={sleigh.propulsionHp}
+                  />
                 </Flex>
               </Flex>
               <Image src="/sleigh.svg" alt="Sleigh Image" w="50rem" />
@@ -498,14 +503,14 @@ export function SleighComponent({ sleigh }: SleighProps) {
                     color={theme.colors.white}
                     mr="0.5rem"
                   >
-                    PAYLOAD
+                    PRESENTS BAG
                   </Text>
                   {sleigh.broken ? (
                     <Text
                       fontSize="1rem"
                       fontWeight="700"
                       fontFamily={theme.fonts.body}
-                      color={theme.colors.red}
+                      color={theme.colors.primary}
                     >
                       BROKEN
                     </Text>
@@ -514,40 +519,29 @@ export function SleighComponent({ sleigh }: SleighProps) {
                       fontSize="1rem"
                       fontWeight="700"
                       fontFamily={theme.fonts.body}
-                      color={theme.colors.green}
+                      color={
+                        sleigh.presentsBagHp < 60
+                          ? theme.colors.primary
+                          : sleigh.presentsBagHp < 120
+                          ? theme.colors.quaternary
+                          : sleigh.presentsBagHp < 200
+                          ? theme.colors.tertiary
+                          : theme.green[700]
+                      }
                     >
-                      ACTIVE
+                      {sleigh.presentsBagHp} HP
                     </Text>
                   )}
                 </Flex>
                 <Flex justifyContent="center" alignContent="center" mt="2rem">
-                  <Button
-                    borderWidth="2px"
-                    borderColor={theme.colors.primary}
-                    bg={theme.colors.primary}
-                    borderRadius="30px"
-                    fontWeight="700"
-                    fontSize="1rem"
-                    fontFamily={theme.fonts.body}
-                    w="100%"
-                    h="3rem"
-                    color={theme.colors.white}
-                    isDisabled={!sleigh.broken}
-                    isLoading={sleigh == null}
-                    spinner={
-                      <Flex flexDirection="row" align="center">
-                        <Spinner color={theme.colors.white} size="sm" />
-                      </Flex>
-                    }
-                    onClick={() => {}}
-                    _hover={{
-                      color: theme.colors.white,
-                      borderColor: theme.colors.accentThree,
-                      bg: theme.colors.accentThree,
-                    }}
-                  >
-                    REPAIR
-                  </Button>
+                  <RepairSleighModal
+                    repairSleighInProgress={repairSleighInProgress}
+                    setRepairSleighInProgress={setRepairSleighInProgress}
+                    currentStage={currentStage}
+                    currentSleigh={sleigh}
+                    partToRepair={"PRESENTS BAG"}
+                    hp={sleigh.presentsBagHp}
+                  />
                 </Flex>
               </Flex>
             </Flex>
@@ -577,7 +571,7 @@ export function SleighComponent({ sleigh }: SleighProps) {
                       fontSize="1rem"
                       fontWeight="700"
                       fontFamily={theme.fonts.body}
-                      color={theme.colors.red}
+                      color={theme.colors.primary}
                     >
                       BROKEN
                     </Text>
@@ -586,49 +580,36 @@ export function SleighComponent({ sleigh }: SleighProps) {
                       fontSize="1rem"
                       fontWeight="700"
                       fontFamily={theme.fonts.body}
-                      color={theme.colors.green}
+                      color={
+                        sleigh.landingGearHp < 60
+                          ? theme.colors.primary
+                          : sleigh.landingGearHp < 120
+                          ? theme.colors.quaternary
+                          : sleigh.landingGearHp < 200
+                          ? theme.colors.tertiary
+                          : theme.green[700]
+                      }
                     >
-                      ACTIVE
+                      {sleigh.landingGearHp} HP
                     </Text>
                   )}
                 </Flex>
                 <Flex justifyContent="center" alignContent="center" mt="2rem">
-                  <Button
-                    borderWidth="2px"
-                    borderColor={theme.colors.primary}
-                    bg={theme.colors.primary}
-                    borderRadius="30px"
-                    fontWeight="700"
-                    fontSize="1rem"
-                    fontFamily={theme.fonts.body}
-                    w="100%"
-                    h="3rem"
-                    color={theme.colors.white}
-                    isDisabled={!sleigh.broken}
-                    isLoading={sleigh == null}
-                    spinner={
-                      <Flex flexDirection="row" align="center">
-                        <Spinner color={theme.colors.white} size="sm" />
-                      </Flex>
-                    }
-                    onClick={() => {}}
-                    _hover={{
-                      color: theme.colors.white,
-                      borderColor: theme.colors.accentThree,
-                      bg: theme.colors.accentThree,
-                    }}
-                  >
-                    REPAIR
-                  </Button>
+                  <RepairSleighModal
+                    repairSleighInProgress={repairSleighInProgress}
+                    setRepairSleighInProgress={setRepairSleighInProgress}
+                    currentStage={currentStage}
+                    currentSleigh={sleigh}
+                    partToRepair={"LANDING GEAR"}
+                    hp={sleigh.landingGearHp}
+                  />
                 </Flex>
               </Box>
               <RetireSleighModal
-                isRetireModalOpen={isOpen}
-                onOpenRetireSleighModal={onOpen}
-                onCloseRetireSleighModal={onRetireWarningClose}
-                retireSleigh={retireSleigh}
                 retireInProgress={retireInProgress}
-                sleighName={sleigh.sleighId}
+                setRetireInProgress={setRetireInProgress}
+                currentSleigh={sleigh}
+                currentStage={currentStage}
               />
             </Flex>
           </Flex>

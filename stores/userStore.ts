@@ -1,4 +1,4 @@
-import { Sleigh } from "@/types/types";
+import { GameSettings, Sleigh } from "@/types/types";
 import { Wallet } from "@solana/wallet-adapter-react";
 import { Connection } from "@solana/web3.js";
 import { create } from "zustand";
@@ -12,6 +12,7 @@ type Store = {
   solanaConnection: Connection | null;
   userProfilePic: string;
   sleighs: Sleigh[];
+  gameSettings: GameSettings | null;
   setLogin: (
     status: boolean,
     loginType: string,
@@ -21,6 +22,7 @@ type Store = {
     solanaConnection: Connection | null
   ) => void;
   setSleighs: (setSleighs: Sleigh[]) => void;
+  setGameSettings: (gameSettings: GameSettings) => void;
 };
 
 export const userStore = create<Store>((set) => ({
@@ -33,6 +35,7 @@ export const userStore = create<Store>((set) => ({
   userProfilePic:
     "https://shdw-drive.genesysgo.net/5jHWA7UVajMawLH2wVCZdp3U4u42XsF8rSa1DcEQui72/profilePicWhite.svg",
   sleighs: [],
+  gameSettings: null,
   setLogin: (
     status,
     loginType,
@@ -52,6 +55,10 @@ export const userStore = create<Store>((set) => ({
   setSleighs: (sleighs) =>
     set({
       sleighs: sleighs,
+    }),
+  setGameSettings: (gameSettings) =>
+    set({
+      gameSettings: gameSettings,
     }),
 }));
 

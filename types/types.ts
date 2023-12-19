@@ -42,8 +42,8 @@ export interface GameRolls {
 
 export interface Sleigh {
   owner: string;
-  level: number;
   sleighId: string;
+  level: number;
   gameId: number; // used to search for game accounts by server
   builtIndex: number; // set to 0 if unconfirmed so far, first sleigh is index 1
   mintCost: number; // mint cost paid to build the sleigh // 0 to start as it'll be unconfirmed

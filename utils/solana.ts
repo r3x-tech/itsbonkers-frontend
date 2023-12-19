@@ -32,15 +32,123 @@ import {
   NAVIGATION_MINT_ADDRESS,
   PRESENTS_BAG_MINT_ADDRESS,
   PROPULSION_MINT_ADDRESS,
+  SPL_TOKENS,
   TOKEN_MINT_ADDRESS,
 } from "@/constants";
-import { Solitreo } from "next/font/google";
-// import ByteifyEndianess from "byteify";
-// import serializeUint64 from "byteify";
+import { GameRolls, GameSettings, Sleigh } from "@/types/types";
 
 const bonkersIDL = require("../program/bonkers_program.json");
 const BONKERS_PROGRAM_PROGRAMID =
   "DYjXGPz5HGneqvA7jsgRVKTTaeoarCPNCH6pr9Lu2L3F";
+
+export const getGameSettings = async (
+  connection: Connection
+): Promise<GameSettings | undefined> => {
+  try {
+    const BONKERS_PROGRAM: Program<any> = new Program(
+      bonkersIDL,
+      BONKERS_PROGRAM_PROGRAMID,
+      { connection }
+    );
+
+    const gameSettingsPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("settings"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+
+    const gameSettingsAccount =
+      await BONKERS_PROGRAM.account.gameSettings.fetch(gameSettingsPDA);
+    return gameSettingsAccount as GameSettings;
+  } catch (error) {
+    console.error("Error getting game settings: ", error);
+    return undefined;
+  }
+};
+
+export const getGameRolls = async (
+  connection: Connection,
+  stage: string
+): Promise<GameRolls | undefined> => {
+  try {
+    const program = new Program(bonkersIDL, BONKERS_PROGRAM_PROGRAMID, {
+      connection,
+    });
+
+    const prefix = stage === "BUILD" ? "game_rolls_stg1" : "game_rolls_stg2";
+
+    const gameRollsPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from(prefix),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+
+    const gameRollsAccount = await connection.getAccountInfo(gameRollsPDA);
+
+    if (gameRollsAccount === null) {
+      console.error("Game rolls account not found");
+      return undefined;
+    }
+
+    const gameRollsData = program.coder.accounts.decode<GameRolls>(
+      "GameRolls",
+      gameRollsAccount.data
+    );
+
+    return gameRollsData;
+  } catch (error) {
+    console.error("Error fetching game rolls: ", error);
+    return undefined;
+  }
+};
+
+export const getCurrentSleighs = async (
+  sleighOwnerPublicKey: PublicKey | null,
+  connection: Connection
+): Promise<Sleigh[] | undefined> => {
+  try {
+    if (!sleighOwnerPublicKey) {
+      throw Error("No public key found");
+    }
+    const BONKERS_PROGRAM: Program<any> = new Program(
+      bonkersIDL,
+      BONKERS_PROGRAM_PROGRAMID,
+      { connection }
+    );
+
+    const sleighs = await BONKERS_PROGRAM.account.sleigh.all([
+      {
+        memcmp: {
+          offset: 0, // Assuming 'owner' is the first field in Sleigh struct?
+          bytes: sleighOwnerPublicKey.toBase58(),
+        },
+      },
+      {
+        memcmp: {
+          offset: 32 + 8 + 1, // Assuming 'gameId' comes after 'owner', 'sleighId', and 'level'?
+          bytes: GAME_ID.toString(),
+        },
+      },
+    ]);
+
+    return sleighs.map((accountInfo) => accountInfo.account) as Sleigh[];
+  } catch (error) {
+    console.error("Error getting current sleighs: ", error);
+    return undefined;
+  }
+};
 
 export const createSleighTx = async (
   _sleighId: bigint,
@@ -668,38 +776,65 @@ export const sendAllTxParallel = async (
   }
 };
 
-const gameSettingsPDA = PublicKey.findProgramAddressSync(
-  [
-    Buffer.from("settings"),
-    Uint8Array.from(
-      serializeUint64(BigInt(GAME_ID.toString()), {
-        endianess: ByteifyEndianess.BIG_ENDIAN,
-      })
-    ),
-  ],
-  new PublicKey(BONKERS_PROGRAM_PROGRAMID)
-)[0];
+export const getBonkBalance = async ({
+  walletAddress,
+  connection,
+}: {
+  walletAddress: string;
+  connection: Connection;
+}) => {
+  const bonkBalance = await getTokenAccountBalance(
+    walletAddress,
+    connection,
+    SPL_TOKENS.bonk.mint
+  );
 
-// const connection.FetchSlot
+  return bonkBalance;
+};
 
-// - fetch slot
-// - if > stage1_end in stage2
-// - check time now vs roll_interval (time respresented in slots) about 0.5 sec per slot
-// - prize_poo
+export async function getTokenAccountBalance(
+  wallet: string,
+  solanaConnection: Connection,
+  mint: string
+) {
+  const filters: any[] = [
+    {
+      dataSize: 165, //size of account (bytes)
+    },
+    {
+      memcmp: {
+        offset: 32, //location of our query in the account (bytes)
+        bytes: wallet, //our search criteria, a base58 encoded string
+      },
+    },
+  ];
 
-// - spoils
-//   if (stage1) fetch every 30min. static in stg2
-//   let spoils = (game_settings.sleighs_built - sleigh.built_index)
-//   fetch gameaccount
-//   fetch sleighaccount
+  const accounts = await solanaConnection?.getParsedProgramAccounts(
+    new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"), // TOKEN_PROGRAM_ID
+    { filters: filters }
+  );
 
-// - staked amount = stake_amt sleigh account
+  // console.log(
+  //   `Found ${accounts.length} token account(s) for wallet ${wallet}.`
+  // );
 
-// propulsion_hp max out at 255
+  let retTokenBalance: number = 0;
+  accounts.forEach((account, i) => {
+    //Parse the account data
+    const parsedAccountInfo: any = account.account.data;
+    const mintAddress: string = parsedAccountInfo["parsed"]["info"]["mint"];
+    const tokenBalance: number =
+      parsedAccountInfo["parsed"]["info"]["tokenAmount"]["uiAmount"];
 
-// max repair amount
-// let propulsion_repair_cost = propulsion_repair as u64 * sleigh.last_delivery_roll * 2;
+    //Log results
+    // console.log(`Token Account No. ${i + 1}: ${account.pubkey.toString()}`);
+    // console.log(`--Token Mint: ${mintAddress}`);
+    // console.log(`--Token Balance: ${tokenBalance}`);
 
-// current_mint cost is min stake amount
+    if (mintAddress === mint) {
+      retTokenBalance = tokenBalance;
+    }
+  });
 
-// sleighs_built*mint_cost_multiplier = cost for next stake in gamesettings
+  return retTokenBalance;
+}

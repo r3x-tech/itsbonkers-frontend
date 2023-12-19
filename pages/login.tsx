@@ -318,7 +318,7 @@ function LoginPage() {
           <Flex w={["60vw", "40vw"]} mt="5rem">
             {!isLoginInProgress && !connecting ? (
               <Stack h="100%" w="100%">
-                {/* <WalletMultiButton /> */}
+                <WalletMultiButton />
                 <Button
                   borderWidth="2px"
                   borderColor={theme.colors.primary}

@@ -18,26 +18,77 @@ import {
   NumberInput,
   NumberInputField,
   Spinner,
+  useDisclosure,
 } from "@chakra-ui/react";
 import theme from "@/styles/theme";
+import useSolana from "@/hooks/useSolana";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { randomBytes } from "crypto";
+import { retireSleighTx } from "@/utils";
+import toast from "react-hot-toast";
+import { Sleigh } from "@/types/types";
 
 interface RetireSleighModallProps {
-  isRetireModalOpen: boolean;
-  onOpenRetireSleighModal: () => void;
-  onCloseRetireSleighModal: () => void;
-  retireSleigh: () => void;
   retireInProgress: boolean;
-  sleighName: string;
+  setRetireInProgress: (value: boolean) => void;
+  currentSleigh: Sleigh;
+  currentStage: string;
 }
 
 export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
-  isRetireModalOpen,
-  onOpenRetireSleighModal,
-  onCloseRetireSleighModal,
-  retireSleigh,
   retireInProgress,
-  sleighName,
+  setRetireInProgress,
+  currentSleigh,
+  currentStage,
 }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { connection } = useSolana();
+  const {
+    wallet,
+    publicKey,
+    signTransaction,
+    signAllTransactions,
+    connecting,
+    disconnecting,
+  } = useWallet();
+
+  const retireSleigh = async () => {
+    setRetireInProgress(true);
+
+    try {
+      if (!signTransaction || !connection || !publicKey || !currentSleigh) {
+        throw Error("Staking failed");
+      }
+
+      const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
+
+      const tx = await retireSleighTx(sleighId, connection, publicKey);
+      if (!tx) {
+        throw Error("Failed to create tx");
+      }
+
+      const signedTx = await signTransaction(tx);
+      await connection.sendTransaction(tx);
+      console.log("Signed tx: ", signedTx);
+
+      // Simulate a request with a 10-second delay
+      // await new Promise((resolve) => setTimeout(resolve, 10000));
+
+      toast.success("Retired sleigh");
+      onClose();
+    } catch (e) {
+      console.error("Error during staking: ", e);
+      toast.error("Failed to retire");
+    } finally {
+      setRetireInProgress(false);
+    }
+  };
+
+  const onRetireWarningClose = () => {
+    setRetireInProgress(false);
+    onClose();
+  };
+
   return (
     <Flex align="flex-end">
       <Button
@@ -51,14 +102,14 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
         w="25rem"
         h="3.5rem"
         color={theme.colors.white}
-        isDisabled={retireInProgress}
+        isDisabled={retireInProgress || currentStage == "BUILD"}
         isLoading={retireInProgress}
         spinner={
           <Flex flexDirection="row" align="center">
             <Spinner color={theme.colors.white} size="sm" />
           </Flex>
         }
-        onClick={onOpenRetireSleighModal}
+        onClick={onOpen}
         _hover={{
           color: theme.colors.white,
           borderColor: theme.colors.primary,
@@ -67,11 +118,7 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
       >
         RETIRE SLEIGH
       </Button>
-      <Modal
-        isOpen={isRetireModalOpen}
-        onClose={onCloseRetireSleighModal}
-        isCentered
-      >
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent
           bg={theme.colors.secondary}
@@ -120,7 +167,7 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
                 fontWeight="700"
                 fontSize="2rem"
               >
-                {sleighName}
+                {currentSleigh.sleighId}
               </Text>
             </Flex>
           </ModalBody>
@@ -163,7 +210,7 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
                   YOU ARE ABOUT TO RETIRE SLEIGH
                 </Box>{" "}
                 <Box as="span" color={theme.colors.tertiary}>
-                  {sleighName}
+                  {currentSleigh.sleighId}
                 </Box>
                 <Box as="span" color={theme.colors.white}>
                   . THIS ACTION IS IRREVERSIBLE & SHOULD YOU CHOOSE TO RETIRE
