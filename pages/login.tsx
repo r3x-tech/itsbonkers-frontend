@@ -142,7 +142,7 @@ function LoginPage() {
     };
 
     if (loggedIn && connection && publicKey != null) {
-      // fetchandCreateAtas(publicKey);
+      fetchandCreateAtas(publicKey);
       router.push("/home");
     }
   }, [connection, loggedIn, publicKey, router, signAllTransactions]);

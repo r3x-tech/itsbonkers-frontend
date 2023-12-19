@@ -301,8 +301,8 @@ function HomePage() {
                       fontFamily={theme.fonts.body}
                       color={theme.colors.white}
                     >
-                      {sampleSleighs.length}
-                      {/* {currentSleighs?.length} */}
+                      {/* {sampleSleighs.length} */}
+                      {currentSleighs?.length}
                     </Text>
                   </Flex>
                 </Flex>
@@ -322,20 +322,7 @@ function HomePage() {
                     pr="1rem"
                     mr="-1rem"
                   >
-                    {sampleSleighs.map((sleigh, index) => (
-                      <SleighCardComponent
-                        key={index}
-                        sleigh={sleigh}
-                        onSelect={handleSelectSleigh}
-                        isSelected={
-                          !!(
-                            selectedSleigh &&
-                            selectedSleigh.sleighId === sleigh.sleighId
-                          )
-                        }
-                      />
-                    ))}
-                    {/* {currentSleighs?.map((sleigh, index) => (
+                    {/* {sampleSleighs.map((sleigh, index) => (
                       <SleighCardComponent
                         key={index}
                         sleigh={sleigh}
@@ -348,6 +335,19 @@ function HomePage() {
                         }
                       />
                     ))} */}
+                    {currentSleighs?.map((sleigh, index) => (
+                      <SleighCardComponent
+                        key={index}
+                        sleigh={sleigh}
+                        onSelect={handleSelectSleigh}
+                        isSelected={
+                          !!(
+                            selectedSleigh &&
+                            selectedSleigh.sleighId === sleigh.sleighId
+                          )
+                        }
+                      />
+                    ))}
                   </Flex>
                   <Flex
                     flexDirection="column"
@@ -387,8 +387,8 @@ function HomePage() {
             </Flex>
             <SleighComponent
               sleigh={selectedSleigh}
-              gameSettings={sampleGameSettings[2]}
-              // gameSettings={gameSettings}
+              // gameSettings={sampleGameSettings[2]}
+              gameSettings={gameSettings}
             />
           </Flex>
         ) : (

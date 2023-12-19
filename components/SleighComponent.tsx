@@ -28,7 +28,7 @@ import { sampleSleighs } from "@/stores/sampleData";
 
 interface SleighProps {
   sleigh: Sleigh | null;
-  gameSettings: GameSettings | null;
+  gameSettings: GameSettings | undefined;
 }
 
 export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
