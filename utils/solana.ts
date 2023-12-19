@@ -316,9 +316,8 @@ export const claimLevelsTx = async (
     )[0];
 
     const ix = await BONKERS_PROGRAM.methods
-      .claimLevels(sleighIdBN, rollIndexesBN)
+      .claimLevels(sleighIdBN)
       .accounts({
-        sleighOwner: sleighOwner,
         sleigh: sleighPDA,
         gameSettings: gameSettingsPDA,
         gameRolls: gameRollsPDA,

@@ -138,14 +138,9 @@ export type Bonkers = {
     {
       name: "claimLevels";
       docs: [
-        "* Pass in Roll Indexes since last claim (do the calculations off chain) that earn levels\n     * Can only be called by stake account otherwise someone could skip claims\n     * Can no longer claim levels if game is on stage 2\n     * If they have claims, but their stake amount is less than current mint cost (sleighs built + multiplier)\n     * they have to wait and recover the account in stage 2\n     * Basically they're SOL for not confirming sooner\n     * CHECK: How many levels you can claim per transaction due to compute limit"
+        "* Can be called by anyone for any sleigh permissionlesly as it's a gain only for the sleigh\n     * Can no longer claim levels if game is on stage 2\n     * Processes the next available roll for the sleigh. Can be stuff multiple ones in the same ix\n     * If they have claims, but their stake amount is less than current mint cost (sleighs built + multiplier)\n     * they have to wait and recover the account in stage 2\n     * Basically they're SOL for not confirming sooner"
       ];
       accounts: [
-        {
-          name: "sleighOwner";
-          isMut: false;
-          isSigner: true;
-        },
         {
           name: "gameSettings";
           isMut: true;
@@ -162,14 +157,7 @@ export type Bonkers = {
           isSigner: false;
         }
       ];
-      args: [
-        {
-          name: "rollIdxs";
-          type: {
-            vec: "u64";
-          };
-        }
-      ];
+      args: [];
     },
     {
       name: "stage2Roll";
@@ -549,6 +537,10 @@ export type Bonkers = {
             type: "publicKey";
           },
           {
+            name: "sleighId";
+            type: "u64";
+          },
+          {
             name: "level";
             type: "u8";
           },
@@ -577,7 +569,7 @@ export type Bonkers = {
             type: "u64";
           },
           {
-            name: "lastCheckedRoll";
+            name: "lastClaimedRoll";
             type: "u64";
           },
           {
@@ -788,14 +780,9 @@ export const IDL: Bonkers = {
     {
       name: "claimLevels",
       docs: [
-        "* Pass in Roll Indexes since last claim (do the calculations off chain) that earn levels\n     * Can only be called by stake account otherwise someone could skip claims\n     * Can no longer claim levels if game is on stage 2\n     * If they have claims, but their stake amount is less than current mint cost (sleighs built + multiplier)\n     * they have to wait and recover the account in stage 2\n     * Basically they're SOL for not confirming sooner\n     * CHECK: How many levels you can claim per transaction due to compute limit",
+        "* Can be called by anyone for any sleigh permissionlesly as it's a gain only for the sleigh\n     * Can no longer claim levels if game is on stage 2\n     * Processes the next available roll for the sleigh. Can be stuff multiple ones in the same ix\n     * If they have claims, but their stake amount is less than current mint cost (sleighs built + multiplier)\n     * they have to wait and recover the account in stage 2\n     * Basically they're SOL for not confirming sooner",
       ],
       accounts: [
-        {
-          name: "sleighOwner",
-          isMut: false,
-          isSigner: true,
-        },
         {
           name: "gameSettings",
           isMut: true,
@@ -812,14 +799,7 @@ export const IDL: Bonkers = {
           isSigner: false,
         },
       ],
-      args: [
-        {
-          name: "rollIdxs",
-          type: {
-            vec: "u64",
-          },
-        },
-      ],
+      args: [],
     },
     {
       name: "stage2Roll",
@@ -1199,6 +1179,10 @@ export const IDL: Bonkers = {
             type: "publicKey",
           },
           {
+            name: "sleighId",
+            type: "u64",
+          },
+          {
             name: "level",
             type: "u8",
           },
@@ -1227,7 +1211,7 @@ export const IDL: Bonkers = {
             type: "u64",
           },
           {
-            name: "lastCheckedRoll",
+            name: "lastClaimedRoll",
             type: "u64",
           },
           {

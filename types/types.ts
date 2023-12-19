@@ -50,7 +50,7 @@ export interface Sleigh {
   stakeAmt: number; // includes mint amt because at start mint amount is not deducted. when returning spoils, use (stake-mint) * 70% + spoils
   broken: boolean; // if broken, cannot produce any more resources, and can only be scuttled (or rez'd at 70% stake)
   stakedAfterRoll: number; // the idx of the roll that this was built *after* so they can't claim previous rolls
-  lastCheckedRoll: number; // up to the last largest idx that was claimed
+  lastClaimedRoll: number; // up to the last largest idx that was claimed
   lastDeliveryRoll: number; // stage 2 rolls
 
   // Parts
