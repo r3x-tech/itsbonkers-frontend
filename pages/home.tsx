@@ -390,7 +390,7 @@ function HomePage() {
                         color={theme.colors.white}
                         mr="0.5rem"
                       >
-                        COST TO STAKE:{" "}
+                        CURRENT MIN. BID AMOUNT:{" "}
                       </Text>
                       <Text
                         fontSize="1rem"

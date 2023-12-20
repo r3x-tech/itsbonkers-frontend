@@ -132,7 +132,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
           bg: theme.colors.quaternary,
         }}
       >
-        STAKE NEW SLEIGH +
+        BID 4 SLEIGH +
       </Button>
       <Modal isOpen={isOpen} onClose={onSleighWarningClose} isCentered>
         <ModalOverlay />
@@ -148,7 +148,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
             fontSize="2rem"
             fontFamily={theme.fonts.header}
           >
-            STAKE NEW SLEIGH
+            BID 4 SLEIGH
           </ModalHeader>
           <ModalCloseButton
             m="2rem"
@@ -176,7 +176,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                 fontWeight="700"
                 fontSize="1.25rem"
               >
-                AMOUNT TO STAKE:
+                AMOUNT TO BID:
               </Text>
               <Flex
                 w="100%"

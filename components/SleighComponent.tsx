@@ -25,6 +25,7 @@ import {
 } from "@/utils/solana";
 import { RepairSleighModal } from "./RepairSleighModal";
 import { sampleSleighs } from "@/stores/sampleData";
+import { useCurrentSlot } from "@/hooks/useCurrentSlot";
 
 interface SleighProps {
   sleigh: Sleigh | null;
@@ -39,13 +40,6 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
     useState<boolean>(false);
   const [claimingInProgress, setClaimingInProgress] = useState<boolean>(false);
   const [currentStage, setCurrentStage] = useState<string>("BUILD");
-
-  useEffect(() => {
-    if (gameSettings && gameSettings.stage1Start > gameSettings.stage1End) {
-      setCurrentStage("DELIVERY");
-    }
-  }, [gameSettings]);
-
   const { connection } = useSolana();
   const {
     wallet,
@@ -55,6 +49,13 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
     connecting,
     disconnecting,
   } = useWallet();
+  const { data: currentSlot } = useCurrentSlot();
+
+  useEffect(() => {
+    if (gameSettings && currentSlot && currentSlot > gameSettings.stage1End) {
+      setCurrentStage("DELIVERY");
+    }
+  }, [currentSlot, gameSettings]);
 
   const startDelivery = async () => {
     setStartingDeliveryInProgress(true);
@@ -322,36 +323,6 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                   >
                     {sleigh.sleighId}
                   </Text>
-                  {sleigh.builtIndex == 0 && (
-                    <Button
-                      borderWidth="2px"
-                      borderColor={theme.colors.primary}
-                      bg={theme.colors.primary}
-                      borderRadius="30px"
-                      fontWeight="700"
-                      fontSize="1.25rem"
-                      fontFamily={theme.fonts.body}
-                      w="20rem"
-                      mt="1rem"
-                      h="3.5rem"
-                      color={theme.colors.white}
-                      isDisabled={claimingInProgress || sleigh.builtIndex > 0}
-                      isLoading={claimingInProgress}
-                      spinner={
-                        <Flex flexDirection="row" align="center">
-                          <Spinner color={theme.colors.white} size="sm" />
-                        </Flex>
-                      }
-                      onClick={claimSleigh}
-                      _hover={{
-                        color: theme.colors.white,
-                        borderColor: theme.colors.accentThree,
-                        bg: theme.colors.accentThree,
-                      }}
-                    >
-                      CLAIM SLEIGH
-                    </Button>
-                  )}
                 </Flex>
                 <Flex
                   flexDirection="column"
@@ -483,7 +454,33 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                   />
                 </Flex>
               </Flex>
-              <Image src="/sleigh.svg" alt="Sleigh Image" w="50rem" />
+              {sleigh.builtIndex == 0 && currentStage == "BUILD" ? (
+                <Tooltip
+                  label="BIDDING 4 SLEIGH IN PROGRESS"
+                  aria-label="BIDDING 4 SLEIGH IN PROGRESS"
+                  bg={theme.colors.black}
+                >
+                  <Image
+                    src="/sleighBidInProgress.svg"
+                    alt="Sleigh Bid In Progress Image"
+                    w="50rem"
+                  />
+                </Tooltip>
+              ) : sleigh.builtIndex == 0 && currentStage == "DELIVERY" ? (
+                <Tooltip
+                  label="LOST BID 4 SLEIGH. RETIRE THIS SLEIGH TO RECLAIM BONK"
+                  aria-label="LOST BID 4 SLEIGH. RETIRE THIS SLEIGH TO RECLAIM BONK"
+                  bg={theme.colors.black}
+                >
+                  <Image
+                    src="/sleighLostBid.svg"
+                    alt="Sleigh Lost Bid Image"
+                    w="50rem"
+                  />
+                </Tooltip>
+              ) : (
+                <Image src="/sleigh.svg" alt="Sleigh Image" w="50rem" />
+              )}
               <Flex
                 flexDirection="column"
                 bg={theme.colors.background}

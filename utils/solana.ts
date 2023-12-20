@@ -285,22 +285,6 @@ export const claimLevelsTx = async (
     );
 
     const sleighOwner = publicKey;
-    const sleighPDA = PublicKey.findProgramAddressSync(
-      [
-        Buffer.from("sleigh"),
-        Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
-            endianess: ByteifyEndianess.BIG_ENDIAN,
-          })
-        ),
-        Uint8Array.from(
-          serializeUint64(BigInt(sleighIdBN.toString()), {
-            endianess: ByteifyEndianess.BIG_ENDIAN,
-          })
-        ),
-      ],
-      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
-    )[0];
     const gameSettingsPDA = PublicKey.findProgramAddressSync(
       [
         Buffer.from("settings"),
@@ -317,6 +301,22 @@ export const claimLevelsTx = async (
         Buffer.from("game_rolls_stg1"),
         Uint8Array.from(
           serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+      ],
+      new PublicKey(BONKERS_PROGRAM_PROGRAMID)
+    )[0];
+    const sleighPDA = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("sleigh"),
+        Uint8Array.from(
+          serializeUint64(BigInt(GAME_ID.toString()), {
+            endianess: ByteifyEndianess.BIG_ENDIAN,
+          })
+        ),
+        Uint8Array.from(
+          serializeUint64(BigInt(sleighIdBN.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -847,3 +847,22 @@ export async function getTokenAccountBalance(
 
   return retTokenBalance;
 }
+
+export const fetchCurrentSlot = async (
+  connection: Connection
+): Promise<number> => {
+  try {
+    const currentSlot = await connection.getSlot();
+    console.log("currentSlot: ", currentSlot);
+
+    if (!currentSlot) {
+      console.error("slot not found");
+      throw Error("Slot does not exist");
+    }
+
+    return currentSlot;
+  } catch (error) {
+    console.error("Error fetching slot: ", error);
+    return 0;
+  }
+};
