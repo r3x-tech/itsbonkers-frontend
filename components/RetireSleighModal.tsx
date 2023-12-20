@@ -66,10 +66,10 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
       if (!tx) {
         throw Error("Failed to create tx");
       }
-
       const signedTx = await signTransaction(tx);
-      await connection.sendTransaction(tx);
       console.log("Signed tx: ", signedTx);
+
+      await connection.sendRawTransaction(signedTx.serialize());
 
       // Simulate a request with a 10-second delay
       // await new Promise((resolve) => setTimeout(resolve, 10000));
@@ -77,7 +77,7 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
       toast.success("Retired sleigh");
       onClose();
     } catch (e) {
-      console.error("Error during staking: ", e);
+      console.error("Error during retire: ", e);
       toast.error("Failed to retire");
     } finally {
       setRetireInProgress(false);

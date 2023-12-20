@@ -339,6 +339,11 @@ export const claimLevelsTx = async (
     }
 
     const tx = await createTx(ix, connection, publicKey);
+    console.info(
+      "claim Encoded TX: ",
+      Buffer.from(tx!.serialize()).toString("base64")
+    );
+
     if (!tx) {
       console.error("Error with claiming levels tx. tx: ", tx);
       return undefined;
@@ -459,6 +464,11 @@ export const deliveryTx = async (
     }
 
     const tx = await createTx(ix, connection, publicKey);
+    console.info(
+      "delivery Encoded TX: ",
+      Buffer.from(tx!.serialize()).toString("base64")
+    );
+
     if (!tx) {
       console.error("Error with delivery tx. tx: ", tx);
       return undefined;
@@ -573,6 +583,10 @@ export const repairSleighTx = async (
     }
 
     const tx = await createTx(ix, connection, publicKey);
+    console.info(
+      "repair Encoded TX: ",
+      Buffer.from(tx!.serialize()).toString("base64")
+    );
     if (!tx) {
       console.error("Error with repair tx. tx: ", tx);
       return undefined;
@@ -673,6 +687,11 @@ export const retireSleighTx = async (
     }
 
     const tx = await createTx(ix, connection, publicKey);
+    console.log(
+      "retire Encoded TX: ",
+      Buffer.from(tx!.serialize()).toString("base64")
+    );
+
     if (!tx) {
       console.error("Error with retire tx. tx: ", tx);
       return undefined;

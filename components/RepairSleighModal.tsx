@@ -98,9 +98,11 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
       if (!tx) {
         throw Error("Failed to create tx");
       }
+
       const signedTx = await signTransaction(tx);
-      await connection.sendTransaction(tx);
       console.log("Signed tx: ", signedTx);
+
+      await connection.sendRawTransaction(signedTx.serialize());
 
       // Simulate a request with a 10-second delay
       // await new Promise((resolve) => setTimeout(resolve, 10000));
@@ -108,7 +110,7 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
       toast.success("Sleigh repaired");
       onClose();
     } catch (e) {
-      console.error("Error during staking: ", e);
+      console.error("Error during repair: ", e);
       toast.error("Failed to repair");
     } finally {
       setRepairSleighInProgress(false);

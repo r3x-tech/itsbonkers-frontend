@@ -53,7 +53,7 @@ export const Navbar: React.FC = () => {
     if (name.length <= 6 || name == "") {
       return name;
     }
-    return `0x${name.substring(0, 1)}...${name.substring(name.length - 5)}`;
+    return `${name.substring(0, 4)}...${name.substring(name.length - 5)}`;
   };
 
   return (

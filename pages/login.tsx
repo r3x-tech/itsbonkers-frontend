@@ -610,9 +610,8 @@ function LoginPage() {
           direction="column"
           align="center"
           justifyContent="center"
-          w={["80%", "80%"]}
-          h={["80%", "80%"]}
-          bg="red"
+          w="90%"
+          h="90%"
         >
           <Flex
             w="120%"
@@ -621,13 +620,14 @@ function LoginPage() {
             align="center"
             justifyContent="start"
             bgImage="url('/chat2.svg')"
-            backgroundSize="100% 100%"
+            backgroundSize="85% 85%"
             backgroundRepeat="no-repeat"
             backgroundPosition="center"
-            bg="green"
+            // bg="green"
           >
             <Flex
-              // p="5rem"
+              py="5rem"
+              mt="5rem"
               direction="column"
               alignItems="start"
               justifyContent="start"
