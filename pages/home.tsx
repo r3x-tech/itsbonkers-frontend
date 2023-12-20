@@ -335,19 +335,31 @@ function HomePage() {
                         }
                       />
                     ))} */}
-                    {currentSleighs?.map((sleigh, index) => (
-                      <SleighCardComponent
-                        key={index}
-                        sleigh={sleigh}
-                        onSelect={handleSelectSleigh}
-                        isSelected={
-                          !!(
+                    {currentSleighs?.map((sleigh, index) => {
+                      const formattedSleigh = {
+                        ...sleigh,
+                        builtIndex: sleigh.builtIndex.toString(),
+                        gameId: sleigh.gameId.toString(),
+                        lastClaimedRoll: sleigh.lastClaimedRoll.toString(),
+                        lastDeliveryRoll: sleigh.lastDeliveryRoll.toString(),
+                        mintCost: sleigh.mintCost.toString(),
+                        sleighId: sleigh.sleighId.toString(),
+                        stakeAmt: sleigh.stakeAmt.toString(),
+                        stakedAfterRoll: sleigh.stakedAfterRoll.toString(),
+                        owner: sleigh.owner.toBase58(), // Convert PublicKey to a string
+                      };
+                      return (
+                        <SleighCardComponent
+                          key={sleigh.sleighId.toString()} // Use sleighId as key
+                          sleigh={formattedSleigh}
+                          onSelect={handleSelectSleigh}
+                          isSelected={
                             selectedSleigh &&
-                            selectedSleigh.sleighId === sleigh.sleighId
-                          )
-                        }
-                      />
-                    ))}
+                            selectedSleigh.sleighId === formattedSleigh.sleighId
+                          }
+                        />
+                      );
+                    })}
                   </Flex>
                   <Flex
                     flexDirection="column"

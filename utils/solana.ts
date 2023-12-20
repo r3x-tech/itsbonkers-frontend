@@ -36,6 +36,7 @@ import {
   TOKEN_MINT_ADDRESS,
 } from "@/constants";
 import { GameRolls, GameSettings, Sleigh } from "@/types/types";
+import { encode } from "bs58";
 
 const bonkersIDL = require("../program/bonkers_program.json");
 const BONKERS_PROGRAM_PROGRAMID =
@@ -131,17 +132,19 @@ export const getCurrentSleighs = async (
     const sleighs = await BONKERS_PROGRAM.account.sleigh.all([
       {
         memcmp: {
-          offset: 0, // Assuming 'owner' is the first field in Sleigh struct?
+          offset: 8, // Assuming 'owner' is the first field in Sleigh struct?
           bytes: sleighOwnerPublicKey.toBase58(),
         },
       },
       {
         memcmp: {
-          offset: 32 + 8 + 1, // Assuming 'gameId' comes after 'owner', 'sleighId', and 'level'?
-          bytes: GAME_ID.toString(),
+          offset: 8 + 32 + 8 + 1, // Assuming 'gameId' comes after 'owner', 'sleighId', and 'level'?
+          bytes: encode(new BN(GAME_ID).toArrayLike(Buffer, "le", 8)),
         },
       },
     ]);
+
+    console.log("sleighs found: ", sleighs);
 
     return sleighs.map((accountInfo) => accountInfo.account) as Sleigh[];
   } catch (error) {
@@ -212,7 +215,8 @@ export const createSleighTx = async (
 
     const gameTokenAta = getAssociatedTokenAddressSync(
       new PublicKey(TOKEN_MINT_ADDRESS),
-      gameSettingsPDA
+      gameSettingsPDA,
+      true
     );
     const sleighOwnerAta = getAssociatedTokenAddressSync(
       new PublicKey(TOKEN_MINT_ADDRESS),
@@ -242,6 +246,11 @@ export const createSleighTx = async (
     }
 
     const tx = await createTx(ix, connection, publicKey);
+    console.info(
+      "createSleigh Encoded TX: ",
+      Buffer.from(tx!.serialize()).toString("base64")
+    );
+
     if (!tx) {
       console.error("Error with claiming levels tx. tx: ", tx);
       return undefined;
@@ -636,7 +645,8 @@ export const retireSleighTx = async (
 
     const gameTokenAta = getAssociatedTokenAddressSync(
       new PublicKey(TOKEN_MINT_ADDRESS),
-      gameSettingsPDA
+      gameSettingsPDA,
+      true
     );
     const sleighOwnerAta = getAssociatedTokenAddressSync(
       new PublicKey(TOKEN_MINT_ADDRESS),

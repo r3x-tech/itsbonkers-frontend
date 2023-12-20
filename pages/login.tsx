@@ -60,6 +60,7 @@ function LoginPage() {
       const presentsBagMintAddress = new PublicKey(PRESENTS_BAG_MINT_ADDRESS);
 
       let ixs = [];
+      console.log("pk: ", currentPublicKey.toString());
 
       const sleighPropulsionPartsAta = getAssociatedTokenAddressSync(
         propulsionMintAddress,
@@ -69,6 +70,11 @@ function LoginPage() {
       const sleighPropulsionPartsAtaBalance = await connection.getBalance(
         sleighPropulsionPartsAta
       );
+      console.log(
+        "sleighPropulsionPartsAta: ",
+        sleighPropulsionPartsAta.toString()
+      );
+
       if (sleighPropulsionPartsAtaBalance == 0) {
         const ix = createAssociatedTokenAccountInstruction(
           currentPublicKey,
@@ -85,6 +91,11 @@ function LoginPage() {
       );
       const sleighLandingGearPartsAtaBalance = await connection.getBalance(
         sleighLandingGearPartsAta
+      );
+
+      console.log(
+        "sleighLandingGearPartsAta: ",
+        sleighLandingGearPartsAta.toString()
       );
       if (sleighLandingGearPartsAtaBalance == 0) {
         const ix = createAssociatedTokenAccountInstruction(
@@ -103,6 +114,11 @@ function LoginPage() {
       const sleighNavigationPartsAtaBalance = await connection.getBalance(
         sleighPropulsionPartsAta
       );
+
+      console.log(
+        "sleighPropulsionPartsAta: ",
+        sleighPropulsionPartsAta.toString()
+      );
       if (sleighNavigationPartsAtaBalance == 0) {
         const ix = createAssociatedTokenAccountInstruction(
           currentPublicKey,
@@ -120,12 +136,17 @@ function LoginPage() {
       const sleighPresentsBagPartsAtaBalance = await connection.getBalance(
         sleighPresentsBagPartsAta
       );
+
+      console.log(
+        "sleighPresentsBagPartsAta: ",
+        sleighPresentsBagPartsAta.toString()
+      );
       if (sleighPresentsBagPartsAtaBalance == 0) {
         const ix = createAssociatedTokenAccountInstruction(
           currentPublicKey,
           sleighPresentsBagPartsAta,
           currentPublicKey,
-          navigationMintAddress
+          presentsBagMintAddress
         );
         ixs.push(ix);
       }

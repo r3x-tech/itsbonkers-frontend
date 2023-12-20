@@ -69,7 +69,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
       }
 
       const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
-      const stakeAmt = stakeAmount;
+      const stakeAmt = stakeAmount * 100000;
 
       // Call createSleighTx function and wait for the transaction to be ready
       const tx = await createSleighTx(
@@ -82,8 +82,9 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
         throw Error("Failed to create tx");
       }
       const signedTx = await signTransaction(tx);
-      await connection.sendTransaction(tx);
       console.log("Signed tx: ", signedTx);
+
+      await connection.sendRawTransaction(signedTx.serialize());
 
       // Simulate a request with a 10-second delay
       // await new Promise((resolve) => setTimeout(resolve, 10000));
