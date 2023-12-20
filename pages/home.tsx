@@ -73,6 +73,26 @@ function HomePage() {
   const { data: walletBonkBalance, isLoading: isLoadingWalletBonkBalance } =
     useCurrentWalletBonkBalance(publicKey, connection);
 
+  // Process the sleighs data to convert BN fields
+  const processedSleighs = currentSleighs?.map((sleigh) => ({
+    ...sleigh,
+    sleighId: sleigh.sleighId.toString(),
+    builtIndex: sleigh.builtIndex,
+    gameId: sleigh.gameId,
+    lastClaimedRoll: sleigh.lastClaimedRoll,
+    lastDeliveryRoll: sleigh.lastDeliveryRoll,
+    mintCost: sleigh.mintCost,
+    stakeAmt: sleigh.stakeAmt,
+    stakedAfterRoll: sleigh.stakedAfterRoll,
+    level: sleigh.level,
+    broken: sleigh.broken,
+    propulsionHp: sleigh.propulsionHp,
+    landingGearHp: sleigh.landingGearHp,
+    navigationHp: sleigh.navigationHp,
+    presentsBagHp: sleigh.presentsBagHp,
+    owner: sleigh.owner.toString(),
+  }));
+
   useEffect(() => {
     if (publicKey && connection) {
       queryClient.refetchQueries({
@@ -302,7 +322,7 @@ function HomePage() {
                       color={theme.colors.white}
                     >
                       {/* {sampleSleighs.length} */}
-                      {currentSleighs?.length}
+                      {processedSleighs?.length}
                     </Text>
                   </Flex>
                 </Flex>
@@ -335,31 +355,19 @@ function HomePage() {
                         }
                       />
                     ))} */}
-                    {currentSleighs?.map((sleigh, index) => {
-                      const formattedSleigh = {
-                        ...sleigh,
-                        builtIndex: sleigh.builtIndex.toString(),
-                        gameId: sleigh.gameId.toString(),
-                        lastClaimedRoll: sleigh.lastClaimedRoll.toString(),
-                        lastDeliveryRoll: sleigh.lastDeliveryRoll.toString(),
-                        mintCost: sleigh.mintCost.toString(),
-                        sleighId: sleigh.sleighId.toString(),
-                        stakeAmt: sleigh.stakeAmt.toString(),
-                        stakedAfterRoll: sleigh.stakedAfterRoll.toString(),
-                        owner: sleigh.owner.toBase58(), // Convert PublicKey to a string
-                      };
-                      return (
-                        <SleighCardComponent
-                          key={sleigh.sleighId.toString()} // Use sleighId as key
-                          sleigh={formattedSleigh}
-                          onSelect={handleSelectSleigh}
-                          isSelected={
+                    {processedSleighs?.map((sleigh, index) => (
+                      <SleighCardComponent
+                        key={index}
+                        sleigh={sleigh}
+                        onSelect={handleSelectSleigh}
+                        isSelected={
+                          !!(
                             selectedSleigh &&
-                            selectedSleigh.sleighId === formattedSleigh.sleighId
-                          }
-                        />
-                      );
-                    })}
+                            selectedSleigh.sleighId === sleigh.sleighId
+                          )
+                        }
+                      />
+                    ))}
                   </Flex>
                   <Flex
                     flexDirection="column"
