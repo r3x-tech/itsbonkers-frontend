@@ -75,6 +75,56 @@ export const Navbar: React.FC = () => {
           // router.push("/account");
         }}
       />
+      <Button
+        borderWidth="2px"
+        borderColor={theme.colors.primary}
+        bg={theme.colors.primary}
+        borderRadius="30px"
+        fontWeight="700"
+        fontSize="1.5rem"
+        fontFamily={theme.fonts.body}
+        w="100%"
+        h="5rem"
+        color={theme.colors.white}
+        onClick={() => {
+          window.open(
+            "https://spacemandev.notion.site/It-s-Bonkers-How-to-Play-6f70818c0b0c42039ca33f5985e25b64",
+            "_blank"
+          );
+        }}
+        _hover={{
+          color: theme.colors.background,
+          borderColor: theme.colors.quaternary,
+          bg: theme.colors.quaternary,
+        }}
+      >
+        HOW TO PLAY?
+      </Button>
+      <Button
+        borderWidth="2px"
+        borderColor={theme.colors.primary}
+        bg={theme.colors.primary}
+        borderRadius="30px"
+        fontWeight="700"
+        fontSize="1.5rem"
+        fontFamily={theme.fonts.body}
+        w="100%"
+        h="5rem"
+        color={theme.colors.white}
+        onClick={() => {
+          window.open(
+            "https://spacemandev.notion.site/It-s-Bonkers-How-to-Play-6f70818c0b0c42039ca33f5985e25b64",
+            "_blank"
+          );
+        }}
+        _hover={{
+          color: theme.colors.background,
+          borderColor: theme.colors.quaternary,
+          bg: theme.colors.quaternary,
+        }}
+      >
+        ABOUT
+      </Button>
 
       {loggedIn ? (
         <Popover placement="bottom-end">

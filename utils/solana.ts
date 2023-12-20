@@ -448,6 +448,19 @@ export const deliveryTx = async (
         navigationMint: navigationMintAddress,
         presentsBagMint: presentsBagMintAddress,
         tokenProgram: TOKEN_PROGRAM_ID,
+
+        // gameSettings: gameSettingsPDA,
+        // gameRolls: rollSTG2PDA,
+        // sleigh: sleighPDA,
+        // sleighLandingGearPartsAta: landingGearATA,
+        // sleighNavigationPartsAta: navigationATA,
+        // sleighPresentsBagPartsAta: presentsBagATA,
+        // sleighPropulsionPartsAta: propulsionATA,
+        // navigationMint: gameSettings.navigationPartsMint,
+        // landingGearMint: gameSettings.landingGearPartsMint,
+        // presentsBagMint: gameSettings.presentsBagPartsMint,
+        // propulsionMint: gameSettings.propulsionPartsMint,
+        // tokenProgram: spl.TOKEN_PROGRAM_ID,
       })
       .instruction();
 
