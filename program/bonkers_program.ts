@@ -231,22 +231,22 @@ export type Bonkers = {
         },
         {
           name: "propulsionMint";
-          isMut: false;
+          isMut: true;
           isSigner: false;
         },
         {
           name: "landingGearMint";
-          isMut: false;
+          isMut: true;
           isSigner: false;
         },
         {
           name: "navigationMint";
-          isMut: false;
+          isMut: true;
           isSigner: false;
         },
         {
           name: "presentsBagMint";
-          isMut: false;
+          isMut: true;
           isSigner: false;
         },
         {
@@ -300,22 +300,22 @@ export type Bonkers = {
         },
         {
           name: "propulsionMint";
-          isMut: false;
+          isMut: true;
           isSigner: false;
         },
         {
           name: "landingGearMint";
-          isMut: false;
+          isMut: true;
           isSigner: false;
         },
         {
           name: "navigationMint";
-          isMut: false;
+          isMut: true;
           isSigner: false;
         },
         {
           name: "presentsBagMint";
-          isMut: false;
+          isMut: true;
           isSigner: false;
         },
         {
@@ -636,6 +636,11 @@ export type Bonkers = {
       code: 6007;
       name: "GameNotOver";
       msg: "";
+    },
+    {
+      code: 6008;
+      name: "SleighNotBuilt";
+      msg: "";
     }
   ];
 };
@@ -873,22 +878,22 @@ export const IDL: Bonkers = {
         },
         {
           name: "propulsionMint",
-          isMut: false,
+          isMut: true,
           isSigner: false,
         },
         {
           name: "landingGearMint",
-          isMut: false,
+          isMut: true,
           isSigner: false,
         },
         {
           name: "navigationMint",
-          isMut: false,
+          isMut: true,
           isSigner: false,
         },
         {
           name: "presentsBagMint",
-          isMut: false,
+          isMut: true,
           isSigner: false,
         },
         {
@@ -942,22 +947,22 @@ export const IDL: Bonkers = {
         },
         {
           name: "propulsionMint",
-          isMut: false,
+          isMut: true,
           isSigner: false,
         },
         {
           name: "landingGearMint",
-          isMut: false,
+          isMut: true,
           isSigner: false,
         },
         {
           name: "navigationMint",
-          isMut: false,
+          isMut: true,
           isSigner: false,
         },
         {
           name: "presentsBagMint",
-          isMut: false,
+          isMut: true,
           isSigner: false,
         },
         {
@@ -1277,6 +1282,11 @@ export const IDL: Bonkers = {
     {
       code: 6007,
       name: "GameNotOver",
+      msg: "",
+    },
+    {
+      code: 6008,
+      name: "SleighNotBuilt",
       msg: "",
     },
   ],

@@ -104,9 +104,6 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
 
       await connection.sendRawTransaction(signedTx.serialize());
 
-      // Simulate a request with a 10-second delay
-      // await new Promise((resolve) => setTimeout(resolve, 10000));
-
       toast.success("Sleigh repaired");
       onClose();
     } catch (e) {

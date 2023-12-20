@@ -231,22 +231,22 @@
         },
         {
           "name": "propulsionMint",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "landingGearMint",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "navigationMint",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "presentsBagMint",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -300,22 +300,22 @@
         },
         {
           "name": "propulsionMint",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "landingGearMint",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "navigationMint",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "presentsBagMint",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -637,6 +637,11 @@
     {
       "code": 6007,
       "name": "GameNotOver",
+      "msg": ""
+    },
+    {
+      "code": 6008,
+      "name": "SleighNotBuilt",
       "msg": ""
     }
   ]

@@ -71,12 +71,12 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
         throw Error("Failed to create tx");
       }
       const signedTx = await signTransaction(tx);
-      console.log("Signed tx: ", signedTx);
+      console.log(
+        "startDelivery Signed tx: ",
+        Buffer.from(signedTx!.serialize()).toString("base64")
+      );
 
       await connection.sendRawTransaction(signedTx.serialize());
-
-      // Simulate a request with a 10-second delay
-      // await new Promise((resolve) => setTimeout(resolve, 10000));
 
       toast.success("Delivery started");
     } catch (e) {
@@ -113,10 +113,7 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
       }
       const signedTx = await signTransaction(tx);
       await connection.sendTransaction(tx);
-      console.log("Signed tx: ", signedTx);
-
-      // Simulate a request with a 10-second delay
-      // await new Promise((resolve) => setTimeout(resolve, 10000));
+      console.log("Claim Sleigh Signed tx: ", signedTx);
 
       toast.success("Sleigh claimed");
     } catch (e) {

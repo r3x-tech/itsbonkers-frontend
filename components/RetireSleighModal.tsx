@@ -67,12 +67,12 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
         throw Error("Failed to create tx");
       }
       const signedTx = await signTransaction(tx);
-      console.log("Signed tx: ", signedTx);
+      console.log(
+        "retireSleigh Signed tx: ",
+        Buffer.from(signedTx!.serialize()).toString("base64")
+      );
 
       await connection.sendRawTransaction(signedTx.serialize());
-
-      // Simulate a request with a 10-second delay
-      // await new Promise((resolve) => setTimeout(resolve, 10000));
 
       toast.success("Retired sleigh");
       onClose();

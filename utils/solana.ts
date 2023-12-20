@@ -247,7 +247,7 @@ export const createSleighTx = async (
 
     const tx = await createTx(ix, connection, publicKey);
     console.info(
-      "createSleigh Encoded TX: ",
+      "createSleigh ENCODED UNSIGNED TX: ",
       Buffer.from(tx!.serialize()).toString("base64")
     );
 
@@ -340,7 +340,7 @@ export const claimLevelsTx = async (
 
     const tx = await createTx(ix, connection, publicKey);
     console.info(
-      "claim Encoded TX: ",
+      "claim ENCODED UNSIGNED TX: ",
       Buffer.from(tx!.serialize()).toString("base64")
     );
 
@@ -478,7 +478,7 @@ export const deliveryTx = async (
 
     const tx = await createTx(ix, connection, publicKey);
     console.info(
-      "delivery Encoded TX: ",
+      "delivery ENCODED UNSIGNED TX: ",
       Buffer.from(tx!.serialize()).toString("base64")
     );
 
@@ -597,7 +597,7 @@ export const repairSleighTx = async (
 
     const tx = await createTx(ix, connection, publicKey);
     console.info(
-      "repair Encoded TX: ",
+      "repair ENCODED UNSIGNED TX: ",
       Buffer.from(tx!.serialize()).toString("base64")
     );
     if (!tx) {
@@ -701,7 +701,7 @@ export const retireSleighTx = async (
 
     const tx = await createTx(ix, connection, publicKey);
     console.log(
-      "retire Encoded TX: ",
+      "retire ENCODED UNSIGNED TX: ",
       Buffer.from(tx!.serialize()).toString("base64")
     );
 

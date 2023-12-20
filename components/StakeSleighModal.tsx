@@ -82,12 +82,12 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
         throw Error("Failed to create tx");
       }
       const signedTx = await signTransaction(tx);
-      console.log("Signed tx: ", signedTx);
+      console.log(
+        "stakeSleigh Signed tx: ",
+        Buffer.from(signedTx!.serialize()).toString("base64")
+      );
 
       await connection.sendRawTransaction(signedTx.serialize());
-
-      // Simulate a request with a 10-second delay
-      // await new Promise((resolve) => setTimeout(resolve, 10000));
 
       toast.success("Staked sleigh");
       onClose();
