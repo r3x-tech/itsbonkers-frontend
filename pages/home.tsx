@@ -48,6 +48,16 @@ import { useCurrentSleighs } from "@/hooks/useCurrentSleighs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCurrentWalletBonkBalance } from "@/hooks/useCurrentWalletBonkBalance";
 import { useCurrentSlot } from "@/hooks/useCurrentSlot";
+import { useCurrentPropulsionParts } from "@/hooks/useCurrentPropulsionParts";
+import { useCurrentNavigationParts } from "@/hooks/useCurrentNavigationParts";
+import { useCurrentLandingGearParts } from "@/hooks/useCurrentLandingGearParts";
+import { useCurrentPresentsBagParts } from "@/hooks/useCurrentPresentsBagParts";
+import {
+  LANDING_GEAR_MINT_ADDRESS,
+  NAVIGATION_MINT_ADDRESS,
+  PRESENTS_BAG_MINT_ADDRESS,
+  PROPULSION_MINT_ADDRESS,
+} from "@/constants";
 
 function HomePage() {
   const [selectedSleigh, setSelectedSleigh] = useState<Sleigh | null>(null);
@@ -78,6 +88,30 @@ function HomePage() {
   const { data: walletBonkBalance, isLoading: isLoadingWalletBonkBalance } =
     useCurrentWalletBonkBalance(publicKey, connection);
   const { data: currentSlot } = useCurrentSlot();
+  const {
+    data: currentPropulsionParts,
+    refetch: refetchCurrentPropulsionParts,
+  } = useCurrentPropulsionParts(publicKey, connection, PROPULSION_MINT_ADDRESS);
+  const {
+    data: currentLandingGearParts,
+    refetch: refetchCurrentLandingGearParts,
+  } = useCurrentLandingGearParts(
+    publicKey,
+    connection,
+    LANDING_GEAR_MINT_ADDRESS
+  );
+  const {
+    data: currentNavigationParts,
+    refetch: refetchCurrentNavigationParts,
+  } = useCurrentNavigationParts(publicKey, connection, NAVIGATION_MINT_ADDRESS);
+  const {
+    data: currentPresentsBagParts,
+    refetch: refetchCurrentPresentsBagParts,
+  } = useCurrentPresentsBagParts(
+    publicKey,
+    connection,
+    PRESENTS_BAG_MINT_ADDRESS
+  );
 
   // Process the sleighs data to convert BN fields
   let processedSleighs = currentSleighs?.map((sleigh) => ({
@@ -220,13 +254,13 @@ function HomePage() {
                       justifyContent="space-between"
                       align="center"
                     >
-                      <Image src="/reindeer.png" alt="skis" boxSize="2.5rem" />
+                      <Image src="/reindeer.png" alt="skis" boxSize="2rem" />
                       <Text
-                        fontSize="1.25rem"
+                        fontSize="1rem"
                         fontWeight="700"
                         fontFamily={theme.fonts.body}
                       >
-                        x21
+                        {currentPropulsionParts}
                       </Text>
                     </Flex>
                   </Box>
@@ -247,13 +281,13 @@ function HomePage() {
                       justifyContent="space-between"
                       align="center"
                     >
-                      <Image src="/gps.png" alt="skis" boxSize="2.5rem" />
+                      <Image src="/gps.png" alt="gps" boxSize="2rem" />
                       <Text
-                        fontSize="1.25rem"
+                        fontSize="1rem"
                         fontWeight="700"
                         fontFamily={theme.fonts.body}
                       >
-                        x21
+                        {currentNavigationParts}
                       </Text>
                     </Flex>
                   </Box>
@@ -281,11 +315,11 @@ function HomePage() {
                     >
                       <GiSkis fontSize="2rem" />
                       <Text
-                        fontSize="1.25rem"
+                        fontSize="1rem"
                         fontWeight="700"
                         fontFamily={theme.fonts.body}
                       >
-                        x34
+                        {currentLandingGearParts}
                       </Text>
                     </Flex>
                   </Box>
@@ -305,17 +339,13 @@ function HomePage() {
                       justifyContent="space-between"
                       align="center"
                     >
-                      <Image
-                        src="/presentsbag.png"
-                        alt="skis"
-                        boxSize="2.5rem"
-                      />
+                      <Image src="/presentsbag.png" alt="skis" boxSize="2rem" />
                       <Text
-                        fontSize="1.25rem"
+                        fontSize="1rem"
                         fontWeight="700"
                         fontFamily={theme.fonts.body}
                       >
-                        x10
+                        {currentPresentsBagParts}
                       </Text>
                     </Flex>
                   </Box>

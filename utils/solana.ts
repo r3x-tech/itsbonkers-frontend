@@ -815,6 +815,24 @@ export const getBonkBalance = async ({
   return bonkBalance;
 };
 
+export const getWalletTokenBalance = async ({
+  walletAddress,
+  connection,
+  tokenMint,
+}: {
+  walletAddress: string;
+  connection: Connection;
+  tokenMint: string;
+}) => {
+  const bonkBalance = await getTokenAccountBalance(
+    walletAddress,
+    connection,
+    tokenMint
+  );
+
+  return bonkBalance;
+};
+
 export async function getTokenAccountBalance(
   wallet: string,
   solanaConnection: Connection,
