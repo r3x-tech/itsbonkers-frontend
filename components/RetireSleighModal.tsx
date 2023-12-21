@@ -217,10 +217,9 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
                   {currentSleigh.sleighId}
                 </Box>
                 <Box as="span" color={theme.colors.white}>
-                  . THIS ACTION IS IRREVERSIBLE & SHOULD YOU CHOOSE TO RETIRE
-                  YOUR SLEIGH YOU WILL LOSE THE STAKED AMOUNT OF BONK. SHOULD
-                  YOU RE-STAKE AFTER RETIRING YOUR SLEIGH YOU WILL RECEIVE 70%
-                  OF YOUR ORIGINAL STAKE BACK.{" "}
+                  . THIS ACTION IS IRREVERSIBLE. SHOULD YOU CHOOSE TO RETIRE
+                  YOUR SLEIGH YOU WILL YOU WILL RECEIVE YOUR STAKE AMOUNT MINUS
+                  ANY FEES.{" "}
                 </Box>{" "}
               </Text>
             </Flex>

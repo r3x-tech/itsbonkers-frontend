@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 import userStore from "@/stores/userStore";
 import toast from "react-hot-toast";
 // import { useState } from "react";
-import { FaCopy } from "react-icons/fa";
+import { FaCopy, FaBell } from "react-icons/fa";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useState } from "react";
 
@@ -113,7 +113,7 @@ export const Navbar: React.FC = () => {
             outline="none"
             w={["20rem", "25rem"]}
             zIndex={100}
-            boxShadow="2px 2px 20px rgba(0, 0, 0, 0.8)"
+            boxShadow="10px 10px 50px rgba(0, 0, 0, 1)"
           >
             <VStack spacing={4} py="1.5rem" px="2rem" w="100%">
               <Flex direction="column" w="100%">
@@ -157,8 +157,9 @@ export const Navbar: React.FC = () => {
                     aria-label="Copy"
                     bg={theme.colors.black}
                   >
-                    <Flex color={theme.colors.white}>
+                    <Flex color={theme.colors.tertiary}>
                       <FaCopy
+                        size="1.5rem"
                         style={{
                           marginLeft: "10px",
                           cursor: "pointer",

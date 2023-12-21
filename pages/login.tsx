@@ -7,6 +7,7 @@ import {
   Input,
   Heading,
   Image,
+  Box,
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import theme from "@/styles/theme";
@@ -238,7 +239,7 @@ function LoginPage() {
       bgImage="url('/snowscene4.gif')"
       backgroundSize="100% 100%" // Stretch to fill both width and height
       backgroundRepeat="no-repeat"
-      backgroundPosition="center"
+      // backgroundPosition="center"
     >
       <Flex
         direction="column"
@@ -253,7 +254,7 @@ function LoginPage() {
         <Flex
           h="5vh"
           mt="2rem"
-          px="3rem"
+          px={["1.5rem", "3rem"]}
           py="1rem"
           color={theme.colors.background}
           fontSize={["1.25rem", "1.5rem"]}
@@ -268,7 +269,7 @@ function LoginPage() {
         >
           <Text
             mr={["1rem", "2rem"]}
-            fontSize={["2.5rem", "2.5rem"]}
+            fontSize={["2.25rem", "2.5rem"]}
             fontWeight="700"
             color={theme.colors.white}
           >
@@ -281,7 +282,11 @@ function LoginPage() {
             ml={["1rem", "2rem"]}
             gap={2}
           >
-            <Text fontSize="3rem" fontWeight="700" color={theme.colors.white}>
+            <Text
+              fontSize="2.25rem"
+              fontWeight="700"
+              color={theme.colors.white}
+            >
               {timeLeft.days}
             </Text>
             <Text
@@ -292,7 +297,11 @@ function LoginPage() {
             >
               DAYS
             </Text>
-            <Text fontSize="3rem" fontWeight="700" color={theme.colors.white}>
+            <Text
+              fontSize="2.25rem"
+              fontWeight="700"
+              color={theme.colors.white}
+            >
               {timeLeft.hours}
             </Text>
             <Text
@@ -304,7 +313,7 @@ function LoginPage() {
               HRS
             </Text>
             <Text
-              fontSize="3rem"
+              fontSize="2.25rem"
               fontWeight="700"
               color={theme.colors.white}
               fontFamily={theme.fonts.body}
@@ -347,6 +356,7 @@ function LoginPage() {
               <Stack h="100%" w="100%">
                 <WalletMultiButton />
                 <Button
+                  mt="1.5rem"
                   borderWidth="2px"
                   borderColor={theme.colors.primary}
                   bg={theme.colors.primary}
@@ -366,7 +376,7 @@ function LoginPage() {
                     bg: theme.colors.quaternary,
                   }}
                 >
-                  SIGN UP FOR SEASON 1
+                  RECEIVE GAME NOTIFICATIONS
                 </Button>
               </Stack>
             ) : (
@@ -527,7 +537,7 @@ function LoginPage() {
             </Text>
           </Flex>
           <Flex
-            flexDirection="row"
+            flexDirection={["column", "row"]}
             justifyContent="start"
             align="start"
             mt="8rem"
@@ -600,8 +610,7 @@ function LoginPage() {
         alignItems="center"
         justifyContent="center"
         fontFamily="Montserrat"
-        p="1rem"
-        minWidth="22rem"
+        mt="5rem"
         h="100vh"
         w="100vw"
         ref={signupRef}
@@ -610,68 +619,83 @@ function LoginPage() {
           direction="column"
           align="center"
           justifyContent="center"
-          w="90%"
-          h="90%"
+          // ml="10rem"
+          mt={["20rem", "0rem"]}
+          w={["100%", "100%"]}
+          h={["30%", "100%"]}
         >
           <Flex
-            w="120%"
-            h="120%"
+            w={["100%", "100%"]}
+            h={["200%", "90%"]}
             direction="column"
             align="center"
-            justifyContent="start"
-            bgImage="url('/chat2.svg')"
-            backgroundSize="85% 85%"
+            justifyContent={["center", "start"]}
+            bgImage="url('/chat4.svg')"
+            backgroundSize={["200% 200%", "100% 100%"]}
             backgroundRepeat="no-repeat"
             backgroundPosition="center"
-            // bg="green"
           >
             <Flex
-              py="5rem"
-              mt="5rem"
+              py={["0rem", "3rem"]}
+              my={["0rem", "5rem"]}
               direction="column"
-              alignItems="start"
-              justifyContent="start"
+              alignItems={["center", " center"]}
+              justifyContent={["center", "center"]}
+              // bg="green"
+              w={["80%", "60%"]}
             >
-              <Flex justifyContent="space-between" w="100%">
-                <Flex w="100%" alignItems="start" justifyContent="start">
-                  <Text
-                    color={theme.colors.white}
-                    letterSpacing="3px"
-                    fontSize="5rem"
-                    fontWeight="700"
-                    fontFamily={theme.fonts.header}
-                    mr="2rem"
-                  >
-                    SEASON 1
-                  </Text>{" "}
-                  <Text
-                    color={theme.colors.primary}
-                    letterSpacing="3px"
-                    fontSize="5rem"
-                    fontWeight="700"
-                    fontFamily={theme.fonts.header}
-                    mr="0.5rem"
-                  >
-                    SIGNUP
-                  </Text>
-                </Flex>
+              <Flex
+                justifyContent="space-between"
+                alignItems="start"
+                w="100%"
+                flexDirection={["column", "row"]}
+              >
+                <Text
+                  color={theme.colors.primary}
+                  letterSpacing={["1px", "3px"]}
+                  fontSize={["2rem", "4rem"]}
+                  fontWeight="700"
+                  fontFamily={theme.fonts.header}
+                >
+                  SIGNUP FOR GAME NOTIFICATIONS
+                </Text>
               </Flex>
               <Flex
                 flexDirection="column"
                 alignItems="start"
                 justifyContent="start"
-                mt="2rem"
-                mb="4rem"
+                mt="1.5rem"
+                mb="2.5rem"
+                w={["100%", "100%"]}
               >
                 <Text
                   color={theme.colors.background}
-                  fontSize="2rem"
+                  fontSize={["1.25rem", "1.75rem"]}
                   fontWeight="700"
                   fontFamily={theme.fonts.body}
                 >
-                  1. CONNECT YOUR WALLET
+                  1. WHAT SOLANA WALLET ADDRESS ARE YOU PLAYING WITH?
                 </Text>
-                <Button
+                <Flex w={["100%", "100%"]}>
+                  <Input
+                    mt="1rem"
+                    borderWidth="2px"
+                    borderColor={theme.colors.background}
+                    bg={theme.colors.background}
+                    borderRadius="30px"
+                    fontWeight="700"
+                    fontSize={["1.25rem", "1.5rem"]}
+                    fontFamily={theme.fonts.body}
+                    h={["2rem", "5rem"]}
+                    py={["1.5rem", "2rem"]}
+                    px={["2rem", "2.5rem"]}
+                    placeholder="ENTER YOUR SOLANA WALLET ADDRESS"
+                    color={theme.colors.white}
+                    _placeholder={{ color: theme.colors.darkerGray }}
+                  />
+                </Flex>
+
+                {/* <Button
                   mt="2rem"
                   borderWidth="2px"
                   borderColor={theme.colors.primary}
@@ -691,7 +715,7 @@ function LoginPage() {
                   }}
                 >
                   CONNECT WALLET
-                </Button>
+                </Button> */}
               </Flex>
               <Flex
                 w="100%"
@@ -701,31 +725,31 @@ function LoginPage() {
               >
                 <Text
                   color={theme.colors.background}
-                  fontSize="2rem"
+                  fontSize={["1.25rem", "1.75rem"]}
                   fontWeight="700"
                   fontFamily={theme.fonts.body}
                 >
-                  2. EMAIL ADDRESS FOR GAME NOTIFICATIONS
+                  2. EMAIL ADDRESS FOR RECEIVING GAME NOTIFICATIONS
                 </Text>
-                <Flex>
+                <Flex w={["100%", "100%"]}>
                   <Input
-                    mt="2rem"
-                    mr="2rem"
+                    mt="1rem"
+                    // mr="2rem"
                     borderWidth="2px"
                     borderColor={theme.colors.background}
                     bg={theme.colors.background}
                     borderRadius="30px"
                     fontWeight="700"
-                    fontSize="1.5rem"
+                    fontSize={["1.25rem", "1.5rem"]}
                     fontFamily={theme.fonts.body}
-                    w="40rem"
-                    h="5rem"
-                    p="2rem"
+                    h={["2rem", "5rem"]}
+                    py={["1.5rem", "2rem"]}
+                    px={["2rem", "2.5rem"]}
                     placeholder="ENTER YOUR EMAIL ADDRESS"
                     color={theme.colors.white}
-                    _placeholder={{ color: theme.colors.white }}
+                    _placeholder={{ color: theme.colors.darkerGray }}
                   />
-                  <Button
+                  {/* <Button
                     mt="2rem"
                     borderWidth="2px"
                     borderColor={theme.colors.primary}
@@ -745,29 +769,61 @@ function LoginPage() {
                     }}
                   >
                     VERIFY
-                  </Button>
+                  </Button> */}
                 </Flex>
-                <Flex w="100%" align="center">
+              </Flex>
+              <Flex
+                w="100%"
+                flexDirection="column"
+                align="end"
+                justifyContent="start"
+              >
+                <Button
+                  mt={["1.5rem", "3.5rem"]}
+                  borderWidth="2px"
+                  borderColor={theme.colors.primary}
+                  bg={theme.colors.primary}
+                  borderRadius="30px"
+                  fontWeight="700"
+                  fontSize={["1.25rem", "1.5rem"]}
+                  fontFamily={theme.fonts.body}
+                  h={["2rem", "5rem"]}
+                  py={["1.5rem", "2rem"]}
+                  px={["2rem", "2.5rem"]}
+                  w="100%"
+                  color={theme.colors.white}
+                  onClick={() => {}}
+                  _hover={{
+                    color: theme.colors.background,
+                    borderColor: theme.colors.quaternary,
+                    bg: theme.colors.quaternary,
+                  }}
+                >
+                  SIGNUP
+                </Button>
+                <Box w="100%" textAlign="center" mt="2rem">
                   <Text
-                    ml="1.25rem"
-                    mt="1.25rem"
+                    as="span"
+                    ml="0.75rem"
+                    mt="1rem"
                     color={theme.colors.background}
-                    fontSize="1.25rem"
+                    py={["1.5rem", "2rem"]}
+                    fontSize={["1rem", "1.1rem"]}
                     fontWeight="700"
                     fontFamily={theme.fonts.body}
                   >
-                    ~SIGNING UP WILL ALLOW YOU TO RECEIVE IT&apos;S BONKERS GAME
-                    INFO VIA
+                    ~SIGNING UP WILL ALLOW YOU TO RECEIVE GAME INFO VIA
                   </Text>
                   <Text
+                    as="span"
                     ml="0.75rem"
-                    mt="1.25rem"
+                    mt="1rem"
                     color={theme.colors.background}
                     onClick={() =>
                       window.open("https://reload.r3x.tech/", "_blank")
                     }
                     cursor="pointer"
-                    fontSize="1.25rem"
+                    fontSize={["1rem", "1.1rem"]}
                     fontWeight="700"
                     fontFamily={theme.fonts.body}
                     textDecoration="underline"
@@ -775,16 +831,17 @@ function LoginPage() {
                     R3L04D
                   </Text>{" "}
                   <Text
+                    as="span"
                     ml="0.75rem"
-                    mt="1.25rem"
+                    mt="1rem"
                     color={theme.colors.background}
-                    fontSize="1.25rem"
+                    fontSize={["1rem", "1.1rem"]}
                     fontWeight="700"
                     fontFamily={theme.fonts.body}
                   >
-                    TO YOUR EMAIL~
+                    DIRECTLY TO YOUR EMAIL~
                   </Text>
-                </Flex>
+                </Box>
               </Flex>
             </Flex>
           </Flex>
