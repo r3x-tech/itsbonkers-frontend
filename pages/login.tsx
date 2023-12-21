@@ -37,6 +37,8 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [isLoginInProgress, setLoginInProgress] = useState(false);
+  const [ran, setRan] = useState(false);
+
   const { refetch: refetchSleighs } = useSleighs();
 
   const { connection } = useSolana();
@@ -157,23 +159,38 @@ function LoginPage() {
 
       if (ixs.length > 0) {
         console.log("ixs: ", ixs, "length: ", length);
+
         await sendAllTxParallel(
           connection,
           ixs,
           currentPublicKey,
           signAllTransactions
-        );
-        router.push("/home");
-      } else {
-        router.push("/home");
+        ).catch(() => {
+          toast.error("Failed to create ata");
+        });
       }
+      setRan(true);
+      router.push("/home");
     };
 
-    if (loggedIn && connection && publicKey != null) {
+    if (
+      loggedIn &&
+      connection &&
+      publicKey != null &&
+      !isLoginInProgress &&
+      !ran
+    ) {
       fetchandCreateAtas(publicKey);
-      router.push("/home");
     }
-  }, [connection, loggedIn, publicKey, router, signAllTransactions]);
+  }, [
+    connection,
+    isLoginInProgress,
+    loggedIn,
+    publicKey,
+    ran,
+    router,
+    signAllTransactions,
+  ]);
 
   useEffect(() => {
     const fetchData = async () => {
