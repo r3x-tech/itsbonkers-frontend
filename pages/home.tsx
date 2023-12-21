@@ -354,10 +354,11 @@ function HomePage() {
               </Flex>
               <Flex
                 direction="column"
-                justifyContent="start"
+                justifyContent="space-between"
                 h="75%"
                 py="2rem"
                 px="3rem"
+                overflowY="auto"
               >
                 <Flex
                   alignItems="flex-end"
