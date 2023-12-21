@@ -355,10 +355,9 @@ function HomePage() {
               <Flex
                 direction="column"
                 justifyContent="space-between"
-                h="75%"
+                h="60%"
                 py="2rem"
                 px="3rem"
-                overflowY="auto"
               >
                 <Flex
                   alignItems="flex-end"
@@ -408,13 +407,14 @@ function HomePage() {
                   flexDirection="column"
                   justifyContent="space-between"
                   my="1.25rem"
+                  pb="2rem"
                   w="100%"
-                  h="48rem"
+                  h="100%"
                 >
                   <Flex
                     flexDirection="column"
                     justifyContent="start"
-                    h="80%"
+                    h="100%"
                     overflowY="auto"
                     gap="1.5rem"
                     pr="1rem"
@@ -447,40 +447,40 @@ function HomePage() {
                       />
                     ))}
                   </Flex>
-                  <Flex
-                    flexDirection="column"
-                    justifyContent="center"
-                    align="center"
-                    w="100%"
-                    h="12%"
-                  >
-                    <StakeSleighModal
-                      minStakeAmount={currentStakeCost}
-                      maxStakeAmount={walletBonkBalance!}
-                      stakingInProgress={stakingInProgress}
-                      setStakingInProgress={setStakingInProgress}
-                      refetchCurrentSleighs={refetchCurrentSleighs}
-                      stg2Started={stg2Started}
-                    />
-                    <Flex>
-                      <Text
-                        fontSize="1rem"
-                        fontWeight="400"
-                        fontFamily={theme.fonts.body}
-                        color={theme.colors.white}
-                        mr="0.5rem"
-                      >
-                        CURRENT MIN. BID AMOUNT:{" "}
-                      </Text>
-                      <Text
-                        fontSize="1rem"
-                        fontWeight="700"
-                        fontFamily={theme.fonts.body}
-                        color={theme.colors.white}
-                      >
-                        {currentStakeCost}
-                      </Text>
-                    </Flex>
+                </Flex>
+                <Flex
+                  flexDirection="column"
+                  justifyContent="center"
+                  align="center"
+                  w="100%"
+                  h="12%"
+                >
+                  <StakeSleighModal
+                    minStakeAmount={currentStakeCost}
+                    maxStakeAmount={walletBonkBalance!}
+                    stakingInProgress={stakingInProgress}
+                    setStakingInProgress={setStakingInProgress}
+                    refetchCurrentSleighs={refetchCurrentSleighs}
+                    stg2Started={stg2Started}
+                  />
+                  <Flex>
+                    <Text
+                      fontSize="1rem"
+                      fontWeight="400"
+                      fontFamily={theme.fonts.body}
+                      color={theme.colors.white}
+                      mr="0.5rem"
+                    >
+                      CURRENT MIN. BID AMOUNT:{" "}
+                    </Text>
+                    <Text
+                      fontSize="1rem"
+                      fontWeight="700"
+                      fontFamily={theme.fonts.body}
+                      color={theme.colors.white}
+                    >
+                      {currentStakeCost}
+                    </Text>
                   </Flex>
                 </Flex>
               </Flex>
