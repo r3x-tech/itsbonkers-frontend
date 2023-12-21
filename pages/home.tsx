@@ -9,6 +9,7 @@ import theme from "@/styles/theme";
 import { Sleigh } from "@/types/types";
 import { createSleighTx } from "@/utils";
 import { GiSkis } from "react-icons/gi";
+import { TbRefresh } from "react-icons/tb";
 
 import {
   Box,
@@ -241,7 +242,7 @@ function HomePage() {
                   <Box
                     bg={theme.colors.background}
                     w="100%"
-                    height="4.5rem"
+                    height={["3.5rem, 4rem"]}
                     borderRadius="0.75rem"
                     boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
                     justifyContent="center"
@@ -268,7 +269,7 @@ function HomePage() {
                   <Box
                     bg={theme.colors.background}
                     w="100%"
-                    height="4.5rem"
+                    height={["3.5rem, 4rem"]}
                     borderRadius="0.75rem"
                     boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
                     justifyContent="center"
@@ -294,7 +295,7 @@ function HomePage() {
                   <Box
                     bg={theme.colors.background}
                     w="100%"
-                    height="4.5rem"
+                    height={["3.5rem, 4rem"]}
                     borderRadius="0.75rem"
                     boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
                     justifyContent="space-between"
@@ -326,7 +327,7 @@ function HomePage() {
                   <Box
                     bg={theme.colors.background}
                     w="100%"
-                    height="4.5rem"
+                    height={["3.5rem, 4rem"]}
                     borderRadius="0.75rem"
                     boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
                     justifyContent="center"
@@ -363,20 +364,31 @@ function HomePage() {
                   justifyContent="space-between"
                   w="100%"
                 >
-                  <Text
-                    fontSize="1.25rem"
-                    fontWeight="700"
-                    fontFamily={theme.fonts.body}
-                  >
-                    SLEIGHS
-                  </Text>
-                  <Flex>
+                  <Flex alignItems="center" justifyContent="start" w="50%">
+                    <Text
+                      fontSize="1.25rem"
+                      fontWeight="700"
+                      fontFamily={theme.fonts.body}
+                      mr="1rem"
+                    >
+                      SLEIGHS
+                    </Text>
+                    <Flex
+                      cursor="pointer"
+                      onClick={() => refetchCurrentSleighs()}
+                    >
+                      <TbRefresh size="1.5rem" />
+                    </Flex>
+                  </Flex>
+
+                  <Flex w="50%">
                     <Text
                       fontSize="1rem"
                       fontWeight="400"
                       fontFamily={theme.fonts.body}
                       color={theme.colors.white}
                       mr="0.5rem"
+                      mb="0.1rem"
                     >
                       # OF SLEIGHS:{" "}
                     </Text>
