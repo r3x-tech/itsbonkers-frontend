@@ -65,66 +65,18 @@ export const Navbar: React.FC = () => {
       h="8vh"
       px="5rem"
     >
-      <Image
-        src="/bonkerslogo.png"
-        alt="User Profile Pic"
-        h="4rem"
-        w="10rem"
-        cursor="pointer"
-        onClick={() => {
-          // router.push("/account");
-        }}
-      />
-      <Button
-        borderWidth="2px"
-        borderColor={theme.colors.primary}
-        bg={theme.colors.primary}
-        borderRadius="30px"
-        fontWeight="700"
-        fontSize="1.5rem"
-        fontFamily={theme.fonts.body}
-        w="100%"
-        h="5rem"
-        color={theme.colors.white}
-        onClick={() => {
-          window.open(
-            "https://spacemandev.notion.site/It-s-Bonkers-How-to-Play-6f70818c0b0c42039ca33f5985e25b64",
-            "_blank"
-          );
-        }}
-        _hover={{
-          color: theme.colors.background,
-          borderColor: theme.colors.quaternary,
-          bg: theme.colors.quaternary,
-        }}
-      >
-        HOW TO PLAY?
-      </Button>
-      <Button
-        borderWidth="2px"
-        borderColor={theme.colors.primary}
-        bg={theme.colors.primary}
-        borderRadius="30px"
-        fontWeight="700"
-        fontSize="1.5rem"
-        fontFamily={theme.fonts.body}
-        w="100%"
-        h="5rem"
-        color={theme.colors.white}
-        onClick={() => {
-          window.open(
-            "https://spacemandev.notion.site/It-s-Bonkers-How-to-Play-6f70818c0b0c42039ca33f5985e25b64",
-            "_blank"
-          );
-        }}
-        _hover={{
-          color: theme.colors.background,
-          borderColor: theme.colors.quaternary,
-          bg: theme.colors.quaternary,
-        }}
-      >
-        ABOUT
-      </Button>
+      <Flex w="50%" gap={10}>
+        <Image
+          src="/bonkerslogo.png"
+          alt="User Profile Pic"
+          h="4rem"
+          w="10rem"
+          cursor="pointer"
+          onClick={() => {
+            // router.push("/account");
+          }}
+        />
+      </Flex>
 
       {loggedIn ? (
         <Popover placement="bottom-end">
@@ -153,20 +105,21 @@ export const Navbar: React.FC = () => {
           </PopoverTrigger>
 
           <PopoverContent
-            bg={theme.colors.background}
+            bg={theme.colors.secondary}
             color={theme.colors.white}
-            borderColor={theme.colors.white}
-            borderRadius="1rem"
+            borderColor={theme.colors.tertiary}
+            borderRadius="2rem"
             borderWidth="2px"
             outline="none"
+            w={["20rem", "25rem"]}
             zIndex={100}
-            // boxShadow="4px 4px 10px black"
+            boxShadow="2px 2px 20px rgba(0, 0, 0, 0.8)"
           >
-            <VStack spacing={4} py="1.5rem" px="2rem">
-              <Flex direction="column">
+            <VStack spacing={4} py="1.5rem" px="2rem" w="100%">
+              <Flex direction="column" w="100%">
                 <Flex
                   align="center"
-                  justifyContent="flex-start"
+                  justifyContent="space-between"
                   pb="1.25rem"
                   w="100%"
                 >
@@ -217,16 +170,69 @@ export const Navbar: React.FC = () => {
                   </Tooltip>
                 </Flex>
                 <Button
+                  borderWidth="2px"
+                  borderColor={theme.colors.tertiary}
+                  bg={theme.colors.tertiary}
+                  borderRadius="30px"
+                  fontWeight="700"
+                  fontSize="1.25rem"
+                  fontFamily={theme.fonts.body}
+                  w="100%"
+                  h="3.5rem"
+                  my="0.75rem"
+                  color={theme.colors.background}
+                  onClick={() => {
+                    window.open(
+                      "https://spacemandev.notion.site/It-s-Bonkers-How-to-Play-6f70818c0b0c42039ca33f5985e25b64",
+                      "_blank"
+                    );
+                  }}
+                  _hover={{
+                    color: theme.colors.background,
+                    borderColor: theme.colors.quaternary,
+                    bg: theme.colors.quaternary,
+                  }}
+                >
+                  ABOUT
+                </Button>
+                <Button
+                  borderWidth="2px"
+                  borderColor={theme.colors.tertiary}
+                  bg={theme.colors.tertiary}
+                  borderRadius="30px"
+                  fontWeight="700"
+                  fontSize="1.25rem"
+                  fontFamily={theme.fonts.body}
+                  w="100%"
+                  h="3.5rem"
+                  my="1rem"
+                  color={theme.colors.background}
+                  onClick={() => {
+                    window.open(
+                      "https://spacemandev.notion.site/It-s-Bonkers-How-to-Play-6f70818c0b0c42039ca33f5985e25b64",
+                      "_blank"
+                    );
+                  }}
+                  _hover={{
+                    color: theme.colors.background,
+                    borderColor: theme.colors.quaternary,
+                    bg: theme.colors.quaternary,
+                  }}
+                >
+                  HOW TO PLAY?
+                </Button>
+                <Button
                   variant="outline"
                   borderWidth="2px"
-                  borderColor={theme.colors.white}
-                  bg={theme.colors.background}
+                  color={theme.colors.white}
+                  borderColor={theme.colors.primary}
+                  bg={theme.colors.secondary}
                   borderRadius="30px"
-                  fontWeight="600"
-                  fontSize="1rem"
+                  fontWeight="700"
+                  fontSize="1.25rem"
                   w="100%"
-                  mb="0.5rem"
-                  h="2.5rem"
+                  h="3.5rem"
+                  my="1rem"
                   isDisabled={isLogoutInProgress}
                   isLoading={isLogoutInProgress}
                   spinner={
@@ -255,9 +261,9 @@ export const Navbar: React.FC = () => {
                     setLogoutInProgress(false);
                   }}
                   _hover={{
-                    color: theme.colors.background,
-                    borderColor: theme.colors.white,
-                    bg: theme.colors.white,
+                    color: theme.colors.white,
+                    borderColor: theme.colors.primary,
+                    bg: theme.colors.primary,
                   }}
                 >
                   LOGOUT

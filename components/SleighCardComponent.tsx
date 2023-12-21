@@ -3,13 +3,13 @@ import { Sleigh } from "@/types/types";
 import { Box, Flex, Text } from "@chakra-ui/react";
 
 interface SleighProps {
-  sleigh: Sleigh;
+  currentSleigh: Sleigh;
   onSelect: (sleigh: Sleigh) => void;
   isSelected: boolean;
 }
 
 export function SleighCardComponent({
-  sleigh,
+  currentSleigh,
   onSelect,
   isSelected,
 }: SleighProps) {
@@ -22,7 +22,7 @@ export function SleighCardComponent({
       borderColor={isSelected ? theme.colors.tertiary : theme.colors.background}
       borderWidth="2px"
       boxShadow="4px 4px 8px rgba(0, 0, 0, 0.4)"
-      onClick={() => onSelect(sleigh)}
+      onClick={() => onSelect(currentSleigh)}
       cursor="pointer"
       p="1rem"
     >
@@ -42,7 +42,7 @@ export function SleighCardComponent({
           fontFamily={theme.fonts.body}
           color={theme.colors.white}
         >
-          {sleigh.level}
+          {currentSleigh.level}
         </Text>
       </Flex>
       <Text
@@ -51,7 +51,7 @@ export function SleighCardComponent({
         fontFamily={theme.fonts.header}
         color={theme.colors.white}
       >
-        {sleigh.sleighId}
+        {currentSleigh.sleighId}
       </Text>
     </Box>
   );

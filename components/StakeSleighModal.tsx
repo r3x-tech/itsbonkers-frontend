@@ -26,12 +26,15 @@ import useSolana from "@/hooks/useSolana";
 import { createSleighTx } from "@/utils";
 import { randomBytes } from "crypto";
 import toast from "react-hot-toast";
+import { GameSettings } from "@/types/types";
 
 interface StakeSleighModalProps {
   minStakeAmount: number;
   maxStakeAmount: number;
   stakingInProgress: boolean;
   setStakingInProgress: (value: boolean) => void;
+  refetchCurrentSleighs: () => void;
+  stg2Started: boolean;
 }
 
 export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
@@ -39,6 +42,8 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
   maxStakeAmount,
   stakingInProgress,
   setStakingInProgress,
+  refetchCurrentSleighs,
+  stg2Started,
 }) => {
   const [stakeAmount, setStakeAmount] = useState(250);
 
@@ -86,7 +91,6 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
         "stakeSleigh Signed tx: ",
         Buffer.from(signedTx!.serialize()).toString("base64")
       );
-
       await connection.sendRawTransaction(signedTx.serialize());
 
       toast.success("Staked sleigh");
@@ -95,30 +99,32 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
       console.error("Error during staking: ", e);
       toast.error("Failed to stake sleigh");
     } finally {
+      refetchCurrentSleighs();
       setStakingInProgress(false);
     }
   };
 
   const onSleighWarningClose = () => {
     setStakingInProgress(false);
+    refetchCurrentSleighs();
     onClose();
   };
 
   return (
-    <>
+    <Flex h="100%" w="100%">
       <Button
         borderWidth="2px"
         borderColor={theme.colors.tertiary}
         bg={theme.colors.tertiary}
         borderRadius="30px"
-        fontWeight="600"
+        fontWeight="700"
         fontSize="1.25rem"
         fontFamily={theme.fonts.body}
         w="100%"
-        mb="1rem"
-        h="3rem"
+        mb="2rem"
+        h="3.5rem"
         color={theme.colors.background}
-        isDisabled={stakingInProgress}
+        isDisabled={stakingInProgress || stg2Started}
         isLoading={stakingInProgress}
         spinner={
           <Flex flexDirection="row" align="center">
@@ -132,7 +138,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
           bg: theme.colors.quaternary,
         }}
       >
-        BID 4 SLEIGH +
+        BID FOR SLEIGH +
       </Button>
       <Modal isOpen={isOpen} onClose={onSleighWarningClose} isCentered>
         <ModalOverlay />
@@ -148,7 +154,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
             fontSize="2rem"
             fontFamily={theme.fonts.header}
           >
-            BID 4 SLEIGH
+            BID FOR SLEIGH
           </ModalHeader>
           <ModalCloseButton
             m="2rem"
@@ -290,6 +296,6 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    </Flex>
   );
 };

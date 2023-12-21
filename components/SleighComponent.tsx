@@ -26,13 +26,19 @@ import {
 import { RepairSleighModal } from "./RepairSleighModal";
 import { sampleSleighs } from "@/stores/sampleData";
 import { useCurrentSlot } from "@/hooks/useCurrentSlot";
+import { Connection } from "@solana/web3.js";
 
 interface SleighProps {
-  sleigh: Sleigh | null;
+  currentSleigh: Sleigh | null;
   gameSettings: GameSettings | undefined;
+  refetchCurrentSleighs: () => void;
 }
 
-export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
+export function SleighComponent({
+  currentSleigh,
+  gameSettings,
+  refetchCurrentSleighs,
+}: SleighProps) {
   const [retireInProgress, setRetireInProgress] = useState<boolean>(false);
   const [repairSleighInProgress, setRepairSleighInProgress] =
     useState<boolean>(false);
@@ -40,6 +46,8 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
     useState<boolean>(false);
   const [claimingInProgress, setClaimingInProgress] = useState<boolean>(false);
   const [currentStage, setCurrentStage] = useState<string>("BUILD");
+  const [pendingDeliveries, setPendingDeliveries] = useState<number>(0);
+
   const { connection } = useSolana();
   const {
     wallet,
@@ -52,21 +60,41 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
   const { data: currentSlot } = useCurrentSlot();
 
   useEffect(() => {
-    if (gameSettings && currentSlot && currentSlot > gameSettings.stage1End) {
+    const setDeliveries = async (sleigh: Sleigh, connection: Connection) => {
+      // refetchPendingDeliveries(sleigh);
+      const gameRolls = await getGameRolls(connection, "DELIVERY");
+      if (gameRolls) {
+        const numOfDeliveriesPending = gameRolls.rolls.length;
+        setPendingDeliveries(numOfDeliveriesPending);
+      }
+    };
+    if (
+      connection &&
+      currentStage != "DELIVERY" &&
+      gameSettings &&
+      currentSlot &&
+      currentSlot > gameSettings.stage1End &&
+      currentSleigh
+    ) {
       setCurrentStage("DELIVERY");
+      setDeliveries(currentSleigh, connection);
     }
-  }, [currentSlot, gameSettings]);
+  }, [connection, currentSleigh, currentSlot, currentStage, gameSettings]);
 
   const startDelivery = async () => {
     setStartingDeliveryInProgress(true);
 
     try {
-      if (!signTransaction || !connection || !publicKey || !sleigh) {
+      if (!signTransaction || !connection || !publicKey || !currentSleigh) {
         throw Error("Staking failed");
       }
       const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
 
-      const tx = await deliveryTx(sleighId, connection, publicKey);
+      const tx = await deliveryTx(
+        BigInt(currentSleigh.sleighId),
+        connection,
+        publicKey
+      );
       if (!tx) {
         throw Error("Failed to create tx");
       }
@@ -77,12 +105,12 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
       );
 
       await connection.sendRawTransaction(signedTx.serialize());
-
       toast.success("Delivery started");
     } catch (e) {
       console.error("Error during delivery: ", e);
       toast.error("Failed to start delivery");
     } finally {
+      refetchCurrentSleighs();
       setStartingDeliveryInProgress(false);
     }
   };
@@ -91,7 +119,7 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
     setClaimingInProgress(true);
 
     try {
-      if (!signTransaction || !connection || !publicKey || !sleigh) {
+      if (!signTransaction || !connection || !publicKey || !currentSleigh) {
         throw Error("Staking failed");
       }
       const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
@@ -133,7 +161,7 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
       w="80%"
       overflowY="auto"
     >
-      {sleigh ? (
+      {currentSleigh ? (
         <>
           <Flex
             h="15%"
@@ -260,7 +288,7 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                     aria-label="PENDING DELIVIES"
                     bg={theme.colors.black}
                   >
-                    <Text>(3)</Text>
+                    <Text>({pendingDeliveries})</Text>
                   </Tooltip>
                 </Button>
               </Flex>
@@ -310,7 +338,7 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                       fontFamily={theme.fonts.body}
                       color={theme.colors.white}
                     >
-                      {sleigh.level}
+                      {currentSleigh.level}
                     </Text>
                   </Flex>
                   <Text
@@ -319,7 +347,7 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                     fontFamily={theme.fonts.header}
                     color={theme.colors.white}
                   >
-                    {sleigh.sleighId}
+                    {currentSleigh.sleighId}
                   </Text>
                 </Flex>
                 <Flex
@@ -343,7 +371,7 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                     >
                       NAVIGATION
                     </Text>
-                    {sleigh.broken ? (
+                    {currentSleigh.broken ? (
                       <Text
                         fontSize="1rem"
                         fontWeight="700"
@@ -358,16 +386,16 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                         fontWeight="700"
                         fontFamily={theme.fonts.body}
                         color={
-                          sleigh.navigationHp < 60
+                          currentSleigh.navigationHp < 60
                             ? theme.colors.primary
-                            : sleigh.navigationHp < 120
+                            : currentSleigh.navigationHp < 120
                             ? theme.colors.quaternary
-                            : sleigh.navigationHp < 200
+                            : currentSleigh.navigationHp < 200
                             ? theme.colors.tertiary
                             : theme.green[700]
                         }
                       >
-                        {sleigh.navigationHp} HP
+                        {currentSleigh.navigationHp} HP
                       </Text>
                     )}
                   </Flex>
@@ -376,9 +404,10 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                       repairSleighInProgress={repairSleighInProgress}
                       setRepairSleighInProgress={setRepairSleighInProgress}
                       currentStage={currentStage}
-                      currentSleigh={sleigh}
+                      currentSleigh={currentSleigh}
                       partToRepair={"NAVIGATION"}
-                      hp={sleigh.navigationHp}
+                      hp={currentSleigh.navigationHp}
+                      refetchCurrentSleighs={refetchCurrentSleighs}
                     />
                   </Flex>
                 </Flex>
@@ -408,7 +437,7 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                   >
                     PROPULSION
                   </Text>
-                  {sleigh.broken ? (
+                  {currentSleigh.broken ? (
                     <Text
                       fontSize="1rem"
                       fontWeight="700"
@@ -423,16 +452,16 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                       fontWeight="700"
                       fontFamily={theme.fonts.body}
                       color={
-                        sleigh.propulsionHp < 60
+                        currentSleigh.propulsionHp < 60
                           ? theme.colors.primary
-                          : sleigh.propulsionHp < 120
+                          : currentSleigh.propulsionHp < 120
                           ? theme.colors.quaternary
-                          : sleigh.propulsionHp < 200
+                          : currentSleigh.propulsionHp < 200
                           ? theme.colors.tertiary
                           : theme.green[700]
                       }
                     >
-                      {sleigh.propulsionHp} HP
+                      {currentSleigh.propulsionHp} HP
                     </Text>
                   )}
                 </Flex>
@@ -446,13 +475,14 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                     repairSleighInProgress={repairSleighInProgress}
                     setRepairSleighInProgress={setRepairSleighInProgress}
                     currentStage={currentStage}
-                    currentSleigh={sleigh}
+                    currentSleigh={currentSleigh}
                     partToRepair={"PROPULSION"}
-                    hp={sleigh.propulsionHp}
+                    hp={currentSleigh.propulsionHp}
+                    refetchCurrentSleighs={refetchCurrentSleighs}
                   />
                 </Flex>
               </Flex>
-              {sleigh.builtIndex == 0 && currentStage == "BUILD" ? (
+              {currentSleigh.builtIndex == 0 && currentStage == "BUILD" ? (
                 <Tooltip
                   label="BIDDING 4 SLEIGH IN PROGRESS"
                   aria-label="BIDDING 4 SLEIGH IN PROGRESS"
@@ -464,7 +494,8 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                     w="50rem"
                   />
                 </Tooltip>
-              ) : sleigh.builtIndex == 0 && currentStage == "DELIVERY" ? (
+              ) : currentSleigh.builtIndex == 0 &&
+                currentStage == "DELIVERY" ? (
                 <Tooltip
                   label="LOST BID 4 SLEIGH. RETIRE THIS SLEIGH TO RECLAIM BONK"
                   aria-label="LOST BID 4 SLEIGH. RETIRE THIS SLEIGH TO RECLAIM BONK"
@@ -500,7 +531,7 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                   >
                     PRESENTS BAG
                   </Text>
-                  {sleigh.broken ? (
+                  {currentSleigh.broken ? (
                     <Text
                       fontSize="1rem"
                       fontWeight="700"
@@ -515,16 +546,16 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                       fontWeight="700"
                       fontFamily={theme.fonts.body}
                       color={
-                        sleigh.presentsBagHp < 60
+                        currentSleigh.presentsBagHp < 60
                           ? theme.colors.primary
-                          : sleigh.presentsBagHp < 120
+                          : currentSleigh.presentsBagHp < 120
                           ? theme.colors.quaternary
-                          : sleigh.presentsBagHp < 200
+                          : currentSleigh.presentsBagHp < 200
                           ? theme.colors.tertiary
                           : theme.green[700]
                       }
                     >
-                      {sleigh.presentsBagHp} HP
+                      {currentSleigh.presentsBagHp} HP
                     </Text>
                   )}
                 </Flex>
@@ -533,9 +564,10 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                     repairSleighInProgress={repairSleighInProgress}
                     setRepairSleighInProgress={setRepairSleighInProgress}
                     currentStage={currentStage}
-                    currentSleigh={sleigh}
+                    currentSleigh={currentSleigh}
                     partToRepair={"PRESENTS BAG"}
-                    hp={sleigh.presentsBagHp}
+                    hp={currentSleigh.presentsBagHp}
+                    refetchCurrentSleighs={refetchCurrentSleighs}
                   />
                 </Flex>
               </Flex>
@@ -561,7 +593,7 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                   >
                     LANDING GEAR
                   </Text>
-                  {sleigh.broken ? (
+                  {currentSleigh.broken ? (
                     <Text
                       fontSize="1rem"
                       fontWeight="700"
@@ -576,16 +608,16 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                       fontWeight="700"
                       fontFamily={theme.fonts.body}
                       color={
-                        sleigh.landingGearHp < 60
+                        currentSleigh.landingGearHp < 60
                           ? theme.colors.primary
-                          : sleigh.landingGearHp < 120
+                          : currentSleigh.landingGearHp < 120
                           ? theme.colors.quaternary
-                          : sleigh.landingGearHp < 200
+                          : currentSleigh.landingGearHp < 200
                           ? theme.colors.tertiary
                           : theme.green[700]
                       }
                     >
-                      {sleigh.landingGearHp} HP
+                      {currentSleigh.landingGearHp} HP
                     </Text>
                   )}
                 </Flex>
@@ -594,17 +626,19 @@ export function SleighComponent({ sleigh, gameSettings }: SleighProps) {
                     repairSleighInProgress={repairSleighInProgress}
                     setRepairSleighInProgress={setRepairSleighInProgress}
                     currentStage={currentStage}
-                    currentSleigh={sleigh}
+                    currentSleigh={currentSleigh}
                     partToRepair={"LANDING GEAR"}
-                    hp={sleigh.landingGearHp}
+                    hp={currentSleigh.landingGearHp}
+                    refetchCurrentSleighs={refetchCurrentSleighs}
                   />
                 </Flex>
               </Box>
               <RetireSleighModal
                 retireInProgress={retireInProgress}
                 setRetireInProgress={setRetireInProgress}
-                currentSleigh={sleigh}
+                currentSleigh={currentSleigh}
                 currentStage={currentStage}
+                refetchCurrentSleighs={refetchCurrentSleighs}
               />
             </Flex>
           </Flex>

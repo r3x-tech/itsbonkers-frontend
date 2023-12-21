@@ -27,12 +27,14 @@ import { randomBytes } from "crypto";
 import { retireSleighTx } from "@/utils";
 import toast from "react-hot-toast";
 import { Sleigh } from "@/types/types";
+import { BN } from "@coral-xyz/anchor";
 
 interface RetireSleighModallProps {
   retireInProgress: boolean;
   setRetireInProgress: (value: boolean) => void;
   currentSleigh: Sleigh;
   currentStage: string;
+  refetchCurrentSleighs: () => void;
 }
 
 export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
@@ -40,6 +42,7 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
   setRetireInProgress,
   currentSleigh,
   currentStage,
+  refetchCurrentSleighs,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { connection } = useSolana();
@@ -60,9 +63,11 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
         throw Error("Staking failed");
       }
 
-      const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
-
-      const tx = await retireSleighTx(sleighId, connection, publicKey);
+      const tx = await retireSleighTx(
+        BigInt(currentSleigh.sleighId),
+        connection,
+        publicKey
+      );
       if (!tx) {
         throw Error("Failed to create tx");
       }
@@ -75,16 +80,15 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
       await connection.sendRawTransaction(signedTx.serialize());
 
       toast.success("Retired sleigh");
-      onClose();
+      onRetireWarningClose();
     } catch (e) {
       console.error("Error during retire: ", e);
       toast.error("Failed to retire");
-    } finally {
-      setRetireInProgress(false);
     }
   };
 
   const onRetireWarningClose = () => {
+    refetchCurrentSleighs();
     setRetireInProgress(false);
     onClose();
   };
@@ -118,7 +122,7 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
       >
         RETIRE SLEIGH
       </Button>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal isOpen={isOpen} onClose={onRetireWarningClose} isCentered>
         <ModalOverlay />
         <ModalContent
           bg={theme.colors.secondary}

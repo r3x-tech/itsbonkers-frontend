@@ -34,6 +34,7 @@ interface RepairSleighModalProps {
   currentSleigh: Sleigh;
   partToRepair: string;
   hp: number;
+  refetchCurrentSleighs: () => void;
 }
 
 export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
@@ -43,6 +44,7 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
   currentSleigh,
   partToRepair,
   hp,
+  refetchCurrentSleighs,
 }) => {
   const [repairAmount, setRepairAmount] = useState(0);
   const [minRepairAmount, setMinRepairAmount] = useState(0);
@@ -100,20 +102,25 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
       }
 
       const signedTx = await signTransaction(tx);
-      console.log("Signed tx: ", signedTx);
-
+      console.log(
+        "repairSleigh Signed tx: ",
+        Buffer.from(signedTx!.serialize()).toString("base64")
+      );
       await connection.sendRawTransaction(signedTx.serialize());
 
       toast.success("Sleigh repaired");
-      onClose();
+      onRepairSleighClose();
     } catch (e) {
       console.error("Error during repair: ", e);
       toast.error("Failed to repair");
-    } finally {
-      setRepairSleighInProgress(false);
     }
   };
 
+  const onRepairSleighClose = () => {
+    refetchCurrentSleighs();
+    setRepairSleighInProgress(false);
+    onClose();
+  };
   return (
     <>
       <Button
@@ -148,7 +155,7 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
       >
         REPAIR
       </Button>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal isOpen={isOpen} onClose={onRepairSleighClose} isCentered>
         <ModalOverlay />
         <ModalContent
           bg={theme.colors.secondary}

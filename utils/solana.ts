@@ -439,37 +439,19 @@ export const deliveryTx = async (
         gameSettings: gameSettingsPDA,
         gameRolls: gameRollsPDA,
         sleigh: sleighPDA,
-        sleighPropulsionPartsAta: sleighPropulsionPartsAta,
         sleighLandingGearPartsAta: sleighLandingGearPartsAta,
         sleighNavigationPartsAta: sleighNavigationPartsAta,
         sleighPresentsBagPartsAta: sleighPresentsBagPartsAta,
-        propulsionMint: propulsionMintAddress,
+        sleighPropulsionPartsAta: sleighPropulsionPartsAta,
         landingGearMint: landingGearMintAddress,
         navigationMint: navigationMintAddress,
         presentsBagMint: presentsBagMintAddress,
+        propulsionMint: propulsionMintAddress,
         tokenProgram: TOKEN_PROGRAM_ID,
-
-        // gameSettings: gameSettingsPDA,
-        // gameRolls: rollSTG2PDA,
-        // sleigh: sleighPDA,
-        // sleighLandingGearPartsAta: landingGearATA,
-        // sleighNavigationPartsAta: navigationATA,
-        // sleighPresentsBagPartsAta: presentsBagATA,
-        // sleighPropulsionPartsAta: propulsionATA,
-        // navigationMint: gameSettings.navigationPartsMint,
-        // landingGearMint: gameSettings.landingGearPartsMint,
-        // presentsBagMint: gameSettings.presentsBagPartsMint,
-        // propulsionMint: gameSettings.propulsionPartsMint,
-        // tokenProgram: spl.TOKEN_PROGRAM_ID,
       })
       .instruction();
 
     const { blockhash } = await connection.getLatestBlockhash();
-    const txMsg = new web3.TransactionMessage({
-      payerKey: publicKey,
-      recentBlockhash: blockhash,
-      instructions: [ix],
-    }).compileToLegacyMessage();
 
     if (!ix) {
       console.error("Error delivering. ix: ", ix);

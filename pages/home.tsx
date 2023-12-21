@@ -47,11 +47,13 @@ import { useGameSettings } from "@/hooks/useGameSettings";
 import { useCurrentSleighs } from "@/hooks/useCurrentSleighs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCurrentWalletBonkBalance } from "@/hooks/useCurrentWalletBonkBalance";
+import { useCurrentSlot } from "@/hooks/useCurrentSlot";
 
 function HomePage() {
   const [selectedSleigh, setSelectedSleigh] = useState<Sleigh | null>(null);
   const [stakingInProgress, setStakingInProgress] = useState<boolean>(false);
   const [currentStakeCost, setCurrentStakeCost] = useState<number>(0);
+  const [stg2Started, setStg2Started] = useState<boolean>(false);
 
   const { loggedIn } = userStore();
   const router = useRouter();
@@ -68,13 +70,17 @@ function HomePage() {
 
   const { data: gameSettings, isLoading: isLoadingGameSettings } =
     useGameSettings(connection);
-  const { data: currentSleighs, isLoading: isLoadingSleighs } =
-    useCurrentSleighs(publicKey, connection);
+  const {
+    data: currentSleighs,
+    isLoading: isLoadingSleighs,
+    refetch: refetchCurrentSleighs,
+  } = useCurrentSleighs(publicKey, connection);
   const { data: walletBonkBalance, isLoading: isLoadingWalletBonkBalance } =
     useCurrentWalletBonkBalance(publicKey, connection);
+  const { data: currentSlot } = useCurrentSlot();
 
   // Process the sleighs data to convert BN fields
-  const processedSleighs = currentSleighs?.map((sleigh) => ({
+  let processedSleighs = currentSleighs?.map((sleigh) => ({
     ...sleigh,
     sleighId: sleigh.sleighId.toString(),
     builtIndex: sleigh.builtIndex,
@@ -92,6 +98,35 @@ function HomePage() {
     presentsBagHp: sleigh.presentsBagHp,
     owner: sleigh.owner.toString(),
   }));
+
+  useEffect(() => {
+    if (currentSleighs) {
+      // processedSleighs = currentSleighs?.map((sleigh) => ({
+      //   ...sleigh,
+      //   sleighId: sleigh.sleighId.toString(),
+      //   builtIndex: sleigh.builtIndex,
+      //   gameId: sleigh.gameId,
+      //   lastClaimedRoll: sleigh.lastClaimedRoll,
+      //   lastDeliveryRoll: sleigh.lastDeliveryRoll,
+      //   mintCost: sleigh.mintCost,
+      //   stakeAmt: sleigh.stakeAmt,
+      //   stakedAfterRoll: sleigh.stakedAfterRoll,
+      //   level: sleigh.level,
+      //   broken: sleigh.broken,
+      //   propulsionHp: sleigh.propulsionHp,
+      //   landingGearHp: sleigh.landingGearHp,
+      //   navigationHp: sleigh.navigationHp,
+      //   presentsBagHp: sleigh.presentsBagHp,
+      //   owner: sleigh.owner.toString(),
+      // }));
+    }
+  }, [currentSleighs]);
+
+  useEffect(() => {
+    if (gameSettings && currentSlot && currentSlot > gameSettings.stage1End) {
+      setStg2Started(true);
+    }
+  }, [currentSlot, gameSettings]);
 
   useEffect(() => {
     if (publicKey && connection) {
@@ -336,7 +371,7 @@ function HomePage() {
                   <Flex
                     flexDirection="column"
                     justifyContent="start"
-                    h="88%"
+                    h="80%"
                     overflowY="auto"
                     gap="1.5rem"
                     pr="1rem"
@@ -358,7 +393,7 @@ function HomePage() {
                     {processedSleighs?.map((sleigh, index) => (
                       <SleighCardComponent
                         key={index}
-                        sleigh={sleigh}
+                        currentSleigh={sleigh}
                         onSelect={handleSelectSleigh}
                         isSelected={
                           !!(
@@ -381,6 +416,8 @@ function HomePage() {
                       maxStakeAmount={walletBonkBalance!}
                       stakingInProgress={stakingInProgress}
                       setStakingInProgress={setStakingInProgress}
+                      refetchCurrentSleighs={refetchCurrentSleighs}
+                      stg2Started={stg2Started}
                     />
                     <Flex>
                       <Text
@@ -406,9 +443,10 @@ function HomePage() {
               </Flex>
             </Flex>
             <SleighComponent
-              sleigh={selectedSleigh}
+              currentSleigh={selectedSleigh}
               // gameSettings={sampleGameSettings[2]}
               gameSettings={gameSettings}
+              refetchCurrentSleighs={refetchCurrentSleighs}
             />
           </Flex>
         ) : (
