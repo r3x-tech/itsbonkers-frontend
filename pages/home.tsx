@@ -3,7 +3,7 @@ import { SleighCardComponent } from "@/components/SleighCardComponent";
 import { SleighComponent } from "@/components/SleighComponent";
 import { StakeSleighModal } from "@/components/StakeSleighModal";
 import useSolana from "@/hooks/useSolana";
-import { sampleGameSettings, sampleSleighs } from "@/stores/sampleData";
+// import { sampleGameSettings, sampleSleighs } from "@/stores/sampleData";
 import userStore from "@/stores/userStore";
 import theme from "@/styles/theme";
 import { Sleigh } from "@/types/types";

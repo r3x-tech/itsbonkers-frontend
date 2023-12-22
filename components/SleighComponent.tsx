@@ -24,7 +24,7 @@ import {
   retireSleighTx,
 } from "@/utils/solana";
 import { RepairSleighModal } from "./RepairSleighModal";
-import { sampleSleighs } from "@/stores/sampleData";
+// import { sampleSleighs } from "@/stores/sampleData";
 import { useCurrentSlot } from "@/hooks/useCurrentSlot";
 import { Connection } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";

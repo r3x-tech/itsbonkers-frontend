@@ -17,7 +17,7 @@ import { WalletMultiButton } from "@/components/auth/WalletMultiButton";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/router";
 import { Keypair, PublicKey } from "@solana/web3.js";
-import useSleighs from "@/hooks/useSleighs";
+// import useSleighs from "@/hooks/useSleighs";
 import useSolana from "@/hooks/useSolana";
 import {
   LANDING_GEAR_MINT_ADDRESS,
@@ -39,7 +39,7 @@ function LoginPage() {
   const [isLoginInProgress, setLoginInProgress] = useState(false);
   const [ran, setRan] = useState(false);
 
-  const { refetch: refetchSleighs } = useSleighs();
+  // const { refetch: refetchSleighs } = useSleighs();
 
   const { connection } = useSolana();
   const {

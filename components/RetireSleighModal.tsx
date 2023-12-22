@@ -64,7 +64,7 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
       }
 
       const tx = await retireSleighTx(
-        BigInt(currentSleigh.sleighId),
+        BigInt(currentSleigh.sleighId.toNumber()),
         connection,
         publicKey
       );
@@ -171,7 +171,7 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
                 fontWeight="700"
                 fontSize="2rem"
               >
-                {currentSleigh.sleighId}
+                {currentSleigh.sleighId.toString()}
               </Text>
             </Flex>
           </ModalBody>
@@ -214,7 +214,7 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
                   YOU ARE ABOUT TO RETIRE SLEIGH
                 </Box>{" "}
                 <Box as="span" color={theme.colors.tertiary}>
-                  {currentSleigh.sleighId}
+                  {currentSleigh.sleighId.toString()}
                 </Box>
                 <Box as="span" color={theme.colors.white}>
                   . THIS ACTION IS IRREVERSIBLE. SHOULD YOU CHOOSE TO RETIRE
