@@ -9,6 +9,7 @@ import { useGameSettings } from "./useGameSettings";
 export const useCurrentGameRolls = (connection: Connection) => {
   const { data: gameSettings } = useGameSettings(connection);
   const { data: currentSlot } = useCurrentSlot();
+  const { globalGameId } = userStore();
 
   return useQuery(
     ["curentGameRolls"],
