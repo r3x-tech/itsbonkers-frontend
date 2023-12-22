@@ -15,7 +15,7 @@ export const useCurrentSleighs = (
       if (!globalGameId) {
         return [];
       }
-      getCurrentSleighs(globalGameId, walletAddress, connection);
+      return getCurrentSleighs(globalGameId, walletAddress, connection);
     },
     {
       enabled: !!walletAddress && !!connection,

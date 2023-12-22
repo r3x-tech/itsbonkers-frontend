@@ -172,7 +172,7 @@ export const Navbar: React.FC = () => {
               color={theme.colors.white}
               mr="0.5rem"
             >
-              {gameSettings?.prizePool.toString() || 0}
+              {gameSettings?.prizePool.toString() || 0} BONK
             </Text>
           </Flex>
         </Flex>
