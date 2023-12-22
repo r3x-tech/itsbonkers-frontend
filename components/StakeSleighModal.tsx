@@ -123,7 +123,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
   };
 
   return (
-    <Flex h="100%" w="100%">
+    <Flex h="100%" w="100%" py="1rem">
       <Button
         borderWidth="2px"
         borderColor={theme.colors.tertiary}

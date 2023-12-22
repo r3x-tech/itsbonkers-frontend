@@ -333,9 +333,9 @@ function HomePage() {
               <Flex
                 direction="column"
                 justifyContent="space-between"
-                h="70%"
-                py="2rem"
+                py="3rem"
                 px="3rem"
+                h="100%"
               >
                 <Flex
                   alignItems="flex-end"
@@ -390,22 +390,14 @@ function HomePage() {
                 </Flex>
                 <Flex
                   flexDirection="column"
-                  justifyContent="space-between"
-                  my="1.25rem"
-                  pb="2rem"
-                  w="100%"
-                  h="100%"
+                  justifyContent="start"
+                  h="32rem"
+                  overflowY="auto"
+                  gap="1.5rem"
+                  pr="1rem"
+                  mr="-1rem"
                 >
-                  <Flex
-                    flexDirection="column"
-                    justifyContent="start"
-                    h="100%"
-                    overflowY="auto"
-                    gap="1.5rem"
-                    pr="1rem"
-                    mr="-1rem"
-                  >
-                    {/* {sampleSleighs.map((sleigh, index) => (
+                  {/* {sampleSleighs.map((sleigh, index) => (
                       <SleighCardComponent
                         key={index}
                         sleigh={sleigh}
@@ -418,21 +410,20 @@ function HomePage() {
                         }
                       />
                     ))} */}
-                    {currentSleighs?.map((sleigh: Sleigh, index) => (
-                      <SleighCardComponent
-                        key={index}
-                        currentSleigh={sleigh}
-                        onSelect={handleSelectSleigh}
-                        isSelected={
-                          selectedSleigh !== null &&
-                          selectedSleigh.sleighId instanceof BN &&
-                          sleigh.sleighId instanceof BN &&
-                          selectedSleigh.sleighId.toString() ===
-                            sleigh.sleighId.toString()
-                        }
-                      />
-                    ))}
-                  </Flex>
+                  {currentSleighs?.map((sleigh: Sleigh, index) => (
+                    <SleighCardComponent
+                      key={index}
+                      currentSleigh={sleigh}
+                      onSelect={handleSelectSleigh}
+                      isSelected={
+                        selectedSleigh !== null &&
+                        selectedSleigh.sleighId instanceof BN &&
+                        sleigh.sleighId instanceof BN &&
+                        selectedSleigh.sleighId.toString() ===
+                          sleigh.sleighId.toString()
+                      }
+                    />
+                  ))}
                 </Flex>
                 <Flex
                   flexDirection="column"
