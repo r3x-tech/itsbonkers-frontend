@@ -3,6 +3,7 @@ import { getGameRolls } from "@/utils/solana";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useCurrentSlot } from "./useCurrentSlot";
 import userStore from "@/stores/userStore";
+import { BN } from "@coral-xyz/anchor";
 
 export const useCurrentGameRolls = (connection: Connection) => {
   const { gameSettings } = userStore();
@@ -12,13 +13,13 @@ export const useCurrentGameRolls = (connection: Connection) => {
     ["curentGameRolls"],
     () => {
       if (!currentSlot || !gameSettings) {
-        return [0];
+        return { rolls: [new BN(0)] };
       }
 
       if (currentSlot > gameSettings?.stage1End?.toNumber()) {
-        getGameRolls(connection, "DELIVERY");
+        return getGameRolls(connection, "DELIVERY");
       } else {
-        getGameRolls(connection, "BUILD");
+        return getGameRolls(connection, "BUILD");
       }
     },
     {

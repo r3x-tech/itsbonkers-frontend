@@ -140,7 +140,7 @@ export const Navbar: React.FC = () => {
                 fontFamily={theme.fonts.body}
                 color={theme.colors.white}
               >
-                {currentGameRolls || 0}
+                {currentGameRolls?.rolls.length || 0}
               </Text>
             </Flex>
           </Flex>
@@ -186,7 +186,7 @@ export const Navbar: React.FC = () => {
               fontFamily={theme.fonts.body}
               color={theme.colors.white}
             >
-              {currentGameRolls || 0}
+              {currentGameRolls?.rolls.length || 0}
             </Text>
           </Flex>
         </Flex>
