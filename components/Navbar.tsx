@@ -23,7 +23,6 @@ import { FaCopy, FaBell } from "react-icons/fa";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect, useState } from "react";
 import { useCurrentGameRolls } from "@/hooks/useCurrentGameRolls";
-import { useGameSettings } from "@/hooks/useGameSettings";
 import useSolana from "@/hooks/useSolana";
 import { useCurrentSlot } from "@/hooks/useCurrentSlot";
 // import { GAME_ID } from "@/constants";
@@ -58,8 +57,8 @@ export const Navbar: React.FC = () => {
       refetchCurrentGameRolls();
       console.log("Current Game Rolls: ", currentGameRolls);
     }, ((gameSettings?.rollInterval.toNumber() || 200) / 2) * 2000);
-    return () => clearInterval(interval); // Clear interval on component unmount
-  }, [gameSettings]);
+    return () => clearInterval(interval);
+  }, [currentGameRolls, gameSettings, refetchCurrentGameRolls]);
 
   const { globalGameId, setGlobalGameId } = userStore();
 

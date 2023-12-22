@@ -31,6 +31,7 @@ import {
 } from "@solana/spl-token";
 import { sendAllTxParallel } from "@/utils/solana";
 import { IoIosArrowDown } from "react-icons/io";
+import { useGameSettings } from "@/hooks/useGameSettings";
 
 function LoginPage() {
   const router = useRouter();
@@ -44,8 +45,6 @@ function LoginPage() {
     setGameIdInput(event.target.value);
   };
 
-  // const { refetch: refetchSleighs } = useSleighs();
-
   const { connection } = useSolana();
   const {
     wallet,
@@ -55,9 +54,10 @@ function LoginPage() {
     connecting,
     disconnecting,
   } = useWallet();
+  const { data: gameSettings, refetch: refetchGameSettings } =
+    useGameSettings(connection);
 
   const {
-    username,
     loggedIn,
     globalGameId,
     setGlobalGameId,
@@ -65,12 +65,120 @@ function LoginPage() {
     NAVIGATION_MINT_ADDRESS,
     PRESENTS_BAG_MINT_ADDRESS,
     PROPULSION_MINT_ADDRESS,
+    setPropulsionMintAddress,
+    setLandingGearMintAddress,
+    setNavigationMintAddress,
+    setPresentsBagMintAddress,
   } = userStore();
   const signupRef = useRef<HTMLDivElement>(null);
   const learnMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const fetchData = async () => {
+      if (
+        connection &&
+        publicKey &&
+        !loggedIn &&
+        wallet &&
+        globalGameId &&
+        !connecting &&
+        !disconnecting
+      ) {
+        setLoginInProgress(true);
+
+        let keypair = Keypair.generate();
+
+        let KEY: any = keypair;
+        KEY.payer = keypair;
+
+        userStore.setState({
+          loggedIn: true,
+          loginType: "SOLANA",
+          username: publicKey.toString(),
+          solana_wallet_address: publicKey.toString(),
+          wallet: wallet,
+          solanaConnection: connection,
+        });
+      } else if (
+        connection &&
+        publicKey &&
+        !loggedIn &&
+        wallet &&
+        !globalGameId &&
+        !connecting &&
+        !disconnecting
+      ) {
+        setLoginInProgress(false);
+        toast.error("Game ID not set");
+      }
+    };
+
+    fetchData();
+  }, [
+    connecting,
+    connection,
+    disconnecting,
+    globalGameId,
+    loggedIn,
+    publicKey,
+    wallet,
+  ]);
+
+  useEffect(() => {
+    if (!gameSettings) {
+      refetchGameSettings();
+    }
+  }, [gameSettings, refetchGameSettings]);
+
+  useEffect(() => {
+    if (
+      gameSettings &&
+      (gameSettings.propulsionPartsMint !== PROPULSION_MINT_ADDRESS ||
+        gameSettings.landingGearPartsMint !== LANDING_GEAR_MINT_ADDRESS ||
+        gameSettings.navigationPartsMint !== NAVIGATION_MINT_ADDRESS ||
+        gameSettings.presentsBagPartsMint !== PRESENTS_BAG_MINT_ADDRESS)
+    ) {
+      setPropulsionMintAddress(gameSettings.propulsionPartsMint);
+      setLandingGearMintAddress(gameSettings.landingGearPartsMint);
+      setNavigationMintAddress(gameSettings.navigationPartsMint);
+      setPresentsBagMintAddress(gameSettings.presentsBagPartsMint);
+    }
+  }, [
+    gameSettings,
+    PROPULSION_MINT_ADDRESS,
+    LANDING_GEAR_MINT_ADDRESS,
+    NAVIGATION_MINT_ADDRESS,
+    PRESENTS_BAG_MINT_ADDRESS,
+    setPropulsionMintAddress,
+    setLandingGearMintAddress,
+    setNavigationMintAddress,
+    setPresentsBagMintAddress,
+  ]);
+
+  useEffect(() => {
     const fetchandCreateAtas = async (currentPublicKey: PublicKey) => {
+      if (
+        !PROPULSION_MINT_ADDRESS ||
+        !LANDING_GEAR_MINT_ADDRESS! ||
+        !NAVIGATION_MINT_ADDRESS! ||
+        !PRESENTS_BAG_MINT_ADDRESS
+      ) {
+        toast.error("Parts not found");
+        return;
+      }
+      console.log(
+        "PROPULSION_MINT_ADDRESS: ",
+        PROPULSION_MINT_ADDRESS,
+        "LANDING_GEAR_MINT_ADDRESS: ",
+        LANDING_GEAR_MINT_ADDRESS,
+        "NAVIGATION_MINT_ADDRESS: ",
+        NAVIGATION_MINT_ADDRESS,
+        "PRESENTS_BAG_MINT_ADDRESS: ",
+        PRESENTS_BAG_MINT_ADDRESS,
+        "globalGameId: ",
+        globalGameId
+      );
+
       const propulsionMintAddress = new PublicKey(PROPULSION_MINT_ADDRESS!);
       const landingGearMintAddress = new PublicKey(LANDING_GEAR_MINT_ADDRESS!);
       const navigationMintAddress = new PublicKey(NAVIGATION_MINT_ADDRESS!);
@@ -184,6 +292,7 @@ function LoginPage() {
         });
       }
       setRan(true);
+      setLoginInProgress(false);
       router.push("/home");
     };
 
@@ -192,7 +301,12 @@ function LoginPage() {
       connection &&
       publicKey != null &&
       !isLoginInProgress &&
-      !ran
+      !ran &&
+      globalGameId &&
+      PROPULSION_MINT_ADDRESS &&
+      LANDING_GEAR_MINT_ADDRESS &&
+      NAVIGATION_MINT_ADDRESS &&
+      PRESENTS_BAG_MINT_ADDRESS
     ) {
       fetchandCreateAtas(publicKey);
     }
@@ -202,6 +316,7 @@ function LoginPage() {
     PRESENTS_BAG_MINT_ADDRESS,
     PROPULSION_MINT_ADDRESS,
     connection,
+    globalGameId,
     isLoginInProgress,
     loggedIn,
     publicKey,
@@ -209,39 +324,6 @@ function LoginPage() {
     router,
     signAllTransactions,
   ]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (connection && publicKey && !loggedIn && wallet && globalGameId) {
-        setLoginInProgress(true);
-        let keypair = Keypair.generate();
-
-        let KEY: any = keypair;
-        KEY.payer = keypair;
-
-        userStore.setState({
-          loggedIn: true,
-          loginType: "SOLANA",
-          username: publicKey.toString(),
-          solana_wallet_address: publicKey.toString(),
-          wallet: wallet,
-          solanaConnection: connection,
-        });
-
-        setLoginInProgress(false);
-      } else if (
-        connection &&
-        publicKey &&
-        !loggedIn &&
-        wallet &&
-        !globalGameId
-      ) {
-        toast.error("Game ID not set");
-      }
-    };
-
-    fetchData();
-  }, [connection, globalGameId, loggedIn, publicKey, wallet]);
 
   const calculateTimeLeft = useCallback(() => {
     const targetDate = new Date("2023-12-21 18:00:00");
@@ -425,6 +507,7 @@ function LoginPage() {
                 color={theme.colors.white}
                 onClick={() => {
                   setGlobalGameId(parseInt(gameIdInput));
+                  console.log("GAME ID is: ", gameIdInput);
                   toast.success("Game id set");
                 }}
                 _hover={{
@@ -483,10 +566,16 @@ function LoginPage() {
                 align="center"
                 justifyContent="center"
                 color={theme.colors.background}
-                mt="5rem"
+                mt="3rem"
+                mb="2rem"
               >
-                <Spinner size="sm" />
-                <Text mt={3} fontSize="0.75rem" fontWeight="500">
+                <Spinner size="lg" />
+                <Text
+                  mt={3}
+                  fontSize="2rem"
+                  fontWeight="700"
+                  fontFamily={theme.fonts.body}
+                >
                   LOGGING IN
                 </Text>
               </Flex>

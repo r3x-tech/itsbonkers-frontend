@@ -6,19 +6,19 @@ import userStore from "@/stores/userStore";
 
 export const useGameSettings = (
   connection: Connection
-): UseQueryResult<GameSettings | undefined, unknown> => {
+): UseQueryResult<GameSettings> => {
   const { globalGameId } = userStore();
 
   return useQuery(
     ["gameSettings"],
-    () => {
+    async () => {
       if (!globalGameId) {
-        return [];
+        throw new Error("Global game ID is not set");
       }
-      getGameSettings(globalGameId, connection);
+      return getGameSettings(globalGameId, connection);
     },
     {
-      enabled: !!connection,
+      enabled: !!connection && !!globalGameId,
     }
   );
 };
