@@ -99,40 +99,24 @@ export const Navbar: React.FC = () => {
       </Flex>
       <Flex w="70%" gap={20}>
         <Flex>
+          <Text
+            fontSize="1.25rem"
+            fontWeight="400"
+            fontFamily={theme.fonts.body}
+            color={theme.colors.white}
+            mr="1rem"
+          >
+            GAME ID:{" "}
+          </Text>
           <Flex>
             <Text
               fontSize="1.25rem"
-              fontWeight="400"
+              fontWeight="700"
               fontFamily={theme.fonts.body}
               color={theme.colors.white}
-              mr="1rem"
             >
-              GAME ID:{" "}
+              {GAME_ID || 0}
             </Text>
-            <Flex>
-              <Text
-                fontSize="1.25rem"
-                fontWeight="700"
-                fontFamily={theme.fonts.body}
-                color={theme.colors.white}
-                mr="0.5rem"
-              >
-                {GAME_ID || 0}
-              </Text>
-            </Flex>
-          </Flex>
-
-          <Flex>
-            <Text
-              fontSize="1.25rem"
-              fontWeight="400"
-              fontFamily={theme.fonts.body}
-              color={theme.colors.white}
-              mr="1rem"
-            >
-              CURRENT GAME ROLLS:{" "}
-            </Text>
-
             <Flex>
               <Text
                 fontSize="1.25rem"
@@ -143,28 +127,6 @@ export const Navbar: React.FC = () => {
                 {currentGameRolls?.rolls.length || 0}
               </Text>
             </Flex>
-          </Flex>
-        </Flex>
-        <Flex>
-          <Text
-            fontSize="1.25rem"
-            fontWeight="400"
-            fontFamily={theme.fonts.body}
-            color={theme.colors.white}
-            mr="1rem"
-          >
-            PRIZE POOL:{" "}
-          </Text>
-          <Flex>
-            <Text
-              fontSize="1.25rem"
-              fontWeight="700"
-              fontFamily={theme.fonts.body}
-              color={theme.colors.white}
-              mr="0.5rem"
-            >
-              {gameSettings?.prizePool.toString() || 0}
-            </Text>
           </Flex>
         </Flex>
 
@@ -186,7 +148,29 @@ export const Navbar: React.FC = () => {
               fontFamily={theme.fonts.body}
               color={theme.colors.white}
             >
-              {currentGameRolls?.rolls.length || 0}
+              {currentGameRolls || 0}
+            </Text>
+          </Flex>
+        </Flex>
+        <Flex>
+          <Text
+            fontSize="1.25rem"
+            fontWeight="400"
+            fontFamily={theme.fonts.body}
+            color={theme.colors.white}
+            mr="1rem"
+          >
+            PRIZE POOL:{" "}
+          </Text>
+          <Flex>
+            <Text
+              fontSize="1.25rem"
+              fontWeight="700"
+              fontFamily={theme.fonts.body}
+              color={theme.colors.white}
+              mr="0.5rem"
+            >
+              {gameSettings?.prizePool.toString() || 0}
             </Text>
           </Flex>
         </Flex>
