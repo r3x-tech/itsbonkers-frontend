@@ -29,6 +29,7 @@ import { useCurrentSlot } from "@/hooks/useCurrentSlot";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
 import userStore from "@/stores/userStore";
+import { SLEIGH_NAMES } from "@/constants";
 
 interface SleighProps {
   currentSleigh: Sleigh | null;
@@ -49,7 +50,6 @@ export function SleighComponent({
   const [claimingInProgress, setClaimingInProgress] = useState<boolean>(false);
   const [currentStage, setCurrentStage] = useState<string>("BUILD");
   const [pendingDeliveries, setPendingDeliveries] = useState<number>(0);
-
   const { connection } = useSolana();
   const {
     wallet,
@@ -67,7 +67,6 @@ export function SleighComponent({
     PRESENTS_BAG_MINT_ADDRESS,
     PROPULSION_MINT_ADDRESS,
   } = userStore();
-
   useEffect(() => {
     const setDeliveries = async (sleigh: Sleigh, connection: Connection) => {
       // refetchPendingDeliveries(sleigh);
@@ -77,8 +76,9 @@ export function SleighComponent({
         "DELIVERY"
       );
       if (gameRolls && currentSleigh) {
-        const numOfDeliveriesPending =
-          gameRolls.rolls.length - currentSleigh.lastDeliveryRoll.toNumber();
+        const numOfDeliveriesPending = new BN(gameRolls.rolls.length)
+          .sub(currentSleigh.lastDeliveryRoll)
+          .toNumber();
         setPendingDeliveries(numOfDeliveriesPending);
       }
     };
@@ -274,7 +274,8 @@ export function SleighComponent({
                 fontFamily={theme.fonts.body}
                 color={theme.colors.white}
               >
-                {currentSleigh?.stakeAmt.toString() || 0} BONK
+                {currentSleigh?.stakeAmt.div(new BN(1_00000)).toString() || 0}{" "}
+                BONK
               </Text>
             </Flex>
             <Flex>
@@ -293,9 +294,9 @@ export function SleighComponent({
                 fontFamily={theme.fonts.body}
                 color={theme.colors.white}
               >
-                {(gameSettings!.sleighsBuilt.toNumber() -
+                {(gameSettings?.sleighsBuilt.toNumber() -
                   currentSleigh.builtIndex.toNumber()) *
-                  gameSettings!.mintCostMultiplier!.toNumber() || 0}{" "}
+                  gameSettings?.mintCostMultiplier!.toNumber() || 0}{" "}
                 BONK
               </Text>
             </Flex>
@@ -323,10 +324,9 @@ export function SleighComponent({
                     fontFamily={theme.fonts.body}
                     color={theme.colors.white}
                   >
-                    {gameSettings?.lastRolled
-                      .add(gameSettings.rollInterval)
+                    {gameSettings?.rollInterval
                       .div(new BN(2))
-                      .mul(new BN(60))
+                      .div(new BN(60))
                       .toString()}{" "}
                     MIN
                   </Text>
@@ -422,7 +422,14 @@ export function SleighComponent({
                     fontFamily={theme.fonts.header}
                     color={theme.colors.white}
                   >
-                    {currentSleigh.sleighId.toString()}
+                    {
+                      SLEIGH_NAMES[
+                        Number(
+                          BigInt(currentSleigh.sleighId.toString()) %
+                            BigInt(SLEIGH_NAMES.length)
+                        )
+                      ]
+                    }
                   </Text>
                 </Flex>
                 <Flex
