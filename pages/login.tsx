@@ -38,6 +38,11 @@ function LoginPage() {
   const [emailError, setEmailError] = useState(false);
   const [isLoginInProgress, setLoginInProgress] = useState(false);
   const [ran, setRan] = useState(false);
+  const [gameIdInput, setGameIdInput] = useState("");
+
+  const handleGameIdInputChange = (event: any) => {
+    setGameIdInput(event.target.value);
+  };
 
   // const { refetch: refetchSleighs } = useSleighs();
 
@@ -51,7 +56,7 @@ function LoginPage() {
     disconnecting,
   } = useWallet();
 
-  const { username, loggedIn } = userStore();
+  const { username, loggedIn, globalGameId, setGlobalGameId } = userStore();
   const signupRef = useRef<HTMLDivElement>(null);
   const learnMoreRef = useRef<HTMLDivElement>(null);
 
@@ -194,7 +199,7 @@ function LoginPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (connection && publicKey && !loggedIn && wallet) {
+      if (connection && publicKey && !loggedIn && wallet && globalGameId) {
         setLoginInProgress(true);
         let keypair = Keypair.generate();
 
@@ -211,11 +216,19 @@ function LoginPage() {
         });
 
         setLoginInProgress(false);
+      } else if (
+        connection &&
+        publicKey &&
+        !loggedIn &&
+        wallet &&
+        !globalGameId
+      ) {
+        toast.error("Game ID not set");
       }
     };
 
     fetchData();
-  }, [connection, loggedIn, publicKey, wallet]);
+  }, [connection, globalGameId, loggedIn, publicKey, wallet]);
 
   const calculateTimeLeft = useCallback(() => {
     const targetDate = new Date("2023-12-21 18:00:00");
@@ -348,6 +361,7 @@ function LoginPage() {
             </Text>
           </Flex>
         </Flex>
+
         <Flex
           mt="8rem"
           p="5rem"
@@ -357,6 +371,59 @@ function LoginPage() {
           align="center"
           bg={theme.colors.accentFive}
         >
+          <Flex
+            w="30vw"
+            flexDirection="column"
+            alignItems="start"
+            justifyContent="start"
+            mt="-2rem"
+            mb="3rem"
+          >
+            <Flex w={["100%", "100%"]}>
+              <Input
+                value={gameIdInput}
+                onChange={handleGameIdInputChange}
+                mr="2rem"
+                borderWidth="2px"
+                borderColor={theme.colors.secondary}
+                bg={theme.colors.secondary}
+                borderRadius="30px"
+                fontWeight="700"
+                fontSize={["1.25rem", "1.5rem"]}
+                fontFamily={theme.fonts.body}
+                h={["2rem", "4rem"]}
+                py={["1.5rem", "2rem"]}
+                px={["2rem", "2.5rem"]}
+                placeholder="ENTER A GAME ID"
+                color={theme.colors.white}
+                _placeholder={{ color: theme.colors.darkerGray }}
+              />
+              <Button
+                borderWidth="2px"
+                borderColor={theme.colors.primary}
+                bg={theme.colors.primary}
+                borderRadius="30px"
+                fontWeight="700"
+                fontSize="1.5rem"
+                fontFamily={theme.fonts.body}
+                w="20rem"
+                h={["2rem", "4rem"]}
+                py={["1.5rem", "2rem"]}
+                color={theme.colors.white}
+                onClick={() => {
+                  setGlobalGameId(parseInt(gameIdInput));
+                  toast.success("Game id set");
+                }}
+                _hover={{
+                  color: theme.colors.background,
+                  borderColor: theme.colors.quaternary,
+                  bg: theme.colors.quaternary,
+                }}
+              >
+                SET
+              </Button>
+            </Flex>
+          </Flex>
           <Flex justifyContent="center">
             <Image
               src="/bonkerslargelogo.png"

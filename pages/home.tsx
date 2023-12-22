@@ -318,7 +318,7 @@ function HomePage() {
               <Flex
                 direction="column"
                 justifyContent="space-between"
-                h="60%"
+                h="70%"
                 py="2rem"
                 px="3rem"
               >
@@ -351,7 +351,7 @@ function HomePage() {
                     </Flex>
                   </Flex>
 
-                  <Flex w="50%">
+                  <Flex>
                     <Text
                       fontSize="1rem"
                       fontWeight="400"
