@@ -180,6 +180,63 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
             justifyContent="center"
             alignContent="center"
           >
+            <Flex w="100%" justifyContent="start" alignItems="start" mb="2rem">
+              <Text
+                textAlign="start"
+                w="100%"
+                color={theme.colors.white}
+                fontWeight="700"
+                fontSize="1.25rem"
+              >
+                BIDDING CURRENCY:
+              </Text>
+              <Flex w="100%" alignItems="end">
+                <Text
+                  ml="1rem"
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  color={theme.colors.tertiary}
+                >
+                  {TOKEN_MINT_ADDRESS
+                    ? `${TOKEN_MINT_ADDRESS!.substring(
+                        0,
+                        4
+                      )}...${TOKEN_MINT_ADDRESS!.substring(
+                        TOKEN_MINT_ADDRESS!.length - 5
+                      )}`
+                    : "NOT FOUND"}
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex w="100%" justifyContent="start" alignItems="start" mb="3rem">
+              <Text
+                textAlign="start"
+                w="100%"
+                color={theme.colors.white}
+                fontWeight="700"
+                fontSize="1.25rem"
+              >
+                CURRENCY AVAILABLE:
+              </Text>
+              <Flex w="100%" alignItems="end">
+                <Text
+                  ml="1rem"
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  color={theme.colors.tertiary}
+                >
+                  {maxStakeAmount}
+                </Text>
+                <Text
+                  ml="1rem"
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  color={theme.colors.white}
+                >
+                  BONK
+                </Text>
+              </Flex>
+            </Flex>
             <Flex
               w="100%"
               flexDirection="column"

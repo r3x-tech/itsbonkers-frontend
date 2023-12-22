@@ -32,6 +32,7 @@ import {
 import { sendAllTxParallel } from "@/utils/solana";
 import { IoIosArrowDown } from "react-icons/io";
 import { useGameSettings } from "@/hooks/useGameSettings";
+import { TOKEN_MINT_ADDRESS } from "@/constants";
 
 function LoginPage() {
   const router = useRouter();
@@ -61,6 +62,7 @@ function LoginPage() {
     loggedIn,
     globalGameId,
     setGlobalGameId,
+    TOKEN_MINT_ADDRESS,
     LANDING_GEAR_MINT_ADDRESS,
     NAVIGATION_MINT_ADDRESS,
     PRESENTS_BAG_MINT_ADDRESS,
@@ -69,6 +71,7 @@ function LoginPage() {
     setLandingGearMintAddress,
     setNavigationMintAddress,
     setPresentsBagMintAddress,
+    setTokenMintAddress,
   } = userStore();
   const signupRef = useRef<HTMLDivElement>(null);
   const learnMoreRef = useRef<HTMLDivElement>(null);
@@ -129,6 +132,15 @@ function LoginPage() {
       refetchGameSettings();
     }
   }, [gameSettings, refetchGameSettings]);
+
+  useEffect(() => {
+    if (
+      gameSettings &&
+      gameSettings.coinMint.toString() !== TOKEN_MINT_ADDRESS
+    ) {
+      setTokenMintAddress(gameSettings.coinMint.toString());
+    }
+  }, [TOKEN_MINT_ADDRESS, gameSettings, setTokenMintAddress]);
 
   useEffect(() => {
     if (
