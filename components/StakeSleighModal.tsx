@@ -29,6 +29,7 @@ import toast from "react-hot-toast";
 import { GameSettings } from "@/types/types";
 import userStore from "@/stores/userStore";
 import { PublicKey } from "@solana/web3.js";
+import { BN } from "@coral-xyz/anchor";
 
 interface StakeSleighModalProps {
   minStakeAmount: number;

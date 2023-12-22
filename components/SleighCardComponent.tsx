@@ -1,6 +1,7 @@
 import theme from "@/styles/theme";
 import { Sleigh } from "@/types/types";
 import { Box, Flex, Text } from "@chakra-ui/react";
+import { BN } from "@coral-xyz/anchor";
 
 interface SleighProps {
   currentSleigh: Sleigh;
@@ -13,6 +14,11 @@ export function SleighCardComponent({
   onSelect,
   isSelected,
 }: SleighProps) {
+  const sleighIdString =
+    currentSleigh.sleighId instanceof BN
+      ? currentSleigh.sleighId.toString()
+      : "Unknown";
+
   return (
     <Box
       bg={theme.colors.background}
@@ -51,7 +57,7 @@ export function SleighCardComponent({
         fontFamily={theme.fonts.header}
         color={theme.colors.white}
       >
-        {currentSleigh.sleighId.toString()}
+        {sleighIdString}
       </Text>
     </Box>
   );

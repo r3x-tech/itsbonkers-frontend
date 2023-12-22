@@ -53,6 +53,7 @@ import { useCurrentPropulsionParts } from "@/hooks/useCurrentPropulsionParts";
 import { useCurrentNavigationParts } from "@/hooks/useCurrentNavigationParts";
 import { useCurrentLandingGearParts } from "@/hooks/useCurrentLandingGearParts";
 import { useCurrentPresentsBagParts } from "@/hooks/useCurrentPresentsBagParts";
+import { BN } from "@coral-xyz/anchor";
 // import {
 //   LANDING_GEAR_MINT_ADDRESS,
 //   NAVIGATION_MINT_ADDRESS,
@@ -417,17 +418,17 @@ function HomePage() {
                         }
                       />
                     ))} */}
-                    {currentSleighs?.map((sleigh, index) => (
+                    {currentSleighs?.map((sleigh: Sleigh, index) => (
                       <SleighCardComponent
                         key={index}
                         currentSleigh={sleigh}
                         onSelect={handleSelectSleigh}
                         isSelected={
-                          !!(
-                            selectedSleigh &&
-                            selectedSleigh.sleighId.toString() ===
-                              sleigh.sleighId.toString()
-                          )
+                          selectedSleigh !== null &&
+                          selectedSleigh.sleighId instanceof BN &&
+                          sleigh.sleighId instanceof BN &&
+                          selectedSleigh.sleighId.toString() ===
+                            sleigh.sleighId.toString()
                         }
                       />
                     ))}
