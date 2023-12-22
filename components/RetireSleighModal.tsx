@@ -75,7 +75,7 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
       }
       const tx = await retireSleighTx(
         globalGameId,
-        BigInt(currentSleigh.sleighId.toNumber()),
+        currentSleigh.sleighId,
         connection,
         publicKey,
         new PublicKey(TOKEN_MINT_ADDRESS)

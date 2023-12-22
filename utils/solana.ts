@@ -626,7 +626,7 @@ export const repairSleighTx = async (
 
 export const retireSleighTx = async (
   globalGameId: number | null,
-  _sleighId: bigint,
+  _sleighId: BN,
   connection: Connection,
   publicKey: PublicKey,
   tokenMintAddress: PublicKey
@@ -637,8 +637,6 @@ export const retireSleighTx = async (
   }
 
   try {
-    const sleighIdBN = new BN(_sleighId.toString());
-
     const BONKERS_PROGRAM: Program<any> = new Program(
       bonkersIDL,
       BONKERS_PROGRAM_PROGRAMID,
@@ -655,7 +653,7 @@ export const retireSleighTx = async (
           })
         ),
         Uint8Array.from(
-          serializeUint64(BigInt(sleighIdBN.toString()), {
+          serializeUint64(BigInt(_sleighId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),

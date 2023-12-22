@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -48,7 +48,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
   refetchCurrentSleighs,
   stg2Started,
 }) => {
-  const [stakeAmount, setStakeAmount] = useState(250);
+  const [stakeAmount, setStakeAmount] = useState(minStakeAmount);
 
   const { connection } = useSolana();
   const {
@@ -62,7 +62,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
   const { globalGameId, TOKEN_MINT_ADDRESS } = userStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleSliderChange = (value: any) => {
+  const handleSliderChange = (value: number) => {
     setStakeAmount(value);
   };
 
@@ -262,10 +262,9 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                 <Slider
                   w="70%"
                   id="slider"
-                  defaultValue={minStakeAmount}
+                  value={stakeAmount}
                   min={minStakeAmount}
                   max={maxStakeAmount}
-                  value={stakeAmount}
                   onChange={handleSliderChange}
                 >
                   <SliderTrack
@@ -284,7 +283,6 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                 </Slider>
                 <NumberInput
                   ml="2rem"
-                  defaultValue={minStakeAmount}
                   min={minStakeAmount}
                   max={maxStakeAmount}
                   value={stakeAmount}

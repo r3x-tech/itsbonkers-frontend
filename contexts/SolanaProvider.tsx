@@ -27,7 +27,7 @@ export const SolanaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <ConnectionProvider endpoint={endpoint as string}>
-      <WalletProvider wallets={wallets} onError={onError} autoConnect>
+      <WalletProvider wallets={wallets} onError={onError}>
         <ReactUIWalletModalProviderDynamic>
           {children}{" "}
         </ReactUIWalletModalProviderDynamic>
