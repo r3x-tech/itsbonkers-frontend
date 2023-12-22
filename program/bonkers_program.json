@@ -453,7 +453,7 @@
             "type": "u64"
           },
           {
-            "name": "highestCurrentStake",
+            "name": "totalStake",
             "type": "u64"
           },
           {
@@ -479,6 +479,10 @@
           {
             "name": "coinDecimals",
             "type": "u8"
+          },
+          {
+            "name": "sleighsStaked",
+            "type": "u64"
           },
           {
             "name": "sleighsBuilt",

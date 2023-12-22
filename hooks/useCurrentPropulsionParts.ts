@@ -7,17 +7,27 @@ export const useCurrentPropulsionParts = (
   connection: Connection,
   tokenMint: string
 ) => {
-  return useQuery(
-    ["walletBonkBalance", walletAddress?.toBase58()],
-    () => {
+  return useQuery<bigint>(
+    ["walletPropulsionBalance", walletAddress],
+    async () => {
       if (walletAddress) {
-        return getWalletTokenBalance({
-          walletAddress: walletAddress.toBase58(),
-          connection,
-          tokenMint,
-        });
+        try {
+          const amount = await getWalletTokenBalance({
+            walletAddress,
+            connection,
+            tokenMint,
+          });
+          console.log(
+            "walletPropulsionBalance balance: ",
+            BigInt(amount).toString()
+          );
+          return BigInt(amount);
+        } catch (error) {
+          console.error("Error fetching propulsion parts balance:", error);
+          return BigInt(0);
+        }
       }
-      return 0;
+      return BigInt(0);
     },
     {
       enabled: !!walletAddress && !!connection,

@@ -451,7 +451,7 @@ export type Bonkers = {
             type: "u64";
           },
           {
-            name: "highestCurrentStake";
+            name: "totalStake";
             type: "u64";
           },
           {
@@ -477,6 +477,10 @@ export type Bonkers = {
           {
             name: "coinDecimals";
             type: "u8";
+          },
+          {
+            name: "sleighsStaked";
+            type: "u64";
           },
           {
             name: "sleighsBuilt";
@@ -1098,7 +1102,7 @@ export const IDL: Bonkers = {
             type: "u64",
           },
           {
-            name: "highestCurrentStake",
+            name: "totalStake",
             type: "u64",
           },
           {
@@ -1124,6 +1128,10 @@ export const IDL: Bonkers = {
           {
             name: "coinDecimals",
             type: "u8",
+          },
+          {
+            name: "sleighsStaked",
+            type: "u64",
           },
           {
             name: "sleighsBuilt",

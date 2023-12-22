@@ -4,6 +4,7 @@ import { Bonkers } from "../program/bonkers_program";
 import {
   TOKEN_PROGRAM_ID,
   getAssociatedTokenAddressSync,
+  getAccount,
 } from "@solana/spl-token";
 import {
   PublicKey,
@@ -37,6 +38,7 @@ import {
 } from "@/constants";
 import { GameRolls, GameSettings, Sleigh } from "@/types/types";
 import { encode } from "bs58";
+import { publicKey } from "@coral-xyz/anchor/dist/cjs/utils";
 
 const bonkersIDL = require("../program/bonkers_program.json");
 const BONKERS_PROGRAM_PROGRAMID =
@@ -132,13 +134,13 @@ export const getCurrentSleighs = async (
     const sleighs = await BONKERS_PROGRAM.account.sleigh.all([
       {
         memcmp: {
-          offset: 8, // Assuming 'owner' is the first field in Sleigh struct?
+          offset: 8,
           bytes: sleighOwnerPublicKey.toBase58(),
         },
       },
       {
         memcmp: {
-          offset: 8 + 32 + 8 + 1, // Assuming 'gameId' comes after 'owner', 'sleighId', and 'level'?
+          offset: 8 + 32 + 8 + 1,
           bytes: encode(new BN(GAME_ID).toArrayLike(Buffer, "le", 8)),
         },
       },
@@ -264,7 +266,7 @@ export const createSleighTx = async (
 
 export const claimLevelsTx = async (
   _sleighId: bigint,
-  rollIndexes: number[],
+  rollIndexes: BN[],
   connection: Connection,
   publicKey: PublicKey
 ): Promise<VersionedTransaction | undefined> => {
@@ -820,17 +822,18 @@ export const getWalletTokenBalance = async ({
   connection,
   tokenMint,
 }: {
-  walletAddress: string;
+  walletAddress: PublicKey;
   connection: Connection;
   tokenMint: string;
 }) => {
-  const bonkBalance = await getTokenAccountBalance(
-    walletAddress,
+  const tokenAccount = await getAccount(
     connection,
-    tokenMint
+    getAssociatedTokenAddressSync(new PublicKey(tokenMint), walletAddress)
   );
 
-  return bonkBalance;
+  // console.log("tokenAccount.amount: ", tokenAccount.amount.toString());
+
+  return tokenAccount.amount;
 };
 
 export async function getTokenAccountBalance(

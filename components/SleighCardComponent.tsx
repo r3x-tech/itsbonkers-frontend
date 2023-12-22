@@ -42,7 +42,7 @@ export function SleighCardComponent({
           fontFamily={theme.fonts.body}
           color={theme.colors.white}
         >
-          {currentSleigh.level}
+          {currentSleigh.level.toString()}
         </Text>
       </Flex>
       <Text
@@ -51,7 +51,7 @@ export function SleighCardComponent({
         fontFamily={theme.fonts.header}
         color={theme.colors.white}
       >
-        {currentSleigh.sleighId}
+        {currentSleigh.sleighId.toString()}
       </Text>
     </Box>
   );

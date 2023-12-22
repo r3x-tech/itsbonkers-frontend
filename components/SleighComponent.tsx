@@ -27,6 +27,7 @@ import { RepairSleighModal } from "./RepairSleighModal";
 import { sampleSleighs } from "@/stores/sampleData";
 import { useCurrentSlot } from "@/hooks/useCurrentSlot";
 import { Connection } from "@solana/web3.js";
+import { BN } from "@coral-xyz/anchor";
 
 interface SleighProps {
   currentSleigh: Sleigh | null;
@@ -63,8 +64,9 @@ export function SleighComponent({
     const setDeliveries = async (sleigh: Sleigh, connection: Connection) => {
       // refetchPendingDeliveries(sleigh);
       const gameRolls = await getGameRolls(connection, "DELIVERY");
-      if (gameRolls) {
-        const numOfDeliveriesPending = gameRolls.rolls.length;
+      if (gameRolls && currentSleigh) {
+        const numOfDeliveriesPending =
+          gameRolls.rolls.length - currentSleigh.lastDeliveryRoll.toNumber();
         setPendingDeliveries(numOfDeliveriesPending);
       }
     };
@@ -73,7 +75,7 @@ export function SleighComponent({
       currentStage != "DELIVERY" &&
       gameSettings &&
       currentSlot &&
-      currentSlot > gameSettings.stage1End &&
+      currentSlot > gameSettings.stage1End.toNumber() &&
       currentSleigh
     ) {
       setCurrentStage("DELIVERY");
@@ -91,7 +93,7 @@ export function SleighComponent({
       const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
 
       const tx = await deliveryTx(
-        BigInt(currentSleigh.sleighId),
+        BigInt(currentSleigh.sleighId.toString()),
         connection,
         publicKey
       );
@@ -196,6 +198,28 @@ export function SleighComponent({
                 color={theme.colors.white}
                 mr="1rem"
               >
+                STAKED AT ROLL:{" "}
+              </Text>
+              <Flex>
+                <Text
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  fontFamily={theme.fonts.body}
+                  color={theme.colors.white}
+                  mr="0.5rem"
+                >
+                  {currentSleigh?.stakedAfterRoll.toString() || 0}
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex>
+              <Text
+                fontSize="1.25rem"
+                fontWeight="400"
+                fontFamily={theme.fonts.body}
+                color={theme.colors.white}
+                mr="1rem"
+              >
                 STAKED:{" "}
               </Text>
               <Text
@@ -204,8 +228,7 @@ export function SleighComponent({
                 fontFamily={theme.fonts.body}
                 color={theme.colors.white}
               >
-                {/* {sleigh.staked} BONK */}
-                10M BONK
+                {currentSleigh?.stakeAmt.toString() || 0} BONK
               </Text>
             </Flex>
             <Flex>
@@ -224,8 +247,10 @@ export function SleighComponent({
                 fontFamily={theme.fonts.body}
                 color={theme.colors.white}
               >
-                {/* {sleigh.spoils} BONK */}
-                10M BONK
+                {(gameSettings!.sleighsBuilt.toNumber() -
+                  currentSleigh.builtIndex.toNumber()) *
+                  gameSettings!.mintCostMultiplier!.toNumber() || 0}{" "}
+                BONK
               </Text>
             </Flex>
             {currentStage == "DELIVERY" && (
@@ -252,8 +277,12 @@ export function SleighComponent({
                     fontFamily={theme.fonts.body}
                     color={theme.colors.white}
                   >
-                    {/* {sleigh.nextDelivery} */}
-                    30 MIN
+                    {gameSettings?.lastRolled
+                      .add(gameSettings.rollInterval)
+                      .div(new BN(2))
+                      .mul(new BN(60))
+                      .toString()}{" "}
+                    MIN
                   </Text>
                 </Flex>
                 <Button
@@ -288,7 +317,7 @@ export function SleighComponent({
                     aria-label="PENDING DELIVIES"
                     bg={theme.colors.black}
                   >
-                    <Text>({pendingDeliveries})</Text>
+                    <Text>({pendingDeliveries.toString()})</Text>
                   </Tooltip>
                 </Button>
               </Flex>
@@ -338,7 +367,7 @@ export function SleighComponent({
                       fontFamily={theme.fonts.body}
                       color={theme.colors.white}
                     >
-                      {currentSleigh.level}
+                      {currentSleigh.level.toString()}
                     </Text>
                   </Flex>
                   <Text
@@ -347,7 +376,7 @@ export function SleighComponent({
                     fontFamily={theme.fonts.header}
                     color={theme.colors.white}
                   >
-                    {currentSleigh.sleighId}
+                    {currentSleigh.sleighId.toString()}
                   </Text>
                 </Flex>
                 <Flex
@@ -482,7 +511,8 @@ export function SleighComponent({
                   />
                 </Flex>
               </Flex>
-              {currentSleigh.builtIndex == 0 && currentStage == "BUILD" ? (
+              {currentSleigh.builtIndex.toNumber() == 0 &&
+              currentStage == "BUILD" ? (
                 <Tooltip
                   label="BIDDING 4 SLEIGH IN PROGRESS"
                   aria-label="BIDDING 4 SLEIGH IN PROGRESS"
@@ -494,7 +524,7 @@ export function SleighComponent({
                     w="50rem"
                   />
                 </Tooltip>
-              ) : currentSleigh.builtIndex == 0 &&
+              ) : currentSleigh.builtIndex.toNumber() == 0 &&
                 currentStage == "DELIVERY" ? (
                 <Tooltip
                   label="LOST BID 4 SLEIGH. RETIRE THIS SLEIGH TO RECLAIM BONK"

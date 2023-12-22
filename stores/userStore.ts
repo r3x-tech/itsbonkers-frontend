@@ -13,6 +13,11 @@ type Store = {
   userProfilePic: string;
   sleighs: Sleigh[];
   gameSettings: GameSettings | null;
+  PROPULSION_MINT_ADDRESS: string | null;
+  LANDING_GEAR_MINT_ADDRESS: string | null;
+  NAVIGATION_MINT_ADDRESS: string | null;
+  PRESENTS_BAG_MINT_ADDRESS: string | null;
+  globalGameId: number | null;
   setLogin: (
     status: boolean,
     loginType: string,
@@ -23,6 +28,11 @@ type Store = {
   ) => void;
   setSleighs: (setSleighs: Sleigh[]) => void;
   setGameSettings: (gameSettings: GameSettings) => void;
+  setGlobalGameId: (propulsionMintAddress: number) => void;
+  setPropulsionMintAddress: (PROPULSION_MINT_ADDRESS: string) => void;
+  setLandingGearMintAddress: (LANDING_GEAR_MINT_ADDRESS: string) => void;
+  setNavigationMintAddress: (NAVIGATION_MINT_ADDRESS: string) => void;
+  setPresentsBagMintAddress: (PRESENTS_BAG_MINT_ADDRESS: string) => void;
 };
 
 export const userStore = create<Store>((set) => ({
@@ -36,6 +46,11 @@ export const userStore = create<Store>((set) => ({
     "https://shdw-drive.genesysgo.net/5jHWA7UVajMawLH2wVCZdp3U4u42XsF8rSa1DcEQui72/profilePicWhite.svg",
   sleighs: [],
   gameSettings: null,
+  globalGameId: null,
+  PROPULSION_MINT_ADDRESS: null,
+  LANDING_GEAR_MINT_ADDRESS: null,
+  NAVIGATION_MINT_ADDRESS: null,
+  PRESENTS_BAG_MINT_ADDRESS: null,
   setLogin: (
     status,
     loginType,
@@ -59,6 +74,26 @@ export const userStore = create<Store>((set) => ({
   setGameSettings: (gameSettings) =>
     set({
       gameSettings: gameSettings,
+    }),
+  setGlobalGameId: (globalGameId) =>
+    set({
+      globalGameId: globalGameId,
+    }),
+  setPropulsionMintAddress: (propulsionMintAddress) =>
+    set({
+      PROPULSION_MINT_ADDRESS: propulsionMintAddress,
+    }),
+  setLandingGearMintAddress: (landingGearMintAddress) =>
+    set({
+      LANDING_GEAR_MINT_ADDRESS: landingGearMintAddress,
+    }),
+  setNavigationMintAddress: (navigationMintAddress) =>
+    set({
+      NAVIGATION_MINT_ADDRESS: navigationMintAddress,
+    }),
+  setPresentsBagMintAddress: (presentsBagMintAddress) =>
+    set({
+      PRESENTS_BAG_MINT_ADDRESS: presentsBagMintAddress,
     }),
 }));
 

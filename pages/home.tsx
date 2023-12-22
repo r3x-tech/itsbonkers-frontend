@@ -114,51 +114,12 @@ function HomePage() {
     PRESENTS_BAG_MINT_ADDRESS
   );
 
-  // Process the sleighs data to convert BN fields
-  let processedSleighs = currentSleighs?.map((sleigh) => ({
-    ...sleigh,
-    sleighId: sleigh.sleighId.toString(),
-    builtIndex: sleigh.builtIndex,
-    gameId: sleigh.gameId,
-    lastClaimedRoll: sleigh.lastClaimedRoll,
-    lastDeliveryRoll: sleigh.lastDeliveryRoll,
-    mintCost: sleigh.mintCost,
-    stakeAmt: sleigh.stakeAmt,
-    stakedAfterRoll: sleigh.stakedAfterRoll,
-    level: sleigh.level,
-    broken: sleigh.broken,
-    propulsionHp: sleigh.propulsionHp,
-    landingGearHp: sleigh.landingGearHp,
-    navigationHp: sleigh.navigationHp,
-    presentsBagHp: sleigh.presentsBagHp,
-    owner: sleigh.owner.toString(),
-  }));
-
   useEffect(() => {
-    if (currentSleighs) {
-      // processedSleighs = currentSleighs?.map((sleigh) => ({
-      //   ...sleigh,
-      //   sleighId: sleigh.sleighId.toString(),
-      //   builtIndex: sleigh.builtIndex,
-      //   gameId: sleigh.gameId,
-      //   lastClaimedRoll: sleigh.lastClaimedRoll,
-      //   lastDeliveryRoll: sleigh.lastDeliveryRoll,
-      //   mintCost: sleigh.mintCost,
-      //   stakeAmt: sleigh.stakeAmt,
-      //   stakedAfterRoll: sleigh.stakedAfterRoll,
-      //   level: sleigh.level,
-      //   broken: sleigh.broken,
-      //   propulsionHp: sleigh.propulsionHp,
-      //   landingGearHp: sleigh.landingGearHp,
-      //   navigationHp: sleigh.navigationHp,
-      //   presentsBagHp: sleigh.presentsBagHp,
-      //   owner: sleigh.owner.toString(),
-      // }));
-    }
-  }, [currentSleighs]);
-
-  useEffect(() => {
-    if (gameSettings && currentSlot && currentSlot > gameSettings.stage1End) {
+    if (
+      gameSettings &&
+      currentSlot &&
+      currentSlot > gameSettings.stage1End.toNumber()
+    ) {
       setStg2Started(true);
     }
   }, [currentSlot, gameSettings]);
@@ -179,7 +140,9 @@ function HomePage() {
 
   useEffect(() => {
     if (gameSettings) {
-      const sC = gameSettings.sleighsBuilt * gameSettings.mintCostMultiplier;
+      const sC =
+        gameSettings.sleighsBuilt.toNumber() *
+        gameSettings.mintCostMultiplier.toNumber();
       setCurrentStakeCost(sC);
     }
   }, [gameSettings]);
@@ -261,7 +224,7 @@ function HomePage() {
                         fontWeight="700"
                         fontFamily={theme.fonts.body}
                       >
-                        {currentPropulsionParts}
+                        {currentPropulsionParts?.toString()}
                       </Text>
                     </Flex>
                   </Box>
@@ -288,7 +251,7 @@ function HomePage() {
                         fontWeight="700"
                         fontFamily={theme.fonts.body}
                       >
-                        {currentNavigationParts}
+                        {currentNavigationParts?.toString()}
                       </Text>
                     </Flex>
                   </Box>
@@ -320,7 +283,7 @@ function HomePage() {
                         fontWeight="700"
                         fontFamily={theme.fonts.body}
                       >
-                        {currentLandingGearParts}
+                        {currentLandingGearParts?.toString()}
                       </Text>
                     </Flex>
                   </Box>
@@ -346,7 +309,7 @@ function HomePage() {
                         fontWeight="700"
                         fontFamily={theme.fonts.body}
                       >
-                        {currentPresentsBagParts}
+                        {currentPresentsBagParts?.toString()}
                       </Text>
                     </Flex>
                   </Box>
@@ -375,9 +338,16 @@ function HomePage() {
                     </Text>
                     <Flex
                       cursor="pointer"
-                      onClick={() => refetchCurrentSleighs()}
+                      onClick={async () => await refetchCurrentSleighs()}
                     >
-                      <TbRefresh size="1.5rem" />
+                      <TbRefresh
+                        size="1.5rem"
+                        style={{
+                          animation: isLoadingSleighs
+                            ? "spin 1s linear infinite"
+                            : "none",
+                        }}
+                      />
                     </Flex>
                   </Flex>
 
@@ -399,7 +369,7 @@ function HomePage() {
                       color={theme.colors.white}
                     >
                       {/* {sampleSleighs.length} */}
-                      {processedSleighs?.length}
+                      {currentSleighs?.length}
                     </Text>
                   </Flex>
                 </Flex>
@@ -433,7 +403,7 @@ function HomePage() {
                         }
                       />
                     ))} */}
-                    {processedSleighs?.map((sleigh, index) => (
+                    {currentSleighs?.map((sleigh, index) => (
                       <SleighCardComponent
                         key={index}
                         currentSleigh={sleigh}
@@ -441,7 +411,8 @@ function HomePage() {
                         isSelected={
                           !!(
                             selectedSleigh &&
-                            selectedSleigh.sleighId === sleigh.sleighId
+                            selectedSleigh.sleighId.toString() ===
+                              sleigh.sleighId.toString()
                           )
                         }
                       />

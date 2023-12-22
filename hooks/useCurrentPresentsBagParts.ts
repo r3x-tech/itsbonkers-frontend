@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getBonkBalance, getWalletTokenBalance } from "@/utils/solana";
+import { getWalletTokenBalance } from "@/utils/solana";
 import { Connection, PublicKey } from "@solana/web3.js";
 
 export const useCurrentPresentsBagParts = (
@@ -7,17 +7,27 @@ export const useCurrentPresentsBagParts = (
   connection: Connection,
   tokenMint: string
 ) => {
-  return useQuery(
-    ["walletBonkBalance", walletAddress?.toBase58()],
-    () => {
+  return useQuery<bigint>(
+    ["walletPresentsBagBalance", walletAddress],
+    async () => {
       if (walletAddress) {
-        return getWalletTokenBalance({
-          walletAddress: walletAddress.toBase58(),
-          connection,
-          tokenMint,
-        });
+        try {
+          const amount = await getWalletTokenBalance({
+            walletAddress,
+            connection,
+            tokenMint,
+          });
+          console.log(
+            "walletPresentsBagBalance balance: ",
+            BigInt(amount).toString()
+          );
+          return BigInt(amount);
+        } catch (error) {
+          console.error("Error fetching presents bag parts balance:", error);
+          return BigInt(0);
+        }
       }
-      return 0;
+      return BigInt(0);
     },
     {
       enabled: !!walletAddress && !!connection,

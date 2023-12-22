@@ -1,15 +1,15 @@
-export const GAME_ID = 18;
+export let GAME_ID = 22;
 export const TOKEN_MINT_ADDRESS =
   "Gx1V34ivZZ1Fq7Rm9ZmogBdDgYZieYKjJU1icSupFuCT";
 
 export const PROPULSION_MINT_ADDRESS =
-  "8KHc46FUirJQi2LRKvwf7E45bbpzg4pQqZKawS1fArw";
+  "97w4zbPDq5Qz57icgVEGdwtQu32HsDKuoci2N3mUKcsj";
 export const LANDING_GEAR_MINT_ADDRESS =
-  "EQbFNPYsF25tSBg5ej2yrG7ag39jRyB83pzdXiHJmKuJ";
+  "95abbjBr3EqA9XMi56by1qbvXpUBR8Ukmxi1pu3QNTh3";
 export const NAVIGATION_MINT_ADDRESS =
-  "CuThSpcxNgCFuYKLWhKrP1Wgo2jwWR2MUr5eGv4coneZ";
+  "AwG5Vc4qCHdwDr1WByhSFB2HRj2XuiKPfWAMzZHrGKUw";
 export const PRESENTS_BAG_MINT_ADDRESS =
-  "83EJ6diYofbXzXFYpV7FQMpk825wXtL7631Jesf6cqGz";
+  "Ap9neREcw6MvsT9XGFZ3ZSsxdBCfSbiUQMp5B2GWrVxp";
 
 export const SPL_TOKENS: {
   [token: string]: { mint: string; decimals: number };
