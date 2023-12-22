@@ -78,11 +78,15 @@ export const getGameSettings = async (
 export const getGameRolls = async (
   connection: Connection,
   stage: string
-): Promise<GameRolls | undefined> => {
+): Promise<GameRolls> => {
   try {
-    const program = new Program(bonkersIDL, BONKERS_PROGRAM_PROGRAMID, {
-      connection,
-    });
+    const program = new Program<Bonkers>(
+      bonkersIDL,
+      BONKERS_PROGRAM_PROGRAMID,
+      {
+        connection,
+      }
+    );
 
     const prefix = stage === "BUILD" ? "game_rolls_stg1" : "game_rolls_stg2";
 
@@ -102,18 +106,15 @@ export const getGameRolls = async (
 
     if (gameRollsAccount === null) {
       console.error("Game rolls account not found");
-      return undefined;
+      return { rolls: [] };
     }
 
-    const gameRollsData = program.coder.accounts.decode<GameRolls>(
-      "GameRolls",
-      gameRollsAccount.data
-    );
+    const gameRollsData = await program.account.gameRolls.fetch(gameRollsPDA);
 
     return gameRollsData;
   } catch (error) {
     console.error("Error fetching game rolls: ", error);
-    return undefined;
+    return { rolls: [] };
   }
 };
 

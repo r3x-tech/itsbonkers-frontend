@@ -117,6 +117,16 @@ export const Navbar: React.FC = () => {
             >
               {GAME_ID || 0}
             </Text>
+            <Flex>
+              <Text
+                fontSize="1.25rem"
+                fontWeight="700"
+                fontFamily={theme.fonts.body}
+                color={theme.colors.white}
+              >
+                {currentGameRolls?.rolls.length || 0}
+              </Text>
+            </Flex>
           </Flex>
         </Flex>
 

@@ -1,15 +1,15 @@
-export let GAME_ID = 22;
+export let GAME_ID = 25;
 export const TOKEN_MINT_ADDRESS =
   "Gx1V34ivZZ1Fq7Rm9ZmogBdDgYZieYKjJU1icSupFuCT";
 
 export const PROPULSION_MINT_ADDRESS =
-  "97w4zbPDq5Qz57icgVEGdwtQu32HsDKuoci2N3mUKcsj";
+  "6QabNFf11sZZhMmzFiMXD6BgjS8Wpcqc4HSuyE6YXjc4";
 export const LANDING_GEAR_MINT_ADDRESS =
-  "95abbjBr3EqA9XMi56by1qbvXpUBR8Ukmxi1pu3QNTh3";
+  "H4dgpJh3KypJW1Z6AagJYoHdzzBS41sM2nLyDqyCbk6x";
 export const NAVIGATION_MINT_ADDRESS =
-  "AwG5Vc4qCHdwDr1WByhSFB2HRj2XuiKPfWAMzZHrGKUw";
+  "3tSrpxAQdKMwbXN5fQjemZirAGQx72oB6ycLJ2QPWMRs";
 export const PRESENTS_BAG_MINT_ADDRESS =
-  "Ap9neREcw6MvsT9XGFZ3ZSsxdBCfSbiUQMp5B2GWrVxp";
+  "Czs6bi8TDz9u25cwWKhcFeEhcXScr9SVjV7225WkPvEr";
 
 export const SPL_TOKENS: {
   [token: string]: { mint: string; decimals: number };
@@ -19,3 +19,10 @@ export const SPL_TOKENS: {
     decimals: 5,
   },
 };
+
+/*
+Propulsion Mint:  6QabNFf11sZZhMmzFiMXD6BgjS8Wpcqc4HSuyE6YXjc4
+Landing Gear Mint:  H4dgpJh3KypJW1Z6AagJYoHdzzBS41sM2nLyDqyCbk6x
+Navigation Mint:  3tSrpxAQdKMwbXN5fQjemZirAGQx72oB6ycLJ2QPWMRs
+Presents Bag Mint:  Czs6bi8TDz9u25cwWKhcFeEhcXScr9SVjV7225WkPvEr
+*/
