@@ -21,7 +21,7 @@ import toast from "react-hot-toast";
 // import { useState } from "react";
 import { FaCopy, FaBell } from "react-icons/fa";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCurrentGameRolls } from "@/hooks/useCurrentGameRolls";
 import { useGameSettings } from "@/hooks/useGameSettings";
 import useSolana from "@/hooks/useSolana";
@@ -42,13 +42,25 @@ export const Navbar: React.FC = () => {
   const { publicKey, disconnect } = useWallet();
   const [isLogoutInProgress, setLogoutInProgress] = useState(false);
   const { connection } = useSolana();
-  const { data: currentSlot } = useCurrentSlot();
+  const { data: currentSlot, refetch: refetchCurrentSlot } = useCurrentSlot();
 
   const {
     data: currentGameRolls,
     isLoading: isLoadingCurrentGameRolls,
     refetch: refetchCurrentGameRolls,
   } = useCurrentGameRolls(connection);
+
+  useEffect(() => {
+    refetchCurrentGameRolls();
+    console.log("Current Game Rolls: ", currentGameRolls?.rolls.length);
+    const interval = setInterval(() => {
+      console.log("Refetching game rolls!");
+      refetchCurrentGameRolls();
+      console.log("Current Game Rolls: ", currentGameRolls);
+    }, ((gameSettings?.rollInterval.toNumber() || 200) / 2) * 2000);
+    return () => clearInterval(interval); // Clear interval on component unmount
+  }, [gameSettings]);
+
   const { globalGameId, setGlobalGameId } = userStore();
 
   const getTextColor = (route: string) => {
@@ -117,16 +129,6 @@ export const Navbar: React.FC = () => {
             >
               {GAME_ID || 0}
             </Text>
-            <Flex>
-              <Text
-                fontSize="1.25rem"
-                fontWeight="700"
-                fontFamily={theme.fonts.body}
-                color={theme.colors.white}
-              >
-                {currentGameRolls?.rolls.length || 0}
-              </Text>
-            </Flex>
           </Flex>
         </Flex>
 
@@ -148,7 +150,7 @@ export const Navbar: React.FC = () => {
               fontFamily={theme.fonts.body}
               color={theme.colors.white}
             >
-              {currentGameRolls || 0}
+              {currentGameRolls?.rolls.length || 0}
             </Text>
           </Flex>
         </Flex>
