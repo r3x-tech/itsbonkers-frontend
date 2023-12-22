@@ -28,6 +28,9 @@ import { retireSleighTx } from "@/utils";
 import toast from "react-hot-toast";
 import { Sleigh } from "@/types/types";
 import { BN } from "@coral-xyz/anchor";
+import userStore from "@/stores/userStore";
+import { PublicKey } from "@solana/web3.js";
+import { TOKEN_MINT_ADDRESS } from "@/constants";
 
 interface RetireSleighModallProps {
   retireInProgress: boolean;
@@ -54,19 +57,28 @@ export const RetireSleighModal: React.FC<RetireSleighModallProps> = ({
     connecting,
     disconnecting,
   } = useWallet();
+  const { globalGameId, TOKEN_MINT_ADDRESS } = userStore();
 
   const retireSleigh = async () => {
     setRetireInProgress(true);
 
     try {
-      if (!signTransaction || !connection || !publicKey || !currentSleigh) {
+      if (
+        !signTransaction ||
+        !connection ||
+        !publicKey ||
+        !currentSleigh ||
+        !globalGameId ||
+        !TOKEN_MINT_ADDRESS
+      ) {
         throw Error("Staking failed");
       }
-
       const tx = await retireSleighTx(
+        globalGameId,
         BigInt(currentSleigh.sleighId.toNumber()),
         connection,
-        publicKey
+        publicKey,
+        new PublicKey(TOKEN_MINT_ADDRESS)
       );
       if (!tx) {
         throw Error("Failed to create tx");

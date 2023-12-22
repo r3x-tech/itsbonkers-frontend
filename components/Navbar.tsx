@@ -26,7 +26,7 @@ import { useCurrentGameRolls } from "@/hooks/useCurrentGameRolls";
 import { useGameSettings } from "@/hooks/useGameSettings";
 import useSolana from "@/hooks/useSolana";
 import { useCurrentSlot } from "@/hooks/useCurrentSlot";
-import { GAME_ID } from "@/constants";
+// import { GAME_ID } from "@/constants";
 
 export const Navbar: React.FC = () => {
   const {
@@ -115,7 +115,8 @@ export const Navbar: React.FC = () => {
               fontFamily={theme.fonts.body}
               color={theme.colors.white}
             >
-              {GAME_ID || 0}
+              {/* {GAME_ID || 0} */}
+              {globalGameId || 0}
             </Text>
             <Flex>
               <Text
@@ -148,7 +149,7 @@ export const Navbar: React.FC = () => {
               fontFamily={theme.fonts.body}
               color={theme.colors.white}
             >
-              {currentGameRolls || 0}
+              {currentGameRolls?.rolls.length || 0}
             </Text>
           </Flex>
         </Flex>

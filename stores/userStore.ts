@@ -13,6 +13,7 @@ type Store = {
   userProfilePic: string;
   sleighs: Sleigh[];
   gameSettings: GameSettings | null;
+  TOKEN_MINT_ADDRESS: string | null;
   PROPULSION_MINT_ADDRESS: string | null;
   LANDING_GEAR_MINT_ADDRESS: string | null;
   NAVIGATION_MINT_ADDRESS: string | null;
@@ -29,6 +30,7 @@ type Store = {
   setSleighs: (setSleighs: Sleigh[]) => void;
   setGameSettings: (gameSettings: GameSettings) => void;
   setGlobalGameId: (propulsionMintAddress: number) => void;
+  setTokenMintAddress: (TOKEN_MINT_ADDRESS: string) => void;
   setPropulsionMintAddress: (PROPULSION_MINT_ADDRESS: string) => void;
   setLandingGearMintAddress: (LANDING_GEAR_MINT_ADDRESS: string) => void;
   setNavigationMintAddress: (NAVIGATION_MINT_ADDRESS: string) => void;
@@ -47,6 +49,7 @@ export const userStore = create<Store>((set) => ({
   sleighs: [],
   gameSettings: null,
   globalGameId: null,
+  TOKEN_MINT_ADDRESS: null,
   PROPULSION_MINT_ADDRESS: null,
   LANDING_GEAR_MINT_ADDRESS: null,
   NAVIGATION_MINT_ADDRESS: null,
@@ -78,6 +81,10 @@ export const userStore = create<Store>((set) => ({
   setGlobalGameId: (globalGameId) =>
     set({
       globalGameId: globalGameId,
+    }),
+  setTokenMintAddress: (tokenMintAddress) =>
+    set({
+      TOKEN_MINT_ADDRESS: tokenMintAddress,
     }),
   setPropulsionMintAddress: (propulsionMintAddress) =>
     set({

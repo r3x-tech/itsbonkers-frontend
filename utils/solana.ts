@@ -27,15 +27,15 @@ import { Buffer } from "buffer";
 import toast from "react-hot-toast";
 //@ts-ignore
 import { ByteifyEndianess, serializeUint64 } from "byteify";
-import {
-  GAME_ID,
-  LANDING_GEAR_MINT_ADDRESS,
-  NAVIGATION_MINT_ADDRESS,
-  PRESENTS_BAG_MINT_ADDRESS,
-  PROPULSION_MINT_ADDRESS,
-  SPL_TOKENS,
-  TOKEN_MINT_ADDRESS,
-} from "@/constants";
+// import {
+//   globalGameId,
+//   LANDING_GEAR_MINT_ADDRESS,
+//   NAVIGATION_MINT_ADDRESS,
+//   PRESENTS_BAG_MINT_ADDRESS,
+//   PROPULSION_MINT_ADDRESS,
+//   SPL_TOKENS,
+//   TOKEN_MINT_ADDRESS,
+// } from "@/constants";
 import { GameRolls, GameSettings, Sleigh } from "@/types/types";
 import { encode } from "bs58";
 import { publicKey } from "@coral-xyz/anchor/dist/cjs/utils";
@@ -45,8 +45,12 @@ const BONKERS_PROGRAM_PROGRAMID =
   "DYjXGPz5HGneqvA7jsgRVKTTaeoarCPNCH6pr9Lu2L3F";
 
 export const getGameSettings = async (
+  globalGameId: number | null,
   connection: Connection
 ): Promise<GameSettings | undefined> => {
+  if (!globalGameId) {
+    throw Error("No game id found");
+  }
   try {
     const BONKERS_PROGRAM: Program<any> = new Program(
       bonkersIDL,
@@ -58,7 +62,7 @@ export const getGameSettings = async (
       [
         Buffer.from("settings"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -76,9 +80,13 @@ export const getGameSettings = async (
 };
 
 export const getGameRolls = async (
+  globalGameId: number | null,
   connection: Connection,
   stage: string
 ): Promise<GameRolls> => {
+  if (!globalGameId) {
+    throw Error("No game id found");
+  }
   try {
     const program = new Program<Bonkers>(
       bonkersIDL,
@@ -94,7 +102,7 @@ export const getGameRolls = async (
       [
         Buffer.from(prefix),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -119,12 +127,16 @@ export const getGameRolls = async (
 };
 
 export const getCurrentSleighs = async (
+  globalGameId: number | null,
   sleighOwnerPublicKey: PublicKey | null,
   connection: Connection
 ): Promise<Sleigh[] | undefined> => {
   try {
     if (!sleighOwnerPublicKey) {
       throw Error("No public key found");
+    }
+    if (!globalGameId) {
+      throw Error("No game id found");
     }
     const BONKERS_PROGRAM: Program<any> = new Program(
       bonkersIDL,
@@ -142,7 +154,7 @@ export const getCurrentSleighs = async (
       {
         memcmp: {
           offset: 8 + 32 + 8 + 1,
-          bytes: encode(new BN(GAME_ID).toArrayLike(Buffer, "le", 8)),
+          bytes: encode(new BN(globalGameId).toArrayLike(Buffer, "le", 8)),
         },
       },
     ]);
@@ -157,12 +169,14 @@ export const getCurrentSleighs = async (
 };
 
 export const createSleighTx = async (
+  globalGameId: number | null,
+  tokenMintAddress: PublicKey,
   _sleighId: bigint,
   stakeAmt: number,
   connection: Connection,
   publicKey: PublicKey
 ): Promise<VersionedTransaction | undefined> => {
-  if (!publicKey || !connection || !stakeAmt || !_sleighId) {
+  if (!publicKey || !connection || !stakeAmt || !_sleighId || !globalGameId) {
     console.error("All createSleigh inputs required");
     return undefined;
   }
@@ -181,7 +195,7 @@ export const createSleighTx = async (
       [
         Buffer.from("settings"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -192,7 +206,7 @@ export const createSleighTx = async (
       [
         Buffer.from("game_rolls_stg1"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -203,7 +217,7 @@ export const createSleighTx = async (
       [
         Buffer.from("sleigh"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -217,15 +231,14 @@ export const createSleighTx = async (
     )[0];
 
     const gameTokenAta = getAssociatedTokenAddressSync(
-      new PublicKey(TOKEN_MINT_ADDRESS),
+      tokenMintAddress,
       gameSettingsPDA,
       true
     );
     const sleighOwnerAta = getAssociatedTokenAddressSync(
-      new PublicKey(TOKEN_MINT_ADDRESS),
+      tokenMintAddress,
       publicKey
     );
-    const coinMintAddress = new PublicKey(TOKEN_MINT_ADDRESS);
 
     // Create the instruction
     const ix = await BONKERS_PROGRAM.methods
@@ -238,7 +251,7 @@ export const createSleighTx = async (
         sleigh: sleighPDA,
         gameTokenAta: gameTokenAta,
         sleighOwnerAta: sleighOwnerAta,
-        coinMint: coinMintAddress,
+        coinMint: tokenMintAddress,
         tokenProgram: TOKEN_PROGRAM_ID,
       })
       .instruction();
@@ -266,12 +279,19 @@ export const createSleighTx = async (
 };
 
 export const claimLevelsTx = async (
+  globalGameId: number | null,
   _sleighId: bigint,
   rollIndexes: BN[],
   connection: Connection,
   publicKey: PublicKey
 ): Promise<VersionedTransaction | undefined> => {
-  if (!publicKey || !connection || !rollIndexes || !_sleighId) {
+  if (
+    !publicKey ||
+    !connection ||
+    !rollIndexes ||
+    !_sleighId ||
+    !globalGameId
+  ) {
     console.error("All claimLevels inputs required");
     return undefined;
   }
@@ -292,7 +312,7 @@ export const claimLevelsTx = async (
       [
         Buffer.from("settings"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -303,7 +323,7 @@ export const claimLevelsTx = async (
       [
         Buffer.from("game_rolls_stg1"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -314,7 +334,7 @@ export const claimLevelsTx = async (
       [
         Buffer.from("sleigh"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -359,11 +379,16 @@ export const claimLevelsTx = async (
 };
 
 export const deliveryTx = async (
+  globalGameId: number | null,
   _sleighId: bigint,
   connection: Connection,
-  publicKey: PublicKey
+  publicKey: PublicKey,
+  propulsionMintAddress: PublicKey,
+  landingGearMintAddress: PublicKey,
+  navigationMintAddress: PublicKey,
+  presentsBagMintAddress: PublicKey
 ): Promise<VersionedTransaction | undefined> => {
-  if (!publicKey || !connection || !_sleighId) {
+  if (!publicKey || !connection || !_sleighId || !globalGameId) {
     console.error("All delivery inputs required");
     return undefined;
   }
@@ -380,7 +405,7 @@ export const deliveryTx = async (
       [
         Buffer.from("settings"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -391,7 +416,7 @@ export const deliveryTx = async (
       [
         Buffer.from("game_rolls_stg2"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -402,7 +427,7 @@ export const deliveryTx = async (
       [
         Buffer.from("sleigh"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -415,10 +440,6 @@ export const deliveryTx = async (
       new PublicKey(BONKERS_PROGRAM_PROGRAMID)
     )[0];
 
-    const propulsionMintAddress = new PublicKey(PROPULSION_MINT_ADDRESS);
-    const landingGearMintAddress = new PublicKey(LANDING_GEAR_MINT_ADDRESS);
-    const navigationMintAddress = new PublicKey(NAVIGATION_MINT_ADDRESS);
-    const presentsBagMintAddress = new PublicKey(PRESENTS_BAG_MINT_ADDRESS);
     const sleighPropulsionPartsAta = getAssociatedTokenAddressSync(
       propulsionMintAddress,
       publicKey
@@ -479,6 +500,7 @@ export const deliveryTx = async (
 };
 
 export const repairSleighTx = async (
+  globalGameId: number | null | null,
   _sleighId: bigint,
   repairDetails: {
     propulsion: number;
@@ -487,9 +509,19 @@ export const repairSleighTx = async (
     presentsBag: number;
   },
   connection: Connection,
-  publicKey: PublicKey
+  publicKey: PublicKey,
+  propulsionMintAddress: PublicKey,
+  landingGearMintAddress: PublicKey,
+  navigationMintAddress: PublicKey,
+  presentsBagMintAddress: PublicKey
 ): Promise<VersionedTransaction | undefined> => {
-  if (!publicKey || !connection || !repairDetails || !_sleighId) {
+  if (
+    !publicKey ||
+    !connection ||
+    !repairDetails ||
+    !_sleighId ||
+    !globalGameId
+  ) {
     console.error("All reapirSleigh inputs required");
     return undefined;
   }
@@ -508,7 +540,7 @@ export const repairSleighTx = async (
       [
         Buffer.from("sleigh"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -524,17 +556,13 @@ export const repairSleighTx = async (
       [
         Buffer.from("settings"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
       ],
       new PublicKey(BONKERS_PROGRAM_PROGRAMID)
     )[0];
-    const propulsionMintAddress = new PublicKey(PROPULSION_MINT_ADDRESS);
-    const landingGearMintAddress = new PublicKey(LANDING_GEAR_MINT_ADDRESS);
-    const navigationMintAddress = new PublicKey(NAVIGATION_MINT_ADDRESS);
-    const presentsBagMintAddress = new PublicKey(PRESENTS_BAG_MINT_ADDRESS);
     const sleighPropulsionPartsAta = getAssociatedTokenAddressSync(
       propulsionMintAddress,
       publicKey
@@ -597,11 +625,13 @@ export const repairSleighTx = async (
 };
 
 export const retireSleighTx = async (
+  globalGameId: number | null,
   _sleighId: bigint,
   connection: Connection,
-  publicKey: PublicKey
+  publicKey: PublicKey,
+  tokenMintAddress: PublicKey
 ): Promise<VersionedTransaction | undefined> => {
-  if (!publicKey || !connection || !_sleighId) {
+  if (!publicKey || !connection || !_sleighId || !globalGameId) {
     console.error("All retireSleigh inputs required");
     return undefined;
   }
@@ -620,7 +650,7 @@ export const retireSleighTx = async (
       [
         Buffer.from("sleigh"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -636,7 +666,7 @@ export const retireSleighTx = async (
       [
         Buffer.from("settings"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -647,7 +677,7 @@ export const retireSleighTx = async (
       [
         Buffer.from("settings"),
         Uint8Array.from(
-          serializeUint64(BigInt(GAME_ID.toString()), {
+          serializeUint64(BigInt(globalGameId.toString()), {
             endianess: ByteifyEndianess.BIG_ENDIAN,
           })
         ),
@@ -656,15 +686,15 @@ export const retireSleighTx = async (
     )[0];
 
     const gameTokenAta = getAssociatedTokenAddressSync(
-      new PublicKey(TOKEN_MINT_ADDRESS),
+      tokenMintAddress,
       gameSettingsPDA,
       true
     );
     const sleighOwnerAta = getAssociatedTokenAddressSync(
-      new PublicKey(TOKEN_MINT_ADDRESS),
+      tokenMintAddress,
       publicKey
     );
-    const coinMintAddress = new PublicKey(TOKEN_MINT_ADDRESS);
+    const coinMintAddress = tokenMintAddress;
 
     const ix = await BONKERS_PROGRAM.methods
       .retire()
@@ -805,14 +835,16 @@ export const sendAllTxParallel = async (
 export const getBonkBalance = async ({
   walletAddress,
   connection,
+  bonkMintAddress,
 }: {
   walletAddress: string;
   connection: Connection;
+  bonkMintAddress: string;
 }) => {
   const bonkBalance = await getTokenAccountBalance(
     walletAddress,
     connection,
-    SPL_TOKENS.bonk.mint
+    bonkMintAddress
   );
 
   return bonkBalance;

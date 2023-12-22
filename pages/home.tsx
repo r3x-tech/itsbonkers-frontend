@@ -53,12 +53,12 @@ import { useCurrentPropulsionParts } from "@/hooks/useCurrentPropulsionParts";
 import { useCurrentNavigationParts } from "@/hooks/useCurrentNavigationParts";
 import { useCurrentLandingGearParts } from "@/hooks/useCurrentLandingGearParts";
 import { useCurrentPresentsBagParts } from "@/hooks/useCurrentPresentsBagParts";
-import {
-  LANDING_GEAR_MINT_ADDRESS,
-  NAVIGATION_MINT_ADDRESS,
-  PRESENTS_BAG_MINT_ADDRESS,
-  PROPULSION_MINT_ADDRESS,
-} from "@/constants";
+// import {
+//   LANDING_GEAR_MINT_ADDRESS,
+//   NAVIGATION_MINT_ADDRESS,
+//   PRESENTS_BAG_MINT_ADDRESS,
+//   PROPULSION_MINT_ADDRESS,
+// } from "@/constants";
 
 function HomePage() {
   const [selectedSleigh, setSelectedSleigh] = useState<Sleigh | null>(null);
@@ -66,7 +66,13 @@ function HomePage() {
   const [currentStakeCost, setCurrentStakeCost] = useState<number>(0);
   const [stg2Started, setStg2Started] = useState<boolean>(false);
 
-  const { loggedIn } = userStore();
+  const {
+    loggedIn,
+    LANDING_GEAR_MINT_ADDRESS,
+    NAVIGATION_MINT_ADDRESS,
+    PRESENTS_BAG_MINT_ADDRESS,
+    PROPULSION_MINT_ADDRESS,
+  } = userStore();
   const router = useRouter();
   const queryClient = useQueryClient();
   const { connection } = useSolana();
@@ -92,26 +98,34 @@ function HomePage() {
   const {
     data: currentPropulsionParts,
     refetch: refetchCurrentPropulsionParts,
-  } = useCurrentPropulsionParts(publicKey, connection, PROPULSION_MINT_ADDRESS);
+  } = useCurrentPropulsionParts(
+    publicKey,
+    connection,
+    PROPULSION_MINT_ADDRESS!
+  );
   const {
     data: currentLandingGearParts,
     refetch: refetchCurrentLandingGearParts,
   } = useCurrentLandingGearParts(
     publicKey,
     connection,
-    LANDING_GEAR_MINT_ADDRESS
+    LANDING_GEAR_MINT_ADDRESS!
   );
   const {
     data: currentNavigationParts,
     refetch: refetchCurrentNavigationParts,
-  } = useCurrentNavigationParts(publicKey, connection, NAVIGATION_MINT_ADDRESS);
+  } = useCurrentNavigationParts(
+    publicKey,
+    connection,
+    NAVIGATION_MINT_ADDRESS!
+  );
   const {
     data: currentPresentsBagParts,
     refetch: refetchCurrentPresentsBagParts,
   } = useCurrentPresentsBagParts(
     publicKey,
     connection,
-    PRESENTS_BAG_MINT_ADDRESS
+    PRESENTS_BAG_MINT_ADDRESS!
   );
 
   useEffect(() => {

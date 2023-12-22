@@ -26,6 +26,8 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import useSolana from "@/hooks/useSolana";
 import toast from "react-hot-toast";
 import { repairSleighTx } from "@/utils";
+import userStore from "@/stores/userStore";
+import { PublicKey } from "@solana/web3.js";
 
 interface RepairSleighModalProps {
   repairSleighInProgress: boolean;
@@ -72,6 +74,13 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
     connecting,
     disconnecting,
   } = useWallet();
+  const {
+    globalGameId,
+    LANDING_GEAR_MINT_ADDRESS,
+    NAVIGATION_MINT_ADDRESS,
+    PRESENTS_BAG_MINT_ADDRESS,
+    PROPULSION_MINT_ADDRESS,
+  } = userStore();
 
   const repairSleigh = async (
     propulsion: number,
@@ -82,11 +91,22 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
     setRepairSleighInProgress(true);
 
     try {
-      if (!signTransaction || !connection || !publicKey || !currentSleigh) {
+      if (
+        !signTransaction ||
+        !connection ||
+        !publicKey ||
+        !currentSleigh ||
+        !globalGameId ||
+        !LANDING_GEAR_MINT_ADDRESS ||
+        !NAVIGATION_MINT_ADDRESS ||
+        !PRESENTS_BAG_MINT_ADDRESS ||
+        !PROPULSION_MINT_ADDRESS
+      ) {
         throw Error("Repair sleigh failed");
       }
 
       const tx = await repairSleighTx(
+        globalGameId,
         BigInt(currentSleigh.sleighId.toNumber()),
         {
           propulsion,
@@ -95,7 +115,11 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
           presentsBag,
         },
         connection,
-        publicKey
+        publicKey,
+        new PublicKey(LANDING_GEAR_MINT_ADDRESS),
+        new PublicKey(NAVIGATION_MINT_ADDRESS),
+        new PublicKey(PRESENTS_BAG_MINT_ADDRESS),
+        new PublicKey(PROPULSION_MINT_ADDRESS)
       );
       if (!tx) {
         throw Error("Failed to create tx");

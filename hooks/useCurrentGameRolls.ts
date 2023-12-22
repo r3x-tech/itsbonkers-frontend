@@ -6,20 +6,20 @@ import userStore from "@/stores/userStore";
 import { BN } from "@coral-xyz/anchor";
 
 export const useCurrentGameRolls = (connection: Connection) => {
-  const { gameSettings } = userStore();
+  const { gameSettings, globalGameId } = userStore();
   const { data: currentSlot } = useCurrentSlot();
 
   return useQuery(
     ["curentGameRolls"],
     () => {
-      if (!currentSlot || !gameSettings) {
+      if (!currentSlot || !gameSettings || !globalGameId) {
         return { rolls: [new BN(0)] };
       }
 
       if (currentSlot > gameSettings?.stage1End?.toNumber()) {
-        return getGameRolls(connection, "DELIVERY");
+        return getGameRolls(globalGameId, connection, "DELIVERY");
       } else {
-        return getGameRolls(connection, "BUILD");
+        return getGameRolls(globalGameId, connection, "BUILD");
       }
     },
     {

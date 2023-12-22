@@ -26,8 +26,9 @@ import {
 import { RepairSleighModal } from "./RepairSleighModal";
 // import { sampleSleighs } from "@/stores/sampleData";
 import { useCurrentSlot } from "@/hooks/useCurrentSlot";
-import { Connection } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
+import userStore from "@/stores/userStore";
 
 interface SleighProps {
   currentSleigh: Sleigh | null;
@@ -59,11 +60,22 @@ export function SleighComponent({
     disconnecting,
   } = useWallet();
   const { data: currentSlot } = useCurrentSlot();
+  const {
+    globalGameId,
+    LANDING_GEAR_MINT_ADDRESS,
+    NAVIGATION_MINT_ADDRESS,
+    PRESENTS_BAG_MINT_ADDRESS,
+    PROPULSION_MINT_ADDRESS,
+  } = userStore();
 
   useEffect(() => {
     const setDeliveries = async (sleigh: Sleigh, connection: Connection) => {
       // refetchPendingDeliveries(sleigh);
-      const gameRolls = await getGameRolls(connection, "DELIVERY");
+      const gameRolls = await getGameRolls(
+        globalGameId,
+        connection,
+        "DELIVERY"
+      );
       if (gameRolls && currentSleigh) {
         const numOfDeliveriesPending =
           gameRolls.rolls.length - currentSleigh.lastDeliveryRoll.toNumber();
@@ -74,6 +86,7 @@ export function SleighComponent({
       connection &&
       currentStage != "DELIVERY" &&
       gameSettings &&
+      globalGameId &&
       currentSlot &&
       currentSlot > gameSettings.stage1End.toNumber() &&
       currentSleigh
@@ -81,21 +94,43 @@ export function SleighComponent({
       setCurrentStage("DELIVERY");
       setDeliveries(currentSleigh, connection);
     }
-  }, [connection, currentSleigh, currentSlot, currentStage, gameSettings]);
+  }, [
+    connection,
+    currentSleigh,
+    currentSlot,
+    currentStage,
+    gameSettings,
+    globalGameId,
+  ]);
 
   const startDelivery = async () => {
     setStartingDeliveryInProgress(true);
 
     try {
-      if (!signTransaction || !connection || !publicKey || !currentSleigh) {
-        throw Error("Staking failed");
+      if (
+        !signTransaction ||
+        !connection ||
+        !publicKey ||
+        !currentSleigh ||
+        !globalGameId ||
+        !LANDING_GEAR_MINT_ADDRESS ||
+        !NAVIGATION_MINT_ADDRESS ||
+        !PRESENTS_BAG_MINT_ADDRESS ||
+        !PROPULSION_MINT_ADDRESS
+      ) {
+        throw Error("Delivery failed");
       }
       const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
 
       const tx = await deliveryTx(
+        globalGameId,
         BigInt(currentSleigh.sleighId.toString()),
         connection,
-        publicKey
+        publicKey,
+        new PublicKey(LANDING_GEAR_MINT_ADDRESS),
+        new PublicKey(NAVIGATION_MINT_ADDRESS),
+        new PublicKey(PRESENTS_BAG_MINT_ADDRESS),
+        new PublicKey(PROPULSION_MINT_ADDRESS)
       );
       if (!tx) {
         throw Error("Failed to create tx");
@@ -121,18 +156,29 @@ export function SleighComponent({
     setClaimingInProgress(true);
 
     try {
-      if (!signTransaction || !connection || !publicKey || !currentSleigh) {
-        throw Error("Staking failed");
+      if (
+        !signTransaction ||
+        !connection ||
+        !publicKey ||
+        !currentSleigh ||
+        !globalGameId
+      ) {
+        throw Error("Claim sleigh failed");
       }
       const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
 
-      const gameRolls = await getGameRolls(connection, currentStage);
+      const gameRolls = await getGameRolls(
+        globalGameId,
+        connection,
+        currentStage
+      );
 
       if (!gameRolls) {
         throw Error("Failed to get game rolls");
       }
 
       const tx = await claimLevelsTx(
+        globalGameId,
         sleighId,
         gameRolls.rolls,
         connection,

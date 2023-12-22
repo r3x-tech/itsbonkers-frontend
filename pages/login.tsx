@@ -19,12 +19,12 @@ import { useRouter } from "next/router";
 import { Keypair, PublicKey } from "@solana/web3.js";
 // import useSleighs from "@/hooks/useSleighs";
 import useSolana from "@/hooks/useSolana";
-import {
-  LANDING_GEAR_MINT_ADDRESS,
-  NAVIGATION_MINT_ADDRESS,
-  PRESENTS_BAG_MINT_ADDRESS,
-  PROPULSION_MINT_ADDRESS,
-} from "@/constants";
+// import {
+//   LANDING_GEAR_MINT_ADDRESS,
+//   NAVIGATION_MINT_ADDRESS,
+//   PRESENTS_BAG_MINT_ADDRESS,
+//   PROPULSION_MINT_ADDRESS,
+// } from "@/constants";
 import {
   createAssociatedTokenAccountInstruction,
   getAssociatedTokenAddressSync,
@@ -56,16 +56,25 @@ function LoginPage() {
     disconnecting,
   } = useWallet();
 
-  const { username, loggedIn, globalGameId, setGlobalGameId } = userStore();
+  const {
+    username,
+    loggedIn,
+    globalGameId,
+    setGlobalGameId,
+    LANDING_GEAR_MINT_ADDRESS,
+    NAVIGATION_MINT_ADDRESS,
+    PRESENTS_BAG_MINT_ADDRESS,
+    PROPULSION_MINT_ADDRESS,
+  } = userStore();
   const signupRef = useRef<HTMLDivElement>(null);
   const learnMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchandCreateAtas = async (currentPublicKey: PublicKey) => {
-      const propulsionMintAddress = new PublicKey(PROPULSION_MINT_ADDRESS);
-      const landingGearMintAddress = new PublicKey(LANDING_GEAR_MINT_ADDRESS);
-      const navigationMintAddress = new PublicKey(NAVIGATION_MINT_ADDRESS);
-      const presentsBagMintAddress = new PublicKey(PRESENTS_BAG_MINT_ADDRESS);
+      const propulsionMintAddress = new PublicKey(PROPULSION_MINT_ADDRESS!);
+      const landingGearMintAddress = new PublicKey(LANDING_GEAR_MINT_ADDRESS!);
+      const navigationMintAddress = new PublicKey(NAVIGATION_MINT_ADDRESS!);
+      const presentsBagMintAddress = new PublicKey(PRESENTS_BAG_MINT_ADDRESS!);
 
       let ixs = [];
       console.log("pk: ", currentPublicKey.toString());
@@ -188,6 +197,10 @@ function LoginPage() {
       fetchandCreateAtas(publicKey);
     }
   }, [
+    LANDING_GEAR_MINT_ADDRESS,
+    NAVIGATION_MINT_ADDRESS,
+    PRESENTS_BAG_MINT_ADDRESS,
+    PROPULSION_MINT_ADDRESS,
     connection,
     isLoginInProgress,
     loggedIn,

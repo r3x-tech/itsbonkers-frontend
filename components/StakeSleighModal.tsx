@@ -27,6 +27,8 @@ import { createSleighTx } from "@/utils";
 import { randomBytes } from "crypto";
 import toast from "react-hot-toast";
 import { GameSettings } from "@/types/types";
+import userStore from "@/stores/userStore";
+import { PublicKey } from "@solana/web3.js";
 
 interface StakeSleighModalProps {
   minStakeAmount: number;
@@ -56,6 +58,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
     connecting,
     disconnecting,
   } = useWallet();
+  const { globalGameId, TOKEN_MINT_ADDRESS } = userStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleSliderChange = (value: any) => {
@@ -69,7 +72,13 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
   const stakeSleigh = async () => {
     setStakingInProgress(true);
     try {
-      if (!signTransaction || !connection || !publicKey) {
+      if (
+        !signTransaction ||
+        !connection ||
+        !publicKey ||
+        !globalGameId ||
+        !TOKEN_MINT_ADDRESS
+      ) {
         throw Error("Staking failed");
       }
 
@@ -78,6 +87,8 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
 
       // Call createSleighTx function and wait for the transaction to be ready
       const tx = await createSleighTx(
+        globalGameId,
+        new PublicKey(TOKEN_MINT_ADDRESS),
         sleighId,
         stakeAmt,
         connection,
