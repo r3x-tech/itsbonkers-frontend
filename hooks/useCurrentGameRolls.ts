@@ -4,16 +4,21 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import { useCurrentSlot } from "./useCurrentSlot";
 import userStore from "@/stores/userStore";
 import { BN } from "@coral-xyz/anchor";
+import { useGameSettings } from "./useGameSettings";
 
 export const useCurrentGameRolls = (connection: Connection) => {
-  const { gameSettings, globalGameId } = userStore();
+  const { data: gameSettings } = useGameSettings(connection);
   const { data: currentSlot } = useCurrentSlot();
 
   return useQuery(
     ["curentGameRolls"],
     () => {
-      if (!currentSlot || !gameSettings || !globalGameId) {
-        return { rolls: [new BN(0)] };
+      if (!currentSlot) {
+        console.log("Current Slot defined!");
+        return { rolls: [] };
+      } else if (!gameSettings) {
+        console.log("Game Settings not defined!");
+        return { rolls: [] };
       }
 
       if (currentSlot > gameSettings?.stage1End?.toNumber()) {
