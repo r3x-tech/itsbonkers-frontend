@@ -1,4 +1,4 @@
-export let GAME_ID = process.env.NEXT_PUBLIC_GAME_ID;
+export let GAME_ID = parseInt(process.env.NEXT_PUBLIC_GAME_ID!);
 export const TOKEN_MINT_ADDRESS =
   "Gx1V34ivZZ1Fq7Rm9ZmogBdDgYZieYKjJU1icSupFuCT";
 
