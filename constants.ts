@@ -3,13 +3,13 @@ export const TOKEN_MINT_ADDRESS =
   "Gx1V34ivZZ1Fq7Rm9ZmogBdDgYZieYKjJU1icSupFuCT";
 
 export const PROPULSION_MINT_ADDRESS =
-  "GfcTvXfo73BPL52gxR3nqaj2zpTCRDRLT1sAAE9jrkNU";
+  process.env.NEXT_PUBLIC_PROPULSION_MINT_ADDRESS;
 export const LANDING_GEAR_MINT_ADDRESS =
-  "6gdoodnAdPfdt9WpqnRXNgLYoTZV4pznt2xziAff9oaT";
+  process.env.NEXT_PUBLIC_LANDING_GEAR_MINT_ADDRESS;
 export const NAVIGATION_MINT_ADDRESS =
-  "9d3GfKF7icgNqQwCMfSRexCJ2PgTUbkHxXEE7mBBt5U2";
+  process.env.NEXT_PUBLIC_NAVIGATION_MINT_ADDRESS;
 export const PRESENTS_BAG_MINT_ADDRESS =
-  "DA8Tj4feM5yoWpSCPhggZmYfmkPWtsQuCSPsr3tAfLeg";
+  process.env.NEXT_PUBLIC_PRESENTS_BAG_MINT_ADDRESS;
 
 export const SPL_TOKENS: {
   [token: string]: { mint: string; decimals: number };
