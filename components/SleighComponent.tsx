@@ -127,10 +127,10 @@ export function SleighComponent({
         BigInt(currentSleigh.sleighId.toString()),
         connection,
         publicKey,
+        new PublicKey(PROPULSION_MINT_ADDRESS),
         new PublicKey(LANDING_GEAR_MINT_ADDRESS),
         new PublicKey(NAVIGATION_MINT_ADDRESS),
-        new PublicKey(PRESENTS_BAG_MINT_ADDRESS),
-        new PublicKey(PROPULSION_MINT_ADDRESS)
+        new PublicKey(PRESENTS_BAG_MINT_ADDRESS)
       );
       if (!tx) {
         throw Error("Failed to create tx");
@@ -294,10 +294,12 @@ export function SleighComponent({
                 fontFamily={theme.fonts.body}
                 color={theme.colors.white}
               >
-                {((gameSettings?.sleighsBuilt.toNumber() -
-                  currentSleigh.builtIndex.toNumber()) *
-                  gameSettings?.mintCostMultiplier!.toNumber()) /
-                  1_00000 || 0}{" "}
+                {(gameSettings &&
+                  ((gameSettings!.sleighsBuilt.toNumber() -
+                    currentSleigh.builtIndex.toNumber()) *
+                    gameSettings!.mintCostMultiplier!.toNumber()) /
+                    1_00000) ||
+                  0}{" "}
                 BONK
               </Text>
             </Flex>

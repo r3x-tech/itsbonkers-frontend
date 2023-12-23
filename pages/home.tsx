@@ -64,7 +64,7 @@ import { BN } from "@coral-xyz/anchor";
 function HomePage() {
   const [selectedSleigh, setSelectedSleigh] = useState<Sleigh | null>(null);
   const [stakingInProgress, setStakingInProgress] = useState<boolean>(false);
-  const [currentStakeCost, setCurrentStakeCost] = useState<number>(0);
+  const [currentStakeCost, setCurrentStakeCost] = useState<number>(250000);
   const [stg2Started, setStg2Started] = useState<boolean>(false);
 
   const {
@@ -486,7 +486,6 @@ function HomePage() {
               h="100%"
               justifyContent="center"
               alignItems="center"
-              cursor="pointer"
             >
               <Text
                 fontSize="2.5rem"

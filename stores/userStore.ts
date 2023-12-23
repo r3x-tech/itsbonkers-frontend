@@ -48,7 +48,7 @@ export const userStore = create<Store>((set) => ({
     "https://shdw-drive.genesysgo.net/5jHWA7UVajMawLH2wVCZdp3U4u42XsF8rSa1DcEQui72/profilePicWhite.svg",
   sleighs: [],
   gameSettings: null,
-  globalGameId: null,
+  globalGameId: 40,
   TOKEN_MINT_ADDRESS: null,
   PROPULSION_MINT_ADDRESS: null,
   LANDING_GEAR_MINT_ADDRESS: null,

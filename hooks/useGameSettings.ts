@@ -8,9 +8,8 @@ import { GAME_ID } from "@/constants";
 export const useGameSettings = (
   connection: Connection
 ): UseQueryResult<GameSettings> => {
-  //const { globalGameId } = userStore();
+  // const { globalGameId } = userStore();
   const globalGameId = GAME_ID;
-
   return useQuery(
     ["gameSettings"],
     async () => {

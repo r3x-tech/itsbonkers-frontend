@@ -240,7 +240,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
             <Flex
               w="100%"
               flexDirection="column"
-              justifyContent="center"
+              justifyContent="start"
               alignItems="center"
             >
               <Text
@@ -253,13 +253,8 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
               >
                 AMOUNT TO BID:
               </Text>
-              <Flex
-                w="100%"
-                justifyContent="space-between"
-                alignItems="center"
-                flexDirection="row"
-              >
-                <Slider
+              <Flex w="100%" justifyContent="start" alignItems="center">
+                {/* <Slider
                   w="70%"
                   id="slider"
                   value={stakeAmount}
@@ -280,9 +275,9 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                   <SliderThumb boxSize={6}>
                     <Box color="tomato" />
                   </SliderThumb>
-                </Slider>
+                </Slider> */}
                 <NumberInput
-                  ml="2rem"
+                  // ml="2rem"
                   min={minStakeAmount}
                   max={maxStakeAmount}
                   value={stakeAmount}

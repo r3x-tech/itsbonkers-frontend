@@ -102,6 +102,7 @@ function LoginPage() {
           wallet: wallet,
           solanaConnection: connection,
         });
+        setLoginInProgress(false);
       } else if (
         connection &&
         publicKey &&
@@ -111,7 +112,6 @@ function LoginPage() {
         !connecting &&
         !disconnecting
       ) {
-        setLoginInProgress(false);
         toast.error("Game ID not set");
       }
     };
@@ -478,7 +478,7 @@ function LoginPage() {
           align="center"
           bg={theme.colors.accentFive}
         >
-          <Flex
+          {/* <Flex
             w="30vw"
             flexDirection="column"
             alignItems="start"
@@ -531,13 +531,12 @@ function LoginPage() {
                 SET
               </Button>
             </Flex>
-          </Flex>
+          </Flex> */}
           <Flex justifyContent="center">
             <Image
               src="/bonkerslargelogo.png"
               alt="User Profile Pic"
               w={["60vw", "40vw"]}
-              cursor="pointer"
               onClick={() => {
                 // router.push("/account");
               }}

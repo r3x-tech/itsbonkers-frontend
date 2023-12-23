@@ -19,6 +19,7 @@ import {
   NumberInputField,
   Spinner,
   useDisclosure,
+  Input,
 } from "@chakra-ui/react";
 import theme from "@/styles/theme";
 import { GameSettings, Sleigh } from "@/types/types";
@@ -28,6 +29,7 @@ import toast from "react-hot-toast";
 import { repairSleighTx } from "@/utils";
 import userStore from "@/stores/userStore";
 import { PublicKey } from "@solana/web3.js";
+import { BN } from "@coral-xyz/anchor";
 
 interface RepairSleighModalProps {
   repairSleighInProgress: boolean;
@@ -48,21 +50,32 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
   hp,
   refetchCurrentSleighs,
 }) => {
-  const [repairAmount, setRepairAmount] = useState(0);
+  const [repairAmount, setRepairAmount] = useState("");
   const [minRepairAmount, setMinRepairAmount] = useState(0);
   const maxR = 255 - hp;
   const [maxRepairAmount, setMaxRepairAmount] = useState(maxR);
+  const [isInputValid, setIsInputValid] = useState(true);
 
-  const handleRepairSliderChange = (value: any) => {
-    setRepairAmount(value);
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value, 10) || 0;
+    setRepairAmount(event.target.value);
+    if (value > maxRepairAmount) {
+      setIsInputValid(false);
+    } else {
+      setIsInputValid(true);
+    }
   };
 
-  const handleRepairInputChange = (
-    valueAsString: string,
-    valueAsNumber: number
-  ) => {
-    setRepairAmount(valueAsNumber);
-  };
+  // const handleRepairSliderChange = (value: any) => {
+  //   setRepairAmount(value);
+  // };
+
+  // const handleRepairInputChange = (
+  //   valueAsString: string,
+  //   valueAsNumber: number
+  // ) => {
+  //   setRepairAmount(valueAsNumber);
+  // };
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { connection } = useSolana();
@@ -82,12 +95,7 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
     PROPULSION_MINT_ADDRESS,
   } = userStore();
 
-  const repairSleigh = async (
-    propulsion: number,
-    landingGear: number,
-    navigation: number,
-    presentsBag: number
-  ) => {
+  const repairSleigh = async () => {
     setRepairSleighInProgress(true);
 
     try {
@@ -104,6 +112,44 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
       ) {
         throw Error("Repair sleigh failed");
       }
+      const numericRepairAmount = parseInt(repairAmount, 10) || 0;
+
+      let propulsion = 0,
+        landingGear = 0,
+        navigation = 0,
+        presentsBag = 0;
+
+      console.log("part to repair: ", partToRepair);
+
+      console.log("repairAmount: ", numericRepairAmount);
+
+      switch (partToRepair) {
+        case "PROPULSION":
+          propulsion = numericRepairAmount;
+          break;
+        case "LANDING GEAR":
+          landingGear = numericRepairAmount;
+          break;
+        case "NAVIGATION":
+          navigation = numericRepairAmount;
+          break;
+        case "PRESENTS BAG":
+          presentsBag = numericRepairAmount;
+          break;
+        default:
+          break; // handle an unexpected case
+      }
+
+      console.log(
+        "propulsion: ",
+        propulsion,
+        "landingGear",
+        landingGear,
+        "navigation",
+        navigation,
+        "presentsBag",
+        presentsBag
+      );
 
       const tx = await repairSleighTx(
         globalGameId,
@@ -116,10 +162,10 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
         },
         connection,
         publicKey,
+        new PublicKey(PROPULSION_MINT_ADDRESS),
         new PublicKey(LANDING_GEAR_MINT_ADDRESS),
         new PublicKey(NAVIGATION_MINT_ADDRESS),
-        new PublicKey(PRESENTS_BAG_MINT_ADDRESS),
-        new PublicKey(PROPULSION_MINT_ADDRESS)
+        new PublicKey(PRESENTS_BAG_MINT_ADDRESS)
       );
       if (!tx) {
         throw Error("Failed to create tx");
@@ -254,53 +300,30 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
               </Text>
               <Flex
                 w="100%"
-                justifyContent="space-between"
+                justifyContent="start"
                 alignItems="center"
                 flexDirection="row"
               >
-                <Slider
-                  w="70%"
-                  id="slider"
-                  defaultValue={minRepairAmount}
+                <Input
+                  w="50%"
+                  type="number"
+                  h="4rem"
+                  pl="1.5rem"
+                  color={theme.colors.tertiary}
+                  borderColor={theme.colors.background}
+                  borderWidth="2px"
+                  borderRadius="30px"
+                  bg={theme.colors.background}
+                  fontSize="1.25rem"
+                  fontWeight="700"
+                  value={repairAmount}
+                  onChange={handleInputChange}
                   min={minRepairAmount}
                   max={maxRepairAmount}
-                  value={repairAmount}
-                  onChange={handleRepairSliderChange}
-                >
-                  <SliderTrack
-                    bg={theme.colors.background}
-                    h="0.5rem"
-                    borderRadius="5px"
-                  >
-                    <SliderFilledTrack
-                      color={theme.colors.tertiary}
-                      bg={theme.colors.tertiary}
-                    />
-                  </SliderTrack>
-                  <SliderThumb boxSize={6}>
-                    <Box color="tomato" />
-                  </SliderThumb>
-                </Slider>
-                <NumberInput
-                  ml="2rem"
-                  defaultValue={minRepairAmount}
-                  min={minRepairAmount}
-                  max={maxRepairAmount}
-                  value={repairAmount}
-                  onChange={handleRepairInputChange}
-                >
-                  <NumberInputField
-                    h="4rem"
-                    pl="1.5rem"
-                    color={theme.colors.tertiary}
-                    borderColor={theme.colors.background}
-                    borderWidth="2px"
-                    borderRadius="30px"
-                    bg={theme.colors.background}
-                    fontSize="1.25rem"
-                    fontWeight="700"
-                  />
-                </NumberInput>
+                  _placeholder={{ color: theme.colors.tertiary }}
+                  placeholder="0"
+                  isInvalid={!isInputValid}
+                />
                 <Text
                   ml="1rem"
                   fontSize="1.25rem"
@@ -311,6 +334,11 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
                 </Text>
               </Flex>
             </Flex>
+            {!isInputValid && (
+              <Text color={theme.colors.primary} mt={2} ml={7}>
+                CANNOT EXCEED {maxRepairAmount}
+              </Text>
+            )}
           </ModalBody>
 
           <ModalFooter>
@@ -335,34 +363,14 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
                   </Flex>
                 }
                 onClick={() => {
-                  let propulsion = 0,
-                    landingGear = 0,
-                    navigation = 0,
-                    presentsBag = 0;
+                  const numericRepairAmount = parseInt(repairAmount, 10) || 0;
 
-                  switch (partToRepair) {
-                    case "PROPULSION":
-                      propulsion = repairAmount;
-                      break;
-                    case "LANDING GEAR":
-                      landingGear = repairAmount;
-                      break;
-                    case "NAVIGATION":
-                      navigation = repairAmount;
-                      break;
-                    case "PRESENTS BAG":
-                      presentsBag = repairAmount;
-                      break;
-                    default:
-                      break; // or handle an unexpected case
+                  if (!isInputValid || numericRepairAmount > maxRepairAmount) {
+                    toast.error("Max repair value exceeded");
+                    return;
                   }
 
-                  repairSleigh(
-                    propulsion,
-                    landingGear,
-                    navigation,
-                    presentsBag
-                  );
+                  repairSleigh();
                 }}
                 _hover={{
                   color: theme.colors.white,
@@ -380,7 +388,11 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
                   YOU ARE ABOUT TO USE
                 </Box>{" "}
                 <Box as="span" color={theme.colors.tertiary}>
-                  {repairAmount} {partToRepair} RESOURCES
+                  {currentSleigh.lastDeliveryRoll
+                    .mul(new BN(repairAmount))
+                    .mul(new BN(2))
+                    .toString()}{" "}
+                  RESOURCES
                 </Box>{" "}
                 <Box as="span" color={theme.colors.white}>
                   TO REPAIR YOUR SLEIGH&apos;S
