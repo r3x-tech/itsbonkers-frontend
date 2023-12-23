@@ -456,7 +456,7 @@ function HomePage() {
                       fontFamily={theme.fonts.body}
                       color={theme.colors.white}
                     >
-                      {currentStakeCost}
+                      {currentStakeCost / 1_00000}
                     </Text>
                   </Flex>
                 </Flex>

@@ -107,7 +107,7 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
 
       const tx = await repairSleighTx(
         globalGameId,
-        BigInt(currentSleigh.sleighId.toNumber()),
+        BigInt(currentSleigh.sleighId.toString()),
         {
           propulsion,
           landingGear,

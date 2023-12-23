@@ -76,9 +76,9 @@ export function SleighComponent({
         "DELIVERY"
       );
       if (gameRolls && currentSleigh) {
-        const numOfDeliveriesPending = new BN(gameRolls.rolls.length)
-          .sub(currentSleigh.lastDeliveryRoll)
-          .toNumber();
+        const numOfDeliveriesPending = Number(
+          new BN(gameRolls.rolls.length).sub(currentSleigh.lastDeliveryRoll)
+        );
         setPendingDeliveries(numOfDeliveriesPending);
       }
     };
@@ -294,9 +294,10 @@ export function SleighComponent({
                 fontFamily={theme.fonts.body}
                 color={theme.colors.white}
               >
-                {(gameSettings?.sleighsBuilt.toNumber() -
+                {((gameSettings?.sleighsBuilt.toNumber() -
                   currentSleigh.builtIndex.toNumber()) *
-                  gameSettings?.mintCostMultiplier!.toNumber() || 0}{" "}
+                  gameSettings?.mintCostMultiplier!.toNumber()) /
+                  1_00000 || 0}{" "}
                 BONK
               </Text>
             </Flex>
