@@ -8,11 +8,11 @@ import { FC, ReactNode, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 
-// const ReactUIWalletModalProviderDynamic = dynamic(
-//   async () =>
-//     (await import("@solana/wallet-adapter-react-ui")).WalletModalProvider,
-//   { ssr: true }
-// );
+const ReactUIWalletModalProviderDynamic = dynamic(
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletModalProvider,
+  { ssr: true }
+);
 
 require("@solana/wallet-adapter-react-ui/styles.css");
 
@@ -28,7 +28,9 @@ export const SolanaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <ConnectionProvider endpoint={endpoint as string}>
       <WalletProvider wallets={wallets} onError={onError} autoConnect>
-        <WalletModalProvider>{children} </WalletModalProvider>
+        <ReactUIWalletModalProviderDynamic>
+          {children}{" "}
+        </ReactUIWalletModalProviderDynamic>
       </WalletProvider>
     </ConnectionProvider>
   );
