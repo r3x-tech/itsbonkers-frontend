@@ -102,7 +102,6 @@ function LoginPage() {
           wallet: wallet,
           solanaConnection: connection,
         });
-        setLoginInProgress(false);
       } else if (
         connection &&
         publicKey &&
@@ -338,7 +337,7 @@ function LoginPage() {
   ]);
 
   const calculateTimeLeft = useCallback(() => {
-    const targetDate = new Date("2023-12-21 18:00:00");
+    const targetDate = new Date("2023-12-26 12:00:00");
 
     const now = new Date();
     const timeDiff = targetDate.getTime() - now.getTime();
