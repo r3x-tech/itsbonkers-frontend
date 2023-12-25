@@ -22,9 +22,6 @@ export const SPL_TOKENS: {
 
 export const SLEIGH_NAMES = require("@/public/sleigh_names.json");
 
-/*
-Propulsion Mint:  6QabNFf11sZZhMmzFiMXD6BgjS8Wpcqc4HSuyE6YXjc4
-Landing Gear Mint:  H4dgpJh3KypJW1Z6AagJYoHdzzBS41sM2nLyDqyCbk6x
-Navigation Mint:  3tSrpxAQdKMwbXN5fQjemZirAGQx72oB6ycLJ2QPWMRs
-Presents Bag Mint:  Czs6bi8TDz9u25cwWKhcFeEhcXScr9SVjV7225WkPvEr
-*/
+export const NUMBER_FORMATTER = Intl.NumberFormat("en", {
+  notation: "compact",
+});

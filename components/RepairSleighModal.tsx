@@ -52,8 +52,7 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
 }) => {
   const [repairAmount, setRepairAmount] = useState("");
   const [minRepairAmount, setMinRepairAmount] = useState(0);
-  const maxR = 255 - hp;
-  const [maxRepairAmount, setMaxRepairAmount] = useState(maxR);
+  const [maxRepairAmount, setMaxRepairAmount] = useState(255 - hp);
   const [isInputValid, setIsInputValid] = useState(true);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,7 +177,9 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
       );
       await connection.sendRawTransaction(signedTx.serialize());
 
-      toast.success("Sleigh repaired");
+      toast.success(
+        "Sleigh repaired. Please wait a couple seconds for values to update!"
+      );
       onRepairSleighClose();
     } catch (e) {
       console.error("Error during repair: ", e);

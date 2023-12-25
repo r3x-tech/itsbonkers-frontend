@@ -54,6 +54,7 @@ import { useCurrentNavigationParts } from "@/hooks/useCurrentNavigationParts";
 import { useCurrentLandingGearParts } from "@/hooks/useCurrentLandingGearParts";
 import { useCurrentPresentsBagParts } from "@/hooks/useCurrentPresentsBagParts";
 import { BN } from "@coral-xyz/anchor";
+import { NUMBER_FORMATTER } from "@/constants";
 // import {
 //   LANDING_GEAR_MINT_ADDRESS,
 //   NAVIGATION_MINT_ADDRESS,
@@ -456,7 +457,7 @@ function HomePage() {
                       fontFamily={theme.fonts.body}
                       color={theme.colors.white}
                     >
-                      {currentStakeCost / 1_00000}
+                      {NUMBER_FORMATTER.format(currentStakeCost / 1_00000)}
                     </Text>
                   </Flex>
                 </Flex>
