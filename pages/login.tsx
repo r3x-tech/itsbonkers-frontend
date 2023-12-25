@@ -102,6 +102,7 @@ function LoginPage() {
           wallet: wallet,
           solanaConnection: connection,
         });
+        setLoginInProgress(false);
       } else if (
         connection &&
         publicKey &&
