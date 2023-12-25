@@ -312,7 +312,7 @@ export function SleighComponent({
                 BONK
               </Text>
             </Flex>
-            {currentStage == "DELIVERY" && (
+            {false && currentStage == "DELIVERY" && (
               <Flex
                 flexDirection="column"
                 w="20rem"
