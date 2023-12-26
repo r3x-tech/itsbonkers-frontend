@@ -346,10 +346,10 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                   {stakeRef.current?.value} BONK{" "}
                 </Box>
                 <Box as="span" color={theme.colors.white}>
-                  THIS ACTION IS IRREVERSIBLE & SHOULD YOU CHOOSE TO REMOVE YOUR
-                  STAKE YOU WILL LOSE THE STAKED AMOUNT OF BONK. SHOULD YOU
-                  RE-STAKE AFTER UN-STAKING YOU WILL RECEIVE 70% OF YOUR
-                  ORIGINAL STAKE BACK.{" "}
+                  ONCE STAKED, YOU WILL ONLY BE ABLE TO UNSTAKE DURING DELIVERY
+                  STAGE BY RETIRING. IF YOUR STAKE HAS ONE OR MORE LEVELS, YOU
+                  WILL ONLY GET 70% OF THE STAKE BACK. IF YOUR STAKE WAS NEVER
+                  BUILT, YOU WILL GET 100% OF THE STAKE BACK.{" "}
                 </Box>{" "}
               </Text>
             </Flex>
