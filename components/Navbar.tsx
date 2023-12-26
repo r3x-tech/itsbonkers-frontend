@@ -204,7 +204,15 @@ export const Navbar: React.FC = () => {
               color={theme.colors.white}
               mr="0.5rem"
             >
-              TBD BONK
+              {gameSettings &&
+                NUMBER_FORMATTER.format(
+                  Number(
+                    gameSettings.totalStake
+                      .div(gameSettings.sleighsStaked)
+                      .div(new BN(1_00000))
+                  )
+                )}{" "}
+              BONK
             </Text>
           </Flex>
         </Flex>
