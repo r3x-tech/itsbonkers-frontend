@@ -215,6 +215,33 @@ export const Navbar: React.FC = () => {
             </Text>
           </Flex>
         </Flex>
+        <Flex>
+          <Text
+            fontSize="1.25rem"
+            fontWeight="400"
+            fontFamily={theme.fonts.body}
+            color={theme.colors.white}
+            mr="1rem"
+          >
+            Sleighs Working:{" "}
+          </Text>
+          <Flex>
+            <Text
+              fontSize="1.25rem"
+              fontWeight="700"
+              fontFamily={theme.fonts.body}
+              color={theme.colors.white}
+              mr="0.5rem"
+            >
+              {NUMBER_FORMATTER.format(
+                Number(
+                  gameSettings?.sleighsBuilt.sub(gameSettings.sleighsRetired) ||
+                    0
+                )
+              )}{" "}
+            </Text>
+          </Flex>
+        </Flex>
       </Flex>
       <Flex>
         {loggedIn ? (
