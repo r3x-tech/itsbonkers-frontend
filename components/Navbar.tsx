@@ -204,14 +204,7 @@ export const Navbar: React.FC = () => {
               color={theme.colors.white}
               mr="0.5rem"
             >
-              {NUMBER_FORMATTER.format(
-                Number(
-                  gameSettings?.totalStake
-                    .div(new BN(1_00000))
-                    .div(gameSettings?.sleighsStaked) || 0
-                )
-              )}{" "}
-              BONK
+              TBD BONK
             </Text>
           </Flex>
         </Flex>
