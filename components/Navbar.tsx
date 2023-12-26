@@ -177,8 +177,38 @@ export const Navbar: React.FC = () => {
             >
               {NUMBER_FORMATTER.format(
                 Number(
-                  (gameSettings?.prizePool || new BN(1)).div(new BN(1_00000)) ||
-                    0
+                  (
+                    gameSettings?.prizePool.div(new BN(1_00000)) || new BN(1)
+                  ).div(new BN(1_00000)) || 0
+                )
+              )}{" "}
+              BONK
+            </Text>
+          </Flex>
+        </Flex>
+        <Flex>
+          <Text
+            fontSize="1.25rem"
+            fontWeight="400"
+            fontFamily={theme.fonts.body}
+            color={theme.colors.white}
+            mr="1rem"
+          >
+            Average Stake:{" "}
+          </Text>
+          <Flex>
+            <Text
+              fontSize="1.25rem"
+              fontWeight="700"
+              fontFamily={theme.fonts.body}
+              color={theme.colors.white}
+              mr="0.5rem"
+            >
+              {NUMBER_FORMATTER.format(
+                Number(
+                  gameSettings?.totalStake
+                    .div(new BN(1_00000))
+                    .div(gameSettings?.sleighsStaked) || 0
                 )
               )}{" "}
               BONK
