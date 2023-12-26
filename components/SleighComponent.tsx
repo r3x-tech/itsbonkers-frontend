@@ -304,10 +304,12 @@ export function SleighComponent({
                 color={theme.colors.white}
               >
                 {(gameSettings &&
-                  ((gameSettings!.sleighsBuilt.toNumber() -
-                    currentSleigh.builtIndex.toNumber()) *
-                    gameSettings!.mintCostMultiplier!.toNumber()) /
-                    1_00000) ||
+                  NUMBER_FORMATTER.format(
+                    ((gameSettings!.sleighsBuilt.toNumber() -
+                      currentSleigh.builtIndex.toNumber()) *
+                      gameSettings!.mintCostMultiplier!.toNumber()) /
+                      1_00000
+                  )) ||
                   0}{" "}
                 BONK
               </Text>

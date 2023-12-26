@@ -226,7 +226,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                   fontWeight="700"
                   color={theme.colors.tertiary}
                 >
-                  {maxStakeAmount}
+                  {NUMBER_FORMATTER.format(maxStakeAmount)}
                 </Text>
                 <Text
                   ml="1rem"
