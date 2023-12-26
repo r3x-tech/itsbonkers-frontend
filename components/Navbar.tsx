@@ -263,10 +263,7 @@ export const Navbar: React.FC = () => {
               color={theme.colors.white}
               mr="0.5rem"
             >
-              {gameSettings &&
-                NUMBER_FORMATTER.format(
-                  Number(gameSettings?.sleighsStaked || 0)
-                )}{" "}
+              {gameSettings && Number(gameSettings?.sleighsStaked || 0)}{" "}
             </Text>
           </Flex>
         </Flex>
