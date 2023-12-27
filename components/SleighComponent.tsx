@@ -304,7 +304,7 @@ export function SleighComponent({
                 color={theme.colors.white}
               >
                 {(gameSettings &&
-                  currentSleigh.builtIndex > 0 &&
+                  Number(currentSleigh.builtIndex) > 0 &&
                   NUMBER_FORMATTER.format(
                     ((gameSettings!.sleighsBuilt.toNumber() -
                       currentSleigh.builtIndex.toNumber()) *
