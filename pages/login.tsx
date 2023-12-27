@@ -338,7 +338,7 @@ function LoginPage() {
   ]);
 
   const calculateTimeLeft = useCallback(() => {
-    const targetDate = new Date("2023-12-26 12:00:00");
+    const targetDate = new Date("2023-12-26 13:00:00");
 
     const now = new Date();
     const timeDiff = targetDate.getTime() - now.getTime();
