@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -54,11 +54,12 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
 }) => {
   const [repairAmount, setRepairAmount] = useState("");
   const [minRepairAmount, setMinRepairAmount] = useState(0);
-  const [maxRepairAmount, setMaxRepairAmount] = useState(255 - hp);
+  const [maxRepairAmount, setMaxRepairAmount] = useState(0);
   const [isInputValid, setIsInputValid] = useState(true);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value, 10) || 0;
     setRepairAmount(event.target.value);
+    console.log("maxRepairAmount: ", maxRepairAmount);
     if (value > maxRepairAmount) {
       setIsInputValid(false);
     } else {
@@ -66,15 +67,14 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (hp && hp > 0 && maxRepairAmount == 0) {
+      setMaxRepairAmount(255 - hp);
+    }
+  }, [hp, maxRepairAmount]);
+
   // const handleRepairSliderChange = (value: any) => {
   //   setRepairAmount(value);
-  // };
-
-  // const handleRepairInputChange = (
-  //   valueAsString: string,
-  //   valueAsNumber: number
-  // ) => {
-  //   setRepairAmount(valueAsNumber);
   // };
 
   const { isOpen, onOpen, onClose } = useDisclosure();
