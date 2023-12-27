@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -54,7 +54,6 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
   const [minRepairAmount, setMinRepairAmount] = useState(0);
   const [maxRepairAmount, setMaxRepairAmount] = useState(255 - hp);
   const [isInputValid, setIsInputValid] = useState(true);
-
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value, 10) || 0;
     setRepairAmount(event.target.value);
