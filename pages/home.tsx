@@ -434,7 +434,9 @@ function HomePage() {
                   h="12%"
                 >
                   <StakeSleighModal
-                    minStakeAmount={currentStakeCost}
+                    minStakeAmount={
+                      currentStakeCost > 250000 ? currentStakeCost : 250000
+                    }
                     maxStakeAmount={walletBonkBalance!}
                     stakingInProgress={stakingInProgress}
                     setStakingInProgress={setStakingInProgress}
