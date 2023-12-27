@@ -10,6 +10,7 @@ import {
   Flex,
   Text,
   Button,
+  Image,
   Slider,
   SliderTrack,
   SliderFilledTrack,
@@ -30,6 +31,7 @@ import { repairSleighTx } from "@/utils";
 import userStore from "@/stores/userStore";
 import { PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
+import { GiSkis } from "react-icons/gi";
 
 interface RepairSleighModalProps {
   repairSleighInProgress: boolean;
@@ -239,7 +241,20 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
             fontSize="2rem"
             fontFamily={theme.fonts.header}
           >
-            REPAIR SLEIGH {partToRepair}
+            <Flex align="center">
+              <Text mr="1rem">REPAIR {partToRepair}</Text>
+              {partToRepair == "PROPULSION" ? (
+                <Image src="/reindeer.png" alt="skis" boxSize="3.5rem" />
+              ) : partToRepair == "NAGIVATION" ? (
+                <Image src="/gps.png" alt="skis" boxSize="3.5rem" />
+              ) : partToRepair == "LANDING GEAR" ? (
+                <GiSkis fontSize="3.5rem" />
+              ) : partToRepair == "PRESENTS BAG" ? (
+                <Image src="/presentsbag.png" alt="skis" boxSize="3.5rem" />
+              ) : (
+                <></>
+              )}
+            </Flex>
           </ModalHeader>
           <ModalCloseButton
             m="2rem"
