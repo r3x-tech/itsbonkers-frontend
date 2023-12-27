@@ -10,7 +10,7 @@ export const useCurrentPropulsionParts = (
   return useQuery<bigint>(
     ["walletPropulsionBalance", walletAddress],
     async () => {
-      if (walletAddress) {
+      if (walletAddress && connection && tokenMint) {
         try {
           const amount = await getWalletTokenBalance({
             walletAddress,

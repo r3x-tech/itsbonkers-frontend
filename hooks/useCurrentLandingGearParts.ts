@@ -10,7 +10,7 @@ export const useCurrentLandingGearParts = (
   return useQuery<bigint>(
     ["walletLandingGearBalance", walletAddress],
     async () => {
-      if (walletAddress) {
+      if (walletAddress && connection && tokenMint) {
         try {
           const amount = await getWalletTokenBalance({
             walletAddress,

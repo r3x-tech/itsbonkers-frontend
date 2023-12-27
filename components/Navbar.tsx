@@ -65,13 +65,6 @@ export const Navbar: React.FC = () => {
 
   const { globalGameId, setGlobalGameId } = userStore();
 
-  const getTextColor = (route: string) => {
-    if (pathname.includes(route)) {
-      return theme.colors.lighterBlue;
-    }
-    return theme.colors.evenLighterBlue;
-  };
-
   const handleCopyClick = async () => {
     try {
       await navigator.clipboard.writeText(solana_wallet_address);
@@ -99,7 +92,7 @@ export const Navbar: React.FC = () => {
       h="8vh"
       px="5rem"
     >
-      <Flex w="30%" gap={10}>
+      <Flex w="10%">
         <Image
           src="/bonkerslogo.png"
           alt="User Profile Pic"
@@ -111,7 +104,7 @@ export const Navbar: React.FC = () => {
           }}
         />
       </Flex>
-      <Flex w="70%" gap={20}>
+      <Flex w="90%" gap="3rem" justifyContent="center">
         <Flex>
           <Text
             fontSize="1.25rem"
@@ -120,7 +113,7 @@ export const Navbar: React.FC = () => {
             color={theme.colors.white}
             mr="1rem"
           >
-            GAME ID:{" "}
+            Game Id:{" "}
           </Text>
           <Flex>
             <Text
@@ -130,7 +123,7 @@ export const Navbar: React.FC = () => {
               color={theme.colors.white}
             >
               {/* {GAME_ID || 0} */}
-              {globalGameId || 0}
+              {loggedIn ? globalGameId : "N/A"}
             </Text>
           </Flex>
         </Flex>
@@ -143,7 +136,7 @@ export const Navbar: React.FC = () => {
             color={theme.colors.white}
             mr="1rem"
           >
-            CURRENT GAME ROLLS:{" "}
+            Current Game Rolls:{" "}
           </Text>
 
           <Flex>
@@ -153,7 +146,7 @@ export const Navbar: React.FC = () => {
               fontFamily={theme.fonts.body}
               color={theme.colors.white}
             >
-              {currentGameRolls?.rolls.length || 0}
+              {loggedIn ? currentGameRolls?.rolls.length : "N/A"}
             </Text>
           </Flex>
         </Flex>
@@ -165,7 +158,7 @@ export const Navbar: React.FC = () => {
             color={theme.colors.white}
             mr="1rem"
           >
-            PRIZE POOL:{" "}
+            Prize Pool:{" "}
           </Text>
           <Flex>
             <Text
@@ -175,9 +168,11 @@ export const Navbar: React.FC = () => {
               color={theme.colors.white}
               mr="0.5rem"
             >
-              {NUMBER_FORMATTER.format(
-                Number(gameSettings?.prizePool) / 1_00000
-              )}{" "}
+              {loggedIn
+                ? NUMBER_FORMATTER.format(
+                    Number(gameSettings?.prizePool) / 1_00000
+                  )
+                : "N/A"}{" "}
               BONK
             </Text>
           </Flex>
@@ -200,14 +195,37 @@ export const Navbar: React.FC = () => {
               color={theme.colors.white}
               mr="0.5rem"
             >
-              {gameSettings &&
-                NUMBER_FORMATTER.format(
-                  Number(
-                    gameSettings.totalStake
-                      .div(gameSettings.sleighsStaked)
-                      .div(new BN(1_00000))
+              {/* {loggedIn &&
+              gameSettings &&
+              gameSettings.totalStake &&
+              gameSettings.sleighsStaked
+                ? NUMBER_FORMATTER.format(
+                    Number(
+                      gameSettings.totalStake
+                        .div(gameSettings.sleighsStaked)
+                        .div(new BN(1_00000))
+                    )
                   )
-                )}{" "}
+                : "N/A"}{" "} */}
+              {loggedIn &&
+              gameSettings &&
+              gameSettings.totalStake &&
+              gameSettings.sleighsStaked &&
+              !gameSettings.totalStake.isZero &&
+              !gameSettings.sleighsStaked.isZero
+                ? NUMBER_FORMATTER.format(
+                    Number(
+                      gameSettings.totalStake
+                        .div(gameSettings.sleighsStaked)
+                        .div(new BN(1_00000))
+                    )
+                  )
+                : loggedIn &&
+                  gameSettings &&
+                  gameSettings.totalStake &&
+                  gameSettings.sleighsStaked
+                ? 0
+                : "N/A"}{" "}
               BONK
             </Text>
           </Flex>
@@ -230,7 +248,9 @@ export const Navbar: React.FC = () => {
               color={theme.colors.white}
               mr="0.5rem"
             >
-              {gameSettings && Number(gameSettings?.sleighsStaked || 0)}{" "}
+              {gameSettings && loggedIn
+                ? Number(gameSettings?.sleighsStaked)
+                : "N/A"}{" "}
             </Text>
           </Flex>
         </Flex>
