@@ -1,15 +1,15 @@
-export let GAME_ID = 25;
+export let GAME_ID = parseInt(process.env.NEXT_PUBLIC_GAME_ID!);
 export const TOKEN_MINT_ADDRESS =
   "Gx1V34ivZZ1Fq7Rm9ZmogBdDgYZieYKjJU1icSupFuCT";
 
 export const PROPULSION_MINT_ADDRESS =
-  "6QabNFf11sZZhMmzFiMXD6BgjS8Wpcqc4HSuyE6YXjc4";
+  process.env.NEXT_PUBLIC_PROPULSION_MINT_ADDRESS;
 export const LANDING_GEAR_MINT_ADDRESS =
-  "H4dgpJh3KypJW1Z6AagJYoHdzzBS41sM2nLyDqyCbk6x";
+  process.env.NEXT_PUBLIC_LANDING_GEAR_MINT_ADDRESS;
 export const NAVIGATION_MINT_ADDRESS =
-  "3tSrpxAQdKMwbXN5fQjemZirAGQx72oB6ycLJ2QPWMRs";
+  process.env.NEXT_PUBLIC_NAVIGATION_MINT_ADDRESS;
 export const PRESENTS_BAG_MINT_ADDRESS =
-  "Czs6bi8TDz9u25cwWKhcFeEhcXScr9SVjV7225WkPvEr";
+  process.env.NEXT_PUBLIC_PRESENTS_BAG_MINT_ADDRESS;
 
 export const SPL_TOKENS: {
   [token: string]: { mint: string; decimals: number };
@@ -20,9 +20,8 @@ export const SPL_TOKENS: {
   },
 };
 
-/*
-Propulsion Mint:  6QabNFf11sZZhMmzFiMXD6BgjS8Wpcqc4HSuyE6YXjc4
-Landing Gear Mint:  H4dgpJh3KypJW1Z6AagJYoHdzzBS41sM2nLyDqyCbk6x
-Navigation Mint:  3tSrpxAQdKMwbXN5fQjemZirAGQx72oB6ycLJ2QPWMRs
-Presents Bag Mint:  Czs6bi8TDz9u25cwWKhcFeEhcXScr9SVjV7225WkPvEr
-*/
+export const SLEIGH_NAMES = require("@/public/sleigh_names.json");
+
+export const NUMBER_FORMATTER = Intl.NumberFormat("en", {
+  notation: "compact",
+});

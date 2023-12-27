@@ -54,6 +54,7 @@ import { useCurrentNavigationParts } from "@/hooks/useCurrentNavigationParts";
 import { useCurrentLandingGearParts } from "@/hooks/useCurrentLandingGearParts";
 import { useCurrentPresentsBagParts } from "@/hooks/useCurrentPresentsBagParts";
 import { BN } from "@coral-xyz/anchor";
+import { NUMBER_FORMATTER } from "@/constants";
 // import {
 //   LANDING_GEAR_MINT_ADDRESS,
 //   NAVIGATION_MINT_ADDRESS,
@@ -64,7 +65,7 @@ import { BN } from "@coral-xyz/anchor";
 function HomePage() {
   const [selectedSleigh, setSelectedSleigh] = useState<Sleigh | null>(null);
   const [stakingInProgress, setStakingInProgress] = useState<boolean>(false);
-  const [currentStakeCost, setCurrentStakeCost] = useState<number>(0);
+  const [currentStakeCost, setCurrentStakeCost] = useState<number>(250000);
   const [stg2Started, setStg2Started] = useState<boolean>(false);
 
   const {
@@ -456,7 +457,7 @@ function HomePage() {
                       fontFamily={theme.fonts.body}
                       color={theme.colors.white}
                     >
-                      {currentStakeCost}
+                      {NUMBER_FORMATTER.format(currentStakeCost / 1_00000)}
                     </Text>
                   </Flex>
                 </Flex>
@@ -486,7 +487,6 @@ function HomePage() {
               h="100%"
               justifyContent="center"
               alignItems="center"
-              cursor="pointer"
             >
               <Text
                 fontSize="2.5rem"

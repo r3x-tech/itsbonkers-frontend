@@ -29,6 +29,7 @@ import { useCurrentSlot } from "@/hooks/useCurrentSlot";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
 import userStore from "@/stores/userStore";
+import { NUMBER_FORMATTER, SLEIGH_NAMES } from "@/constants";
 
 interface SleighProps {
   currentSleigh: Sleigh | null;
@@ -49,7 +50,6 @@ export function SleighComponent({
   const [claimingInProgress, setClaimingInProgress] = useState<boolean>(false);
   const [currentStage, setCurrentStage] = useState<string>("BUILD");
   const [pendingDeliveries, setPendingDeliveries] = useState<number>(0);
-
   const { connection } = useSolana();
   const {
     wallet,
@@ -67,7 +67,6 @@ export function SleighComponent({
     PRESENTS_BAG_MINT_ADDRESS,
     PROPULSION_MINT_ADDRESS,
   } = userStore();
-
   useEffect(() => {
     const setDeliveries = async (sleigh: Sleigh, connection: Connection) => {
       // refetchPendingDeliveries(sleigh);
@@ -77,8 +76,16 @@ export function SleighComponent({
         "DELIVERY"
       );
       if (gameRolls && currentSleigh) {
-        const numOfDeliveriesPending =
-          gameRolls.rolls.length - currentSleigh.lastDeliveryRoll.toNumber();
+        let numOfDeliveriesPending = 0;
+        if (currentSleigh.lastDeliveryRoll.gt(new BN("184467445200"))) {
+          numOfDeliveriesPending = Number(
+            new BN(gameRolls.rolls.length).sub(new BN(0))
+          );
+        } else {
+          numOfDeliveriesPending = Number(
+            new BN(gameRolls.rolls.length).sub(currentSleigh.lastDeliveryRoll)
+          );
+        }
         setPendingDeliveries(numOfDeliveriesPending);
       }
     };
@@ -127,10 +134,10 @@ export function SleighComponent({
         BigInt(currentSleigh.sleighId.toString()),
         connection,
         publicKey,
+        new PublicKey(PROPULSION_MINT_ADDRESS),
         new PublicKey(LANDING_GEAR_MINT_ADDRESS),
         new PublicKey(NAVIGATION_MINT_ADDRESS),
-        new PublicKey(PRESENTS_BAG_MINT_ADDRESS),
-        new PublicKey(PROPULSION_MINT_ADDRESS)
+        new PublicKey(PRESENTS_BAG_MINT_ADDRESS)
       );
       if (!tx) {
         throw Error("Failed to create tx");
@@ -274,7 +281,10 @@ export function SleighComponent({
                 fontFamily={theme.fonts.body}
                 color={theme.colors.white}
               >
-                {currentSleigh?.stakeAmt.toString() || 0} BONK
+                {NUMBER_FORMATTER.format(
+                  Number(currentSleigh?.stakeAmt.div(new BN(1_00000) || 0))
+                )}{" "}
+                BONK
               </Text>
             </Flex>
             <Flex>
@@ -293,13 +303,19 @@ export function SleighComponent({
                 fontFamily={theme.fonts.body}
                 color={theme.colors.white}
               >
-                {(gameSettings!.sleighsBuilt.toNumber() -
-                  currentSleigh.builtIndex.toNumber()) *
-                  gameSettings!.mintCostMultiplier!.toNumber() || 0}{" "}
+                {(gameSettings &&
+                  currentSleigh.builtIndex > 0 &&
+                  NUMBER_FORMATTER.format(
+                    ((gameSettings!.sleighsBuilt.toNumber() -
+                      currentSleigh.builtIndex.toNumber()) *
+                      gameSettings!.mintCostMultiplier!.toNumber()) /
+                      1_00000
+                  )) ||
+                  0}{" "}
                 BONK
               </Text>
             </Flex>
-            {currentStage == "DELIVERY" && (
+            {false && currentStage == "DELIVERY" && (
               <Flex
                 flexDirection="column"
                 w="20rem"
@@ -323,10 +339,9 @@ export function SleighComponent({
                     fontFamily={theme.fonts.body}
                     color={theme.colors.white}
                   >
-                    {gameSettings?.lastRolled
-                      .add(gameSettings.rollInterval)
+                    {gameSettings?.rollInterval
                       .div(new BN(2))
-                      .mul(new BN(60))
+                      .div(new BN(60))
                       .toString()}{" "}
                     MIN
                   </Text>
@@ -422,7 +437,14 @@ export function SleighComponent({
                     fontFamily={theme.fonts.header}
                     color={theme.colors.white}
                   >
-                    {currentSleigh.sleighId.toString()}
+                    {
+                      SLEIGH_NAMES[
+                        Number(
+                          BigInt(currentSleigh.sleighId.toString()) %
+                            BigInt(SLEIGH_NAMES.length)
+                        )
+                      ]
+                    }
                   </Text>
                 </Flex>
                 <Flex

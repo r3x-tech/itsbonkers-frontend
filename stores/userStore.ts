@@ -1,3 +1,4 @@
+import { GAME_ID } from "@/constants";
 import { GameSettings, Sleigh } from "@/types/types";
 import { Wallet } from "@solana/wallet-adapter-react";
 import { Connection } from "@solana/web3.js";
@@ -48,7 +49,7 @@ export const userStore = create<Store>((set) => ({
     "https://shdw-drive.genesysgo.net/5jHWA7UVajMawLH2wVCZdp3U4u42XsF8rSa1DcEQui72/profilePicWhite.svg",
   sleighs: [],
   gameSettings: null,
-  globalGameId: null,
+  globalGameId: GAME_ID,
   TOKEN_MINT_ADDRESS: null,
   PROPULSION_MINT_ADDRESS: null,
   LANDING_GEAR_MINT_ADDRESS: null,

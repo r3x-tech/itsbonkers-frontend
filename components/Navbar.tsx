@@ -25,16 +25,13 @@ import { useEffect, useState } from "react";
 import { useCurrentGameRolls } from "@/hooks/useCurrentGameRolls";
 import useSolana from "@/hooks/useSolana";
 import { useCurrentSlot } from "@/hooks/useCurrentSlot";
-// import { GAME_ID } from "@/constants";
+import { NUMBER_FORMATTER } from "@/constants";
+import { useGameSettings } from "@/hooks/useGameSettings";
+import { BN } from "@coral-xyz/anchor";
 
 export const Navbar: React.FC = () => {
-  const {
-    loggedIn,
-    loginType,
-    solana_wallet_address,
-    userProfilePic,
-    gameSettings,
-  } = userStore();
+  const { loggedIn, loginType, solana_wallet_address, userProfilePic } =
+    userStore();
   const router = useRouter();
   const { pathname } = useRouter();
   const theme = useTheme();
@@ -42,6 +39,8 @@ export const Navbar: React.FC = () => {
   const [isLogoutInProgress, setLogoutInProgress] = useState(false);
   const { connection } = useSolana();
   const { data: currentSlot, refetch: refetchCurrentSlot } = useCurrentSlot();
+  const { data: gameSettings, refetch: refetchGameSettings } =
+    useGameSettings(connection);
 
   const {
     data: currentGameRolls,
@@ -51,14 +50,18 @@ export const Navbar: React.FC = () => {
 
   useEffect(() => {
     refetchCurrentGameRolls();
-    console.log("Current Game Rolls: ", currentGameRolls?.rolls.length);
     const interval = setInterval(() => {
       console.log("Refetching game rolls!");
       refetchCurrentGameRolls();
-      console.log("Current Game Rolls: ", currentGameRolls);
+      refetchGameSettings();
     }, ((gameSettings?.rollInterval.toNumber() || 200) / 2) * 2000);
     return () => clearInterval(interval);
-  }, [currentGameRolls, gameSettings, refetchCurrentGameRolls]);
+  }, [
+    currentGameRolls,
+    gameSettings,
+    refetchCurrentGameRolls,
+    refetchGameSettings,
+  ]);
 
   const { globalGameId, setGlobalGameId } = userStore();
 
@@ -172,7 +175,62 @@ export const Navbar: React.FC = () => {
               color={theme.colors.white}
               mr="0.5rem"
             >
-              {gameSettings?.prizePool.toString() || 0} BONK
+              {NUMBER_FORMATTER.format(
+                Number(gameSettings?.prizePool) / 1_00000
+              )}{" "}
+              BONK
+            </Text>
+          </Flex>
+        </Flex>
+        <Flex>
+          <Text
+            fontSize="1.25rem"
+            fontWeight="400"
+            fontFamily={theme.fonts.body}
+            color={theme.colors.white}
+            mr="1rem"
+          >
+            Average Stake:{" "}
+          </Text>
+          <Flex>
+            <Text
+              fontSize="1.25rem"
+              fontWeight="700"
+              fontFamily={theme.fonts.body}
+              color={theme.colors.white}
+              mr="0.5rem"
+            >
+              {gameSettings &&
+                NUMBER_FORMATTER.format(
+                  Number(
+                    gameSettings.totalStake
+                      .div(gameSettings.sleighsStaked)
+                      .div(new BN(1_00000))
+                  )
+                )}{" "}
+              BONK
+            </Text>
+          </Flex>
+        </Flex>
+        <Flex>
+          <Text
+            fontSize="1.25rem"
+            fontWeight="400"
+            fontFamily={theme.fonts.body}
+            color={theme.colors.white}
+            mr="1rem"
+          >
+            Sleighs Staked:{" "}
+          </Text>
+          <Flex>
+            <Text
+              fontSize="1.25rem"
+              fontWeight="700"
+              fontFamily={theme.fonts.body}
+              color={theme.colors.white}
+              mr="0.5rem"
+            >
+              {gameSettings && Number(gameSettings?.sleighsStaked || 0)}{" "}
             </Text>
           </Flex>
         </Flex>

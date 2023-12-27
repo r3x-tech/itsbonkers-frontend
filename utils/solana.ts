@@ -1,6 +1,6 @@
 import { apiRequest } from ".";
 import axios from "axios";
-import { Bonkers } from "../program/bonkers_program";
+import { Bonkers } from "../program/bonkers";
 import {
   TOKEN_PROGRAM_ID,
   getAssociatedTokenAddressSync,
@@ -40,7 +40,7 @@ import { GameRolls, GameSettings, Sleigh } from "@/types/types";
 import { encode } from "bs58";
 import { publicKey } from "@coral-xyz/anchor/dist/cjs/utils";
 
-const bonkersIDL = require("../program/bonkers_program.json");
+const bonkersIDL = require("../program/bonkers.json");
 const BONKERS_PROGRAM_PROGRAMID =
   "DYjXGPz5HGneqvA7jsgRVKTTaeoarCPNCH6pr9Lu2L3F";
 
