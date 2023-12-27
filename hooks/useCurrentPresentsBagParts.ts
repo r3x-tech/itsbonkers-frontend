@@ -10,7 +10,7 @@ export const useCurrentPresentsBagParts = (
   return useQuery<bigint>(
     ["walletPresentsBagBalance", walletAddress],
     async () => {
-      if (walletAddress) {
+      if (walletAddress && connection && tokenMint) {
         try {
           const amount = await getWalletTokenBalance({
             walletAddress,

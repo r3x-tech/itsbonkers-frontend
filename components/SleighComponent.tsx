@@ -29,7 +29,7 @@ import { useCurrentSlot } from "@/hooks/useCurrentSlot";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
 import userStore from "@/stores/userStore";
-import { SLEIGH_NAMES } from "@/constants";
+import { NUMBER_FORMATTER, SLEIGH_NAMES } from "@/constants";
 
 interface SleighProps {
   currentSleigh: Sleigh | null;
@@ -76,9 +76,16 @@ export function SleighComponent({
         "DELIVERY"
       );
       if (gameRolls && currentSleigh) {
-        const numOfDeliveriesPending = Number(
-          new BN(gameRolls.rolls.length).sub(currentSleigh.lastDeliveryRoll)
-        );
+        let numOfDeliveriesPending = 0;
+        if (currentSleigh.lastDeliveryRoll.gt(new BN("184467445200"))) {
+          numOfDeliveriesPending = Number(
+            new BN(gameRolls.rolls.length).sub(new BN(0))
+          );
+        } else {
+          numOfDeliveriesPending = Number(
+            new BN(gameRolls.rolls.length).sub(currentSleigh.lastDeliveryRoll)
+          );
+        }
         setPendingDeliveries(numOfDeliveriesPending);
       }
     };
@@ -274,7 +281,9 @@ export function SleighComponent({
                 fontFamily={theme.fonts.body}
                 color={theme.colors.white}
               >
-                {currentSleigh?.stakeAmt.div(new BN(1_00000)).toString() || 0}{" "}
+                {NUMBER_FORMATTER.format(
+                  Number(currentSleigh?.stakeAmt.div(new BN(1_00000) || 0))
+                )}{" "}
                 BONK
               </Text>
             </Flex>
@@ -295,15 +304,18 @@ export function SleighComponent({
                 color={theme.colors.white}
               >
                 {(gameSettings &&
-                  ((gameSettings!.sleighsBuilt.toNumber() -
-                    currentSleigh.builtIndex.toNumber()) *
-                    gameSettings!.mintCostMultiplier!.toNumber()) /
-                    1_00000) ||
+                  Number(currentSleigh.builtIndex) > 0 &&
+                  NUMBER_FORMATTER.format(
+                    ((gameSettings!.sleighsBuilt.toNumber() -
+                      currentSleigh.builtIndex.toNumber()) *
+                      gameSettings!.mintCostMultiplier!.toNumber()) /
+                      1_00000
+                  )) ||
                   0}{" "}
                 BONK
               </Text>
             </Flex>
-            {currentStage == "DELIVERY" && (
+            {false && currentStage == "DELIVERY" && (
               <Flex
                 flexDirection="column"
                 w="20rem"

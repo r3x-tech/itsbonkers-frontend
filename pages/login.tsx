@@ -89,11 +89,6 @@ function LoginPage() {
       ) {
         setLoginInProgress(true);
 
-        let keypair = Keypair.generate();
-
-        let KEY: any = keypair;
-        KEY.payer = keypair;
-
         userStore.setState({
           loggedIn: true,
           loginType: "SOLANA",
@@ -102,6 +97,7 @@ function LoginPage() {
           wallet: wallet,
           solanaConnection: connection,
         });
+        setLoginInProgress(false);
       } else if (
         connection &&
         publicKey &&

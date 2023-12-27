@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useRef } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -30,6 +30,7 @@ import { GameSettings } from "@/types/types";
 import userStore from "@/stores/userStore";
 import { PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
+import { NUMBER_FORMATTER } from "@/constants";
 
 interface StakeSleighModalProps {
   minStakeAmount: number;
@@ -48,8 +49,6 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
   refetchCurrentSleighs,
   stg2Started,
 }) => {
-  const [stakeAmount, setStakeAmount] = useState(minStakeAmount);
-
   const { connection } = useSolana();
   const {
     wallet,
@@ -62,13 +61,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
   const { globalGameId, TOKEN_MINT_ADDRESS } = userStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleSliderChange = (value: number) => {
-    setStakeAmount(value);
-  };
-
-  const handleInputChange = (valueAsString: string, valueAsNumber: number) => {
-    setStakeAmount(valueAsNumber);
-  };
+  const stakeRef = useRef<HTMLInputElement>(null);
 
   const stakeSleigh = async () => {
     setStakingInProgress(true);
@@ -84,7 +77,15 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
       }
 
       const sleighId = BigInt(`0x${randomBytes(8).toString("hex")}`);
-      const stakeAmt = stakeAmount * 100000;
+      const stakeAmt = parseInt(stakeRef.current?.value || "0") * 1_00000;
+      if (stakeAmt < minStakeAmount) {
+        toast.error(
+          `Min Stake Amount is: ${NUMBER_FORMATTER.format(
+            minStakeAmount / 1_0000
+          )}`
+        );
+        return;
+      }
 
       // Call createSleighTx function and wait for the transaction to be ready
       const tx = await createSleighTx(
@@ -225,7 +226,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                   fontWeight="700"
                   color={theme.colors.tertiary}
                 >
-                  {maxStakeAmount}
+                  {NUMBER_FORMATTER.format(maxStakeAmount)}
                 </Text>
                 <Text
                   ml="1rem"
@@ -277,11 +278,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                   </SliderThumb>
                 </Slider> */}
                 <NumberInput
-                  // ml="2rem"
-                  min={minStakeAmount}
-                  max={maxStakeAmount}
-                  value={stakeAmount}
-                  onChange={handleInputChange}
+                // ml="2rem"
                 >
                   <NumberInputField
                     h="4rem"
@@ -293,6 +290,7 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                     bg={theme.colors.background}
                     fontSize="1.25rem"
                     fontWeight="700"
+                    ref={stakeRef}
                   />
                 </NumberInput>
                 <Text
@@ -345,13 +343,13 @@ export const StakeSleighModal: React.FC<StakeSleighModalProps> = ({
                   YOU ARE ABOUT TO STAKE
                 </Box>{" "}
                 <Box as="span" color={theme.colors.tertiary}>
-                  {stakeAmount} BONK{" "}
+                  {stakeRef.current?.value} BONK{" "}
                 </Box>
                 <Box as="span" color={theme.colors.white}>
-                  THIS ACTION IS IRREVERSIBLE & SHOULD YOU CHOOSE TO REMOVE YOUR
-                  STAKE YOU WILL LOSE THE STAKED AMOUNT OF BONK. SHOULD YOU
-                  RE-STAKE AFTER UN-STAKING YOU WILL RECEIVE 70% OF YOUR
-                  ORIGINAL STAKE BACK.{" "}
+                  ONCE STAKED, YOU WILL ONLY BE ABLE TO UNSTAKE DURING DELIVERY
+                  STAGE BY RETIRING. IF YOUR STAKE HAS ONE OR MORE LEVELS, YOU
+                  WILL ONLY GET 70% OF THE STAKE BACK. IF YOUR STAKE WAS NEVER
+                  BUILT, YOU WILL GET 100% OF THE STAKE BACK.{" "}
                 </Box>{" "}
               </Text>
             </Flex>

@@ -10,7 +10,7 @@ export const useCurrentNavigationParts = (
   return useQuery<bigint>(
     ["walletNavigationBalance", walletAddress?.toBase58()],
     async () => {
-      if (walletAddress) {
+      if (walletAddress && connection && tokenMint) {
         try {
           const amount = await getWalletTokenBalance({
             walletAddress,

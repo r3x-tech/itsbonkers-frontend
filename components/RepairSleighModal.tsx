@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -10,6 +10,7 @@ import {
   Flex,
   Text,
   Button,
+  Image,
   Slider,
   SliderTrack,
   SliderFilledTrack,
@@ -30,6 +31,7 @@ import { repairSleighTx } from "@/utils";
 import userStore from "@/stores/userStore";
 import { PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
+import { GiSkis } from "react-icons/gi";
 
 interface RepairSleighModalProps {
   repairSleighInProgress: boolean;
@@ -52,13 +54,12 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
 }) => {
   const [repairAmount, setRepairAmount] = useState("");
   const [minRepairAmount, setMinRepairAmount] = useState(0);
-  const maxR = 255 - hp;
-  const [maxRepairAmount, setMaxRepairAmount] = useState(maxR);
+  const [maxRepairAmount, setMaxRepairAmount] = useState(0);
   const [isInputValid, setIsInputValid] = useState(true);
-
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value, 10) || 0;
     setRepairAmount(event.target.value);
+    console.log("maxRepairAmount: ", maxRepairAmount);
     if (value > maxRepairAmount) {
       setIsInputValid(false);
     } else {
@@ -66,15 +67,14 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (hp && hp > 0 && maxRepairAmount == 0) {
+      setMaxRepairAmount(255 - hp);
+    }
+  }, [hp, maxRepairAmount]);
+
   // const handleRepairSliderChange = (value: any) => {
   //   setRepairAmount(value);
-  // };
-
-  // const handleRepairInputChange = (
-  //   valueAsString: string,
-  //   valueAsNumber: number
-  // ) => {
-  //   setRepairAmount(valueAsNumber);
   // };
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -178,7 +178,9 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
       );
       await connection.sendRawTransaction(signedTx.serialize());
 
-      toast.success("Sleigh repaired");
+      toast.success(
+        "Sleigh repaired. Please wait a couple seconds for values to update!"
+      );
       onRepairSleighClose();
     } catch (e) {
       console.error("Error during repair: ", e);
@@ -239,7 +241,20 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
             fontSize="2rem"
             fontFamily={theme.fonts.header}
           >
-            REPAIR SLEIGH {partToRepair}
+            <Flex align="center">
+              <Text mr="1rem">REPAIR {partToRepair}</Text>
+              {partToRepair == "PROPULSION" ? (
+                <Image src="/reindeer.png" alt="skis" boxSize="3.5rem" />
+              ) : partToRepair == "NAGIVATION" ? (
+                <Image src="/gps.png" alt="skis" boxSize="3.5rem" />
+              ) : partToRepair == "LANDING GEAR" ? (
+                <GiSkis fontSize="3.5rem" />
+              ) : partToRepair == "PRESENTS BAG" ? (
+                <Image src="/presentsbag.png" alt="skis" boxSize="3.5rem" />
+              ) : (
+                <></>
+              )}
+            </Flex>
           </ModalHeader>
           <ModalCloseButton
             m="2rem"
@@ -336,7 +351,7 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
             </Flex>
             {!isInputValid && (
               <Text color={theme.colors.primary} mt={2} ml={7}>
-                CANNOT EXCEED {maxRepairAmount}
+                MAX HP CANNOT EXCEED 255
               </Text>
             )}
           </ModalBody>
@@ -389,6 +404,7 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
                 </Box>{" "}
                 <Box as="span" color={theme.colors.tertiary}>
                   {currentSleigh.lastDeliveryRoll
+                    .add(new BN(1))
                     .mul(new BN(repairAmount))
                     .mul(new BN(2))
                     .toString()}{" "}
