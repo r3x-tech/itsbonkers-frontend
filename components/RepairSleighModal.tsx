@@ -336,7 +336,7 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
             </Flex>
             {!isInputValid && (
               <Text color={theme.colors.primary} mt={2} ml={7}>
-                CANNOT EXCEED {maxRepairAmount}
+                MAX HP CANNOT EXCEED 255
               </Text>
             )}
           </ModalBody>
@@ -389,6 +389,7 @@ export const RepairSleighModal: React.FC<RepairSleighModalProps> = ({
                 </Box>{" "}
                 <Box as="span" color={theme.colors.tertiary}>
                   {currentSleigh.lastDeliveryRoll
+                    .add(new BN(1))
                     .mul(new BN(repairAmount))
                     .mul(new BN(2))
                     .toString()}{" "}
